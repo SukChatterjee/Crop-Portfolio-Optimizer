@@ -6,7 +6,6 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
-import { Slider } from './ui/slider';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Card, CardContent } from './ui/card';
 import { 
@@ -49,7 +48,7 @@ const STEPS = [
   { id: 1, title: 'Location', icon: MapPin, description: 'Select your farm location' },
   { id: 2, title: 'Farm Details', icon: Sprout, description: 'Enter farm specifications' },
   { id: 3, title: 'Soil Info', icon: Droplets, description: 'Soil type and conditions' },
-  { id: 4, title: 'Constraints', icon: X, description: 'Crop exclusions' },
+  { id: 4, title: 'Crops', icon: X, description: 'Choose crops to include' },
   { id: 5, title: 'Goals', icon: Target, description: 'Define your objectives' },
 ];
 
@@ -65,13 +64,15 @@ const SOIL_TYPES = [
 
 const CROPS = [
   'Corn',
-  'Soybeans',
   'Wheat',
-  'Cotton',
+  'Soybeans',
   'Rice',
-  'Alfalfa',
-  'Sorghum',
-  'Sunflower',
+  'Cotton',
+  'Tomatoes',
+  'Potatoes',
+  'Onions',
+  'Apples',
+  'Lettuce',
 ];
 
 // Map click handler component
@@ -92,12 +93,15 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
     acres: 100,
     has_irrigation: false,
     soil_type: '',
-    soil_ph: 6.5,
-    crop_constraints: [],
+    selected_crops: [],
+    other_crop_text: '',
     risk_preference: 'moderate',
     goal: 'balanced',
   });
   const [markerPosition, setMarkerPosition] = useState([39.8283, -98.5795]);
+  const [locationQuery, setLocationQuery] = useState('');
+  const [locationSearchError, setLocationSearchError] = useState('');
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -113,16 +117,94 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
     }
   }, [markerPosition]);
 
+  const handleLocationSearch = async () => {
+    const query = locationQuery.trim();
+    if (!query) {
+      setLocationSearchError('Please enter a location to search.');
+      return;
+    }
+
+    setIsSearchingLocation(true);
+    setLocationSearchError('');
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+      // Browsers typically block overriding User-Agent; send standard headers.
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to search location.');
+      }
+
+      const results = await response.json();
+      if (!results || results.length === 0) {
+        setLocationSearchError('No location found. Try a more specific search.');
+        return;
+      }
+
+      const lat = parseFloat(results[0].lat);
+      const lng = parseFloat(results[0].lon);
+      if (Number.isNaN(lat) || Number.isNaN(lng)) {
+        setLocationSearchError('Invalid coordinates returned for that location.');
+        return;
+      }
+
+      setMarkerPosition([lat, lng]);
+      setFormData(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          address: query,
+          lat,
+          lng,
+        },
+      }));
+
+      if (mapRef.current && typeof mapRef.current.flyTo === 'function') {
+        mapRef.current.flyTo([lat, lng], 12);
+      }
+    } catch (error) {
+      setLocationSearchError('Location search failed. Please try again.');
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
+
   const updateFormData = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const toggleCropConstraint = (crop) => {
+  const toggleSelectedCrop = (crop) => {
     setFormData(prev => ({
       ...prev,
-      crop_constraints: prev.crop_constraints.includes(crop)
-        ? prev.crop_constraints.filter(c => c !== crop)
-        : [...prev.crop_constraints, crop]
+      selected_crops: prev.selected_crops.includes(crop)
+        ? prev.selected_crops.filter(c => c !== crop)
+        : [...prev.selected_crops, crop]
+    }));
+  };
+
+  const handleAddOtherCrop = () => {
+    const crop = formData.other_crop_text.trim();
+    if (!crop) {
+      return;
+    }
+    const isInDefaultList = CROPS.some(c => c.toLowerCase() === crop.toLowerCase());
+    if (!isInDefaultList && !formData.selected_crops.some(c => c.toLowerCase() === crop.toLowerCase())) {
+      setFormData(prev => ({
+        ...prev,
+        selected_crops: [...prev.selected_crops, crop],
+        other_crop_text: '',
+      }));
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      other_crop_text: '',
     }));
   };
 
@@ -135,7 +217,7 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
       case 3:
         return formData.soil_type !== '';
       case 4:
-        return true;
+        return formData.selected_crops.length > 0;
       case 5:
         return formData.risk_preference && formData.goal;
       default:
@@ -221,6 +303,35 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
                 <p className="text-sm text-slate-500 mb-4">
                   Click on the map to pinpoint your farm's location
                 </p>
+              </div>
+
+              <div>
+                <Label htmlFor="location-search" className="text-slate-600 mb-2 block">
+                  Search location
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="location-search"
+                    value={locationQuery}
+                    onChange={(e) => setLocationQuery(e.target.value)}
+                    placeholder="City, county, or address"
+                    data-testid="location-search-input"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleLocationSearch}
+                    disabled={isSearchingLocation}
+                    className="bg-emerald-950 hover:bg-emerald-900 text-white"
+                    data-testid="location-search-btn"
+                  >
+                    {isSearchingLocation ? 'Searching...' : 'Search'}
+                  </Button>
+                </div>
+                {locationSearchError && (
+                  <p className="mt-2 text-sm text-red-600" data-testid="location-search-error">
+                    {locationSearchError}
+                  </p>
+                )}
               </div>
 
               <div className="h-[350px] rounded-xl overflow-hidden border border-slate-200">
@@ -349,74 +460,72 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div>
-                  <Label className="text-slate-600 mb-2 block">
-                    Soil pH Level: <span className="font-semibold text-emerald-950">{formData.soil_ph.toFixed(1)}</span>
-                  </Label>
-                  <div className="pt-2 pb-4">
-                    <Slider
-                      value={[formData.soil_ph]}
-                      onValueChange={([value]) => updateFormData('soil_ph', value)}
-                      min={4}
-                      max={9}
-                      step={0.1}
-                      className="w-full"
-                      data-testid="soil-ph-slider"
-                    />
-                    <div className="flex justify-between mt-2 text-xs text-slate-400">
-                      <span>4.0 (Acidic)</span>
-                      <span>7.0 (Neutral)</span>
-                      <span>9.0 (Alkaline)</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           )}
 
-          {/* Step 4: Constraints */}
+          {/* Step 4: Crops */}
           {currentStep === 4 && (
             <div className="space-y-6" data-testid="step-4-content">
               <div>
                 <h3 className="font-display text-lg font-semibold text-emerald-950 mb-2">
-                  Crop Constraints
+                  Select Crops
                 </h3>
                 <p className="text-sm text-slate-500 mb-4">
-                  Select any crops you want to exclude from the analysis
+                  Choose one or more crops to include in your analysis
                 </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {CROPS.map((crop) => {
-                  const isExcluded = formData.crop_constraints.includes(crop);
+                  const isSelected = formData.selected_crops.includes(crop);
+                  const cropTestId = `crop-select-${crop.toLowerCase().replace(/\s+/g, '-')}`;
                   return (
                     <button
                       key={crop}
-                      onClick={() => toggleCropConstraint(crop)}
+                      onClick={() => toggleSelectedCrop(crop)}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        isExcluded
-                          ? 'border-red-300 bg-red-50 text-red-700'
-                          : 'border-slate-200 bg-white hover:border-lime-300 text-slate-700'
+                        isSelected
+                          ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                          : 'border-slate-200 bg-white hover:border-emerald-300 text-slate-700'
                       }`}
-                      data-testid={`crop-constraint-${crop.toLowerCase()}`}
+                      data-testid={cropTestId}
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{crop}</span>
-                        {isExcluded && <X className="w-4 h-4 text-red-500" />}
+                        {isSelected && <Check className="w-4 h-4 text-emerald-500" />}
                       </div>
                       <span className="text-xs text-slate-400">
-                        {isExcluded ? 'Excluded' : 'Included'}
+                        {isSelected ? 'Selected' : 'Not selected'}
                       </span>
                     </button>
                   );
                 })}
               </div>
 
-              <p className="text-sm text-slate-400">
-                {formData.crop_constraints.length === 0
-                  ? 'All crops will be considered in the analysis'
-                  : `${formData.crop_constraints.length} crop(s) excluded`}
+              <div>
+                <Label htmlFor="other-crop" className="text-slate-600 mb-2 block">Other crop</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="other-crop"
+                    value={formData.other_crop_text}
+                    onChange={(e) => updateFormData('other_crop_text', e.target.value)}
+                    placeholder="Type crop name"
+                    data-testid="other-crop-input"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleAddOtherCrop}
+                    className="bg-emerald-950 hover:bg-emerald-900 text-white"
+                    data-testid="other-crop-add-btn"
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-500" data-testid="selected-crops-count">
+                {formData.selected_crops.length} crop(s) selected
               </p>
             </div>
           )}
