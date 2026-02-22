@@ -13,14 +13,75 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import random
+from pymongo.errors import PyMongoError
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Database connection
+USE_INMEMORY_DB = os.environ.get("USE_INMEMORY_DB", "0") == "1"
+client = None
+db = None
+
+if not USE_INMEMORY_DB:
+    mongo_url = os.environ['MONGO_URL']
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[os.environ['DB_NAME']]
+
+# In-memory fallback store for local development without MongoDB
+MEMORY_USERS = {}
+MEMORY_ANALYSES = {}
+
+
+async def db_find_user_by_email(email: str):
+    if USE_INMEMORY_DB:
+        return MEMORY_USERS.get(email)
+    return await db.users.find_one({"email": email})
+
+
+async def db_find_user_by_id(user_id: str):
+    if USE_INMEMORY_DB:
+        for user in MEMORY_USERS.values():
+            if user["id"] == user_id:
+                return {k: v for k, v in user.items() if k != "password"}
+        return None
+    return await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+
+
+async def db_insert_user(user_doc: dict):
+    if USE_INMEMORY_DB:
+        MEMORY_USERS[user_doc["email"]] = user_doc
+        return
+    await db.users.insert_one(user_doc)
+
+
+async def db_insert_analysis(analysis_doc: dict):
+    if USE_INMEMORY_DB:
+        MEMORY_ANALYSES[analysis_doc["id"]] = analysis_doc
+        return
+    await db.analyses.insert_one(analysis_doc)
+
+
+async def db_get_analysis(analysis_id: str, user_id: str):
+    if USE_INMEMORY_DB:
+        analysis = MEMORY_ANALYSES.get(analysis_id)
+        if not analysis or analysis["user_id"] != user_id:
+            return None
+        return analysis
+    return await db.analyses.find_one(
+        {"id": analysis_id, "user_id": user_id},
+        {"_id": 0}
+    )
+
+
+async def db_get_analyses(user_id: str):
+    if USE_INMEMORY_DB:
+        analyses = [a for a in MEMORY_ANALYSES.values() if a["user_id"] == user_id]
+        return sorted(analyses, key=lambda a: a["created_at"], reverse=True)
+    return await db.analyses.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
 
 # JWT Settings
 JWT_SECRET = os.environ.get('JWT_SECRET', 'crop-optimizer-secret-key-2024')
@@ -125,7 +186,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         user_id = payload.get("sub")
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid token")
-        user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+        user = await db_find_user_by_id(user_id)
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         return user
@@ -133,6 +194,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+    except PyMongoError:
+        raise HTTPException(status_code=503, detail="Database unavailable")
 
 # ============ Mock Data Generator ============
 
@@ -247,7 +310,7 @@ async def root():
 @api_router.post("/auth/register", response_model=TokenResponse)
 async def register(user_data: UserCreate):
     # Check if user exists
-    existing = await db.users.find_one({"email": user_data.email})
+    existing = await db_find_user_by_email(user_data.email)
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
     
@@ -263,7 +326,7 @@ async def register(user_data: UserCreate):
         "created_at": created_at
     }
     
-    await db.users.insert_one(user_doc)
+    await db_insert_user(user_doc)
     
     token = create_token(user_id, user_data.email)
     
@@ -279,7 +342,7 @@ async def register(user_data: UserCreate):
 
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(credentials: UserLogin):
-    user = await db.users.find_one({"email": credentials.email})
+    user = await db_find_user_by_email(credentials.email)
     if not user or not verify_password(credentials.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
@@ -326,7 +389,7 @@ async def create_analysis(data: AnalysisCreate, current_user: dict = Depends(get
         "status": "completed"
     }
     
-    await db.analyses.insert_one(analysis_doc)
+    await db_insert_analysis(analysis_doc)
     
     return AnalysisResponse(
         id=analysis_id,
@@ -341,10 +404,7 @@ async def create_analysis(data: AnalysisCreate, current_user: dict = Depends(get
 
 @api_router.get("/analysis/{analysis_id}", response_model=AnalysisResponse)
 async def get_analysis(analysis_id: str, current_user: dict = Depends(get_current_user)):
-    analysis = await db.analyses.find_one(
-        {"id": analysis_id, "user_id": current_user["id"]},
-        {"_id": 0}
-    )
+    analysis = await db_get_analysis(analysis_id, current_user["id"])
     if not analysis:
         raise HTTPException(status_code=404, detail="Analysis not found")
     
@@ -352,10 +412,7 @@ async def get_analysis(analysis_id: str, current_user: dict = Depends(get_curren
 
 @api_router.get("/analysis", response_model=List[AnalysisResponse])
 async def get_analyses(current_user: dict = Depends(get_current_user)):
-    analyses = await db.analyses.find(
-        {"user_id": current_user["id"]},
-        {"_id": 0}
-    ).sort("created_at", -1).to_list(100)
+    analyses = await db_get_analyses(current_user["id"])
     
     return [AnalysisResponse(**a) for a in analyses]
 
@@ -379,4 +436,5 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    if client:
+        client.close()
