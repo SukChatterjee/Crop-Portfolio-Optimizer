@@ -1,34 +1,65 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
+/* App.css - Minimal overrides for Crop Portfolio Optimizer */
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
+.App {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 }
 
-.App-link {
-    color: #61dafb;
+/* Recharts customization */
+.recharts-cartesian-axis-tick-value {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 12px;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
+.recharts-tooltip-wrapper {
+    z-index: 100;
+}
+
+/* Leaflet custom styles */
+.leaflet-container {
+    z-index: 10;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+    margin: 12px 16px;
+    font-family: 'Public Sans', sans-serif;
+}
+
+/* Progress bar customization */
+[data-state="indeterminate"] > div {
+    animation: indeterminate 1s ease-in-out infinite;
+}
+
+@keyframes indeterminate {
+    0% {
+        transform: translateX(-100%);
     }
-    to {
-        transform: rotate(360deg);
+    100% {
+        transform: translateX(100%);
     }
+}
+
+/* Custom focus styles */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-color: #10b981;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection styles */
+::selection {
+    background-color: #84cc16;
+    color: #022c22;
 }
