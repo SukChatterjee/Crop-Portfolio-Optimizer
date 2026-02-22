@@ -1,0 +1,112 @@
+{
+  "identity": {
+    "name": "Crop Portfolio Optimizer",
+    "persona": "The Hedge Fund Farmer",
+    "tone": "Precision, Authority, Profit-Driven, Sustainable Intelligence",
+    "archetype": "The Performance Pro (Financial Precision) meets Sustainable Tech"
+  },
+  "typography": {
+    "primary": {
+      "family": "Manrope",
+      "weights": ["400", "500", "600", "700", "800"],
+      "usage": "Headings, KPI Numbers, Navigation",
+      "cdn_import": "@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap');"
+    },
+    "secondary": {
+      "family": "Public Sans",
+      "weights": ["400", "500", "600"],
+      "usage": "Body Text, Data Tables, UI Elements",
+      "cdn_import": "@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap');"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-6xl font-extrabold tracking-tight leading-tight",
+      "h2": "text-3xl md:text-4xl font-bold tracking-tight",
+      "h3": "text-2xl font-semibold tracking-tight",
+      "body": "text-base leading-relaxed text-slate-600",
+      "small": "text-sm font-medium text-slate-500 uppercase tracking-wider"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "name": "Deep Institutional Green",
+        "hex": "#022c22",
+        "tailwind": "bg-emerald-950 text-white"
+      },
+      "secondary": {
+        "name": "Sterling White",
+        "hex": "#f8fafc",
+        "tailwind": "bg-slate-50"
+      },
+      "accent": {
+        "name": "Yield Lime",
+        "hex": "#84cc16",
+        "tailwind": "text-lime-500 bg-lime-500"
+      },
+      "chart": {
+        "profit": "#10b981",
+        "risk": "#f43f5e",
+        "yield": "#0ea5e9",
+        "soil": "#d97706"
+      }
+    },
+    "gradients": {
+      "subtle_mesh": "bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-100/40 via-slate-50 to-slate-50",
+      "card_surface": "bg-white border border-slate-200 shadow-sm"
+    }
+  },
+  "layout_strategies": {
+    "grid_system": "Bento Grid (Grid Cols 1 -> 4 -> 12)",
+    "spacing": "Generous (p-6, p-8 minimum for containers)",
+    "container_style": "Rounded-xl, 1px Border (slate-200), Soft Shadow (shadow-sm)",
+    "glassmorphism": "backdrop-blur-xl bg-white/80 border-white/40 (Use for sticky headers and floating processing agents)"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-emerald-950 text-white hover:bg-emerald-900 rounded-lg px-6 py-3 font-semibold shadow-lg shadow-emerald-900/20 transition-all active:scale-95",
+      "secondary": "bg-white text-emerald-950 border border-slate-200 hover:bg-slate-50 rounded-lg px-6 py-3 font-medium transition-all"
+    },
+    "cards": {
+      "base": "bg-white border border-slate-100 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow duration-300",
+      "interactive": "cursor-pointer hover:border-lime-500/50 transition-colors"
+    },
+    "inputs": {
+      "style": "bg-white border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 rounded-lg h-12 px-4 text-base"
+    }
+  },
+  "visual_enhancers": {
+    "textures": "Subtle noise overlay on the 'Agent Processing' background to give it a tactical feel.",
+    "icons": "Phosphor Icons (Regular weight for UI, Duotone for Feature Cards)",
+    "motion": {
+      "page_load": "stagger-children",
+      "number_count": "Use 'react-countup' for all KPIs",
+      "ticker": "Typewriter effect for Agent thought process"
+    }
+  },
+  "image_urls": {
+    "hero_bg": "https://images.unsplash.com/photo-1744230673231-865d54a0aba4?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "drone_tech": "https://images.pexels.com/photos/34182414/pexels-photo-34182414.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "soil_analysis": "https://images.unsplash.com/photo-1724337227697-bf212dc0aad8?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "farmer_tablet": "https://images.unsplash.com/photo-1592209176240-e5b170e8474c?crop=entropy&cs=srgb&fm=jpg&q=85"
+  },
+  "instructions_to_main_agent": [
+    "1. **Identity Check**: Ensure the app feels like a 'Financial Tool for Farmers', not a 'Gardening Blog'. Use precise lines, tabular data, and clear KPIs.",
+    "2. **Agent UI**: The 'Processing Screen' is the 'Magic Moment'. Make it look like a terminal or a high-tech scanner. Use a monospaced font for the 'logs' (e.g., 'Fetching NOAA data... [OK]').",
+    "3. **Map Interaction**: The map must be the centerpiece of the 'Location' step. Don't hide it. Use Leaflet with a custom light tile layer (e.g., CartoDB Positron).",
+    "4. **Charts**: Use Recharts. Style them minimally. No grid lines (or very subtle). distinct tooltips.",
+    "5. **Mobile**: Ensure the 'Wizard' creates a focused, full-screen experience on mobile.",
+    "6. **Universal Guidelines**: Follow the UNIVERSAL GUIDELINES FOR MAIN AGENT provided in the system prompt. DO NOT center align the app container. Use Sonner for toasts."
+  ],
+  "universal_guidelines": [
+    "Avoid generic 'AI slop' aesthetics.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition (e.g., transition: all).",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Use 'sonner' for toasts."
+  ]
+}
