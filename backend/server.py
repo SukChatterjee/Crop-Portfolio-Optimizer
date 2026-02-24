@@ -6,6 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
+import json
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 import uuid
@@ -13,7 +14,9 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import random
+import time
 from pymongo.errors import PyMongoError
+from agent.graph import build_graph
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -31,6 +34,48 @@ if not USE_INMEMORY_DB:
 # In-memory fallback store for local development without MongoDB
 MEMORY_USERS = {}
 MEMORY_ANALYSES = {}
+MEMORY_STORE_PATH = ROOT_DIR / ".run" / "memory_store.json"
+
+
+def _load_memory_store() -> None:
+    if not USE_INMEMORY_DB:
+        return
+    try:
+        if MEMORY_STORE_PATH.exists():
+            data = json.loads(MEMORY_STORE_PATH.read_text(encoding="utf-8"))
+            users = data.get("users", {})
+            analyses = data.get("analyses", {})
+            if isinstance(users, dict):
+                MEMORY_USERS.update(users)
+            if isinstance(analyses, dict):
+                MEMORY_ANALYSES.update(analyses)
+    except Exception:
+        # Keep startup resilient in local mode.
+        pass
+
+
+def _save_memory_store() -> None:
+    if not USE_INMEMORY_DB:
+        return
+    try:
+        MEMORY_STORE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        MEMORY_STORE_PATH.write_text(
+            json.dumps(
+                {
+                    "users": MEMORY_USERS,
+                    "analyses": MEMORY_ANALYSES,
+                },
+                indent=2,
+                default=str,
+            ),
+            encoding="utf-8",
+        )
+    except Exception:
+        # Non-fatal for local mode.
+        pass
+
+
+_load_memory_store()
 
 
 async def db_find_user_by_email(email: str):
@@ -51,6 +96,7 @@ async def db_find_user_by_id(user_id: str):
 async def db_insert_user(user_doc: dict):
     if USE_INMEMORY_DB:
         MEMORY_USERS[user_doc["email"]] = user_doc
+        _save_memory_store()
         return
     await db.users.insert_one(user_doc)
 
@@ -58,6 +104,7 @@ async def db_insert_user(user_doc: dict):
 async def db_insert_analysis(analysis_doc: dict):
     if USE_INMEMORY_DB:
         MEMORY_ANALYSES[analysis_doc["id"]] = analysis_doc
+        _save_memory_store()
         return
     await db.analyses.insert_one(analysis_doc)
 
@@ -131,8 +178,7 @@ class FarmProfile(BaseModel):
     acres: float
     has_irrigation: bool
     soil_type: str
-    soil_ph: float
-    crop_constraints: List[str] = []
+    selected_crops: List[str] = []
     risk_preference: str  # conservative, moderate, aggressive
     goal: str  # maximize_profit, minimize_risk, balanced
 
@@ -204,26 +250,54 @@ def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
     
     crops_data = [
         {"name": "Corn", "base_yield": 180, "base_price": 5.50, "water_need": "medium"},
-        {"name": "Soybeans", "base_yield": 55, "base_price": 13.50, "water_need": "low"},
         {"name": "Wheat", "base_yield": 60, "base_price": 7.20, "water_need": "low"},
-        {"name": "Cotton", "base_yield": 900, "base_price": 0.85, "water_need": "high"},
+        {"name": "Soybeans", "base_yield": 55, "base_price": 13.50, "water_need": "low"},
         {"name": "Rice", "base_yield": 7500, "base_price": 0.15, "water_need": "very_high"},
-        {"name": "Alfalfa", "base_yield": 8, "base_price": 220, "water_need": "medium"},
-        {"name": "Sorghum", "base_yield": 75, "base_price": 5.80, "water_need": "low"},
-        {"name": "Sunflower", "base_yield": 1800, "base_price": 0.22, "water_need": "low"},
+        {"name": "Cotton", "base_yield": 900, "base_price": 0.85, "water_need": "high"},
+        {"name": "Tomatoes", "base_yield": 25000, "base_price": 0.45, "water_need": "high"},
+        {"name": "Potatoes", "base_yield": 30000, "base_price": 0.22, "water_need": "medium"},
+        {"name": "Onions", "base_yield": 28000, "base_price": 0.28, "water_need": "medium"},
+        {"name": "Apples", "base_yield": 18000, "base_price": 0.40, "water_need": "medium"},
+        {"name": "Lettuce", "base_yield": 22000, "base_price": 0.65, "water_need": "medium"},
     ]
     
-    # Filter based on constraints
-    excluded = [c.lower() for c in farm_profile.crop_constraints]
-    available_crops = [c for c in crops_data if c["name"].lower() not in excluded]
+    soil_type = (farm_profile.soil_type or "").lower()
+    soil_base = 0.82
+    if "loam" in soil_type:
+        soil_base = 0.92
+    elif "silt" in soil_type:
+        soil_base = 0.88
+    elif "clay" in soil_type:
+        soil_base = 0.84
+    elif "sand" in soil_type:
+        soil_base = 0.80
+
+    # Filter based on explicitly selected crops. If a crop is custom, model it with generic defaults.
+    crops_by_name = {c["name"].lower(): c for c in crops_data}
+    selected = [c.strip() for c in farm_profile.selected_crops if c and c.strip()]
+    available_crops = []
+    seen = set()
+    if selected:
+        for crop_name in selected:
+            key = crop_name.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            if key in crops_by_name:
+                available_crops.append(crops_by_name[key])
+            else:
+                available_crops.append({
+                    "name": crop_name.title(),
+                    "base_yield": 12000,
+                    "base_price": 0.35,
+                    "water_need": "medium",
+                })
+    else:
+        available_crops = crops_data
     
     results = []
-    for crop in available_crops[:6]:  # Top 6 crops
-        # Soil compatibility based on pH
-        optimal_ph = {"Corn": 6.5, "Soybeans": 6.5, "Wheat": 6.5, "Cotton": 6.2, 
-                      "Rice": 6.0, "Alfalfa": 6.8, "Sorghum": 6.5, "Sunflower": 6.5}
-        ph_diff = abs(farm_profile.soil_ph - optimal_ph.get(crop["name"], 6.5))
-        soil_compat = max(0.5, 1 - ph_diff * 0.15)
+    for crop in available_crops:
+        soil_compat = min(0.98, max(0.55, soil_base + random.uniform(-0.08, 0.08)))
         
         # Irrigation impact
         irrigation_mult = 1.2 if farm_profile.has_irrigation and crop["water_need"] in ["high", "very_high"] else 1.0
@@ -254,14 +328,16 @@ def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
         
         # Soil explanation
         soil_explanations = {
-            "Corn": f"Corn thrives in {farm_profile.soil_type} soil. pH of {farm_profile.soil_ph} is {'optimal' if ph_diff < 0.5 else 'acceptable' if ph_diff < 1 else 'challenging'}.",
-            "Soybeans": f"Soybeans fix nitrogen and perform well in {farm_profile.soil_type}. Current pH supports {'excellent' if ph_diff < 0.3 else 'good'} nodulation.",
+            "Corn": f"Corn thrives in {farm_profile.soil_type} soil with solid nutrient and water holding characteristics.",
+            "Soybeans": f"Soybeans perform well in {farm_profile.soil_type} and can support stable rotations.",
             "Wheat": f"Winter wheat adapts well to {farm_profile.soil_type}. Drainage is {'ideal' if farm_profile.has_irrigation else 'dependent on rainfall'}.",
             "Cotton": f"Cotton requires well-drained soil. {farm_profile.soil_type} provides {'good' if 'loam' in farm_profile.soil_type.lower() else 'adequate'} structure.",
             "Rice": f"Rice cultivation {'benefits from' if farm_profile.has_irrigation else 'requires'} irrigation systems in {farm_profile.soil_type} soil.",
-            "Alfalfa": f"Alfalfa prefers {farm_profile.soil_type} with good depth. pH {farm_profile.soil_ph} {'optimal' if ph_diff < 0.4 else 'may need amendment'}.",
-            "Sorghum": f"Sorghum is drought-tolerant in {farm_profile.soil_type}. {'Irrigation adds yield security' if farm_profile.has_irrigation else 'Suitable for dryland farming'}.",
-            "Sunflower": f"Sunflowers perform well in {farm_profile.soil_type} with moderate fertility. Deep taproot accesses subsoil moisture.",
+            "Tomatoes": f"Tomatoes respond well in fertile {farm_profile.soil_type} with consistent moisture management.",
+            "Potatoes": f"Potatoes in {farm_profile.soil_type} can perform well with good drainage and balanced nutrition.",
+            "Onions": f"Onions can be productive in {farm_profile.soil_type} when irrigation and weed control are managed well.",
+            "Apples": f"Apple production in {farm_profile.soil_type} benefits from long-term soil health and orchard management.",
+            "Lettuce": f"Lettuce grows best with even moisture; {farm_profile.soil_type} can support strong seasonal production.",
         }
         
         results.append(CropResult(
@@ -370,13 +446,23 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 # Analysis Routes
 @api_router.post("/analysis/create", response_model=AnalysisResponse)
 async def create_analysis(data: AnalysisCreate, current_user: dict = Depends(get_current_user)):
+    start_ts = datetime.now(timezone.utc)
+    timer_start = time.perf_counter()
+    logger.info(
+        "analysis.create started user_id=%s start_ts=%s",
+        current_user["id"],
+        start_ts.isoformat(),
+    )
+
     analysis_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
-    
-    # Generate mock results
-    results = generate_mock_crop_results(data.farm_profile)
-    weather_summary = generate_weather_summary(data.farm_profile.location)
-    market_outlook = generate_market_outlook()
+
+    graph = build_graph()
+    agent_out = graph.invoke({"farm_profile": data.farm_profile.model_dump()})
+
+    results = [CropResult(**r) for r in agent_out.get("crop_results", [])]
+    weather_summary = str(agent_out.get("weather_summary", ""))
+    market_outlook = str(agent_out.get("market_outlook", ""))
     
     analysis_doc = {
         "id": analysis_id,
@@ -390,6 +476,16 @@ async def create_analysis(data: AnalysisCreate, current_user: dict = Depends(get
     }
     
     await db_insert_analysis(analysis_doc)
+
+    end_ts = datetime.now(timezone.utc)
+    duration_sec = time.perf_counter() - timer_start
+    logger.info(
+        "analysis.create completed user_id=%s end_ts=%s crops_analyzed=%d duration_sec=%.3f",
+        current_user["id"],
+        end_ts.isoformat(),
+        len(results),
+        duration_sec,
+    )
     
     return AnalysisResponse(
         id=analysis_id,

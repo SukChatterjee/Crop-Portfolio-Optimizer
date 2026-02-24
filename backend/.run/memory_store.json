@@ -1,0 +1,499 @@
+{
+  "users": {
+    "kankipli@mail.uc.edu": {
+      "id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "email": "kankipli@mail.uc.edu",
+      "name": "Lahari Kankipati",
+      "password": "$2b$12$SKB3N5dV39N7aAVBS8L4lun2VxP9Fhk.TQlO68mDQrxfVFlujJRkS",
+      "created_at": "2026-02-22T21:54:53.614224+00:00"
+    }
+  },
+  "analyses": {
+    "7e7c0e96-8640-4941-b451-647684f59b53": {
+      "id": "7e7c0e96-8640-4941-b451-647684f59b53",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 49992.43,
+          "profit_p10": 29453.56,
+          "profit_p50": 49992.43,
+          "profit_p90": 70531.29,
+          "yield_forecast": 172.57,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 59.7,
+          "risk_level": "Medium",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 35801.39,
+          "profit_p10": 18450.82,
+          "profit_p50": 35801.39,
+          "profit_p90": 53151.95,
+          "yield_forecast": 91.82,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 68.3,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-22T21:55:40.980884+00:00",
+      "status": "completed"
+    },
+    "cac036ae-9ef9-40ef-95ca-c2fc4eaac532": {
+      "id": "cac036ae-9ef9-40ef-95ca-c2fc4eaac532",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Wheat",
+          "Corn"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 49992.43,
+          "profit_p10": 29453.56,
+          "profit_p50": 49992.43,
+          "profit_p90": 70531.29,
+          "yield_forecast": 172.57,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 59.7,
+          "risk_level": "Medium",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 35801.39,
+          "profit_p10": 18450.82,
+          "profit_p50": 35801.39,
+          "profit_p90": 53151.95,
+          "yield_forecast": 91.82,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 68.3,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-22T21:59:42.540336+00:00",
+      "status": "completed"
+    },
+    "387c9a41-a63a-4d72-ac10-0f28bc639977": {
+      "id": "387c9a41-a63a-4d72-ac10-0f28bc639977",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 49992.43,
+          "profit_p10": 29453.56,
+          "profit_p50": 49992.43,
+          "profit_p90": 70531.29,
+          "yield_forecast": 172.57,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 59.7,
+          "risk_level": "Medium",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 35801.39,
+          "profit_p10": 18450.82,
+          "profit_p50": 35801.39,
+          "profit_p90": 53151.95,
+          "yield_forecast": 91.82,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 68.3,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-22T22:13:31.239184+00:00",
+      "status": "completed"
+    },
+    "740523f8-a6a3-45b9-93cd-42b736541a3b": {
+      "id": "740523f8-a6a3-45b9-93cd-42b736541a3b",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 49992.43,
+          "profit_p10": 29453.56,
+          "profit_p50": 49992.43,
+          "profit_p90": 70531.29,
+          "yield_forecast": 172.57,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 59.7,
+          "risk_level": "Medium",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 35801.39,
+          "profit_p10": 18450.82,
+          "profit_p50": 35801.39,
+          "profit_p90": 53151.95,
+          "yield_forecast": 91.82,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 68.3,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-22T22:38:18.403595+00:00",
+      "status": "completed"
+    },
+    "5a200661-8b9f-4bb4-99e1-17f90d993012": {
+      "id": "5a200661-8b9f-4bb4-99e1-17f90d993012",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 49992.43,
+          "profit_p10": 29453.56,
+          "profit_p50": 49992.43,
+          "profit_p90": 70531.29,
+          "yield_forecast": 172.57,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 59.7,
+          "risk_level": "Medium",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 35801.39,
+          "profit_p10": 18450.82,
+          "profit_p50": 35801.39,
+          "profit_p90": 53151.95,
+          "yield_forecast": 91.82,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 68.3,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:22:51.085242+00:00",
+      "status": "completed"
+    },
+    "c56ac67d-eecf-42b0-bf27-d8bf1db8541f": {
+      "id": "c56ac67d-eecf-42b0-bf27-d8bf1db8541f",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 31105.58,
+          "profit_p10": 15179.52,
+          "profit_p50": 31105.58,
+          "profit_p90": 47031.63,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 22845.22,
+          "profit_p10": 11148.47,
+          "profit_p50": 22845.22,
+          "profit_p90": 34541.97,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:27:40.428999+00:00",
+      "status": "completed"
+    },
+    "8b7a6829-9e7e-41a4-8474-c15b5d9e54b3": {
+      "id": "8b7a6829-9e7e-41a4-8474-c15b5d9e54b3",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 31105.58,
+          "profit_p10": 15179.52,
+          "profit_p50": 31105.58,
+          "profit_p90": 47031.63,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 22845.22,
+          "profit_p10": 11148.47,
+          "profit_p50": 22845.22,
+          "profit_p90": 34541.97,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:31:34.295464+00:00",
+      "status": "completed"
+    },
+    "b13e1964-c729-47e7-b38d-5ca335f2b515": {
+      "id": "b13e1964-c729-47e7-b38d-5ca335f2b515",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Sandy Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 31105.58,
+          "profit_p10": 15179.52,
+          "profit_p50": 31105.58,
+          "profit_p90": 47031.63,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 22845.22,
+          "profit_p10": 11148.47,
+          "profit_p50": 22845.22,
+          "profit_p90": 34541.97,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:45:37.168796+00:00",
+      "status": "completed"
+    },
+    "1369fb24-5d5c-4ebe-8451-ea4cf505ad21": {
+      "id": "1369fb24-5d5c-4ebe-8451-ea4cf505ad21",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Sandy Loam",
+        "selected_crops": [
+          "Wheat",
+          "Corn"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 31105.58,
+          "profit_p10": 15179.52,
+          "profit_p50": 31105.58,
+          "profit_p90": 47031.63,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 22845.22,
+          "profit_p10": 11148.47,
+          "profit_p50": 22845.22,
+          "profit_p90": 34541.97,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:48:29.465110+00:00",
+      "status": "completed"
+    }
+  }
+}

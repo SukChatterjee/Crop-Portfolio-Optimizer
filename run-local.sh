@@ -30,7 +30,15 @@ start_backend() {
 
   echo "Starting backend on http://127.0.0.1:8000 ..."
   nohup bash -lc "cd '$ROOT_DIR/backend' && source .venv/bin/activate && uvicorn server:app --host 127.0.0.1 --port 8000" >"$BACKEND_LOG" 2>&1 &
-  echo $! >"$BACKEND_PID_FILE"
+  # Store actual listener PID when available; wrapper shell PID can exit early.
+  sleep 1
+  local listen_pid
+  listen_pid="$(port_pid 8000)"
+  if [[ -n "$listen_pid" ]]; then
+    echo "$listen_pid" >"$BACKEND_PID_FILE"
+  else
+    echo $! >"$BACKEND_PID_FILE"
+  fi
 }
 
 start_frontend() {
@@ -47,7 +55,15 @@ start_frontend() {
 
   echo "Starting frontend on http://localhost:3000 ..."
   nohup bash -lc "cd '$ROOT_DIR/frontend' && export PATH=\"$NODE_BIN:\$PATH\" && npm start" >"$FRONTEND_LOG" 2>&1 &
-  echo $! >"$FRONTEND_PID_FILE"
+  # Store actual listener PID when available; wrapper shell PID can exit early.
+  sleep 1
+  local listen_pid
+  listen_pid="$(port_pid 3000)"
+  if [[ -n "$listen_pid" ]]; then
+    echo "$listen_pid" >"$FRONTEND_PID_FILE"
+  else
+    echo $! >"$FRONTEND_PID_FILE"
+  fi
 }
 
 wait_for_backend() {
@@ -107,17 +123,29 @@ stop_ports_fallback() {
 }
 
 status() {
-  local bpid="" fpid=""
+  local bpid="" fpid="" bport_pid="" fport_pid=""
   [[ -f "$BACKEND_PID_FILE" ]] && bpid="$(cat "$BACKEND_PID_FILE")"
   [[ -f "$FRONTEND_PID_FILE" ]] && fpid="$(cat "$FRONTEND_PID_FILE")"
+  bport_pid="$(port_pid 8000)"
+  fport_pid="$(port_pid 3000)"
 
-  if [[ -n "$bpid" ]] && is_running "$bpid"; then
+  if [[ -n "$bport_pid" ]]; then
+    echo "Backend: running (PID $bport_pid) http://127.0.0.1:8000"
+    if [[ "$bpid" != "$bport_pid" ]]; then
+      echo "$bport_pid" >"$BACKEND_PID_FILE"
+    fi
+  elif [[ -n "$bpid" ]] && is_running "$bpid"; then
     echo "Backend: running (PID $bpid) http://127.0.0.1:8000"
   else
     echo "Backend: stopped"
   fi
 
-  if [[ -n "$fpid" ]] && is_running "$fpid"; then
+  if [[ -n "$fport_pid" ]]; then
+    echo "Frontend: running (PID $fport_pid) http://localhost:3000"
+    if [[ "$fpid" != "$fport_pid" ]]; then
+      echo "$fport_pid" >"$FRONTEND_PID_FILE"
+    fi
+  elif [[ -n "$fpid" ]] && is_running "$fpid"; then
     echo "Frontend: running (PID $fpid) http://localhost:3000"
   else
     echo "Frontend: stopped"
