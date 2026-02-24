@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import os
 from datetime import datetime
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import requests
@@ -33,8 +33,13 @@ def _seeded_float(seed: str, low: float, high: float) -> float:
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=6))
-def _request_json(url: str, headers: Dict[str, str], params: Dict[str, str]) -> Dict:
-    response = requests.get(url, headers=headers, params=params, timeout=25)
+def _request_json(
+    url: str,
+    headers: Dict[str, str],
+    params: Dict[str, str],
+    auth: Optional[Tuple[str, str]] = None,
+) -> Dict:
+    response = requests.get(url, headers=headers, params=params, auth=auth, timeout=25)
     response.raise_for_status()
     return response.json()
 
@@ -61,6 +66,100 @@ def _parse_template_response(payload: Dict, crop: str, years: List[int]) -> pd.D
     return pd.DataFrame(parsed)
 
 
+def _walk_items(node: Any):
+    if isinstance(node, dict):
+        yield node
+        for v in node.values():
+            yield from _walk_items(v)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _walk_items(item)
+
+
+def _parse_float(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip().replace(",", "")
+    if not text:
+        return None
+    allowed = set("0123456789.-")
+    cleaned = "".join(ch for ch in text if ch in allowed)
+    if not cleaned or cleaned in {"-", ".", "-."}:
+        return None
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
+
+
+def _extract_year(item: Dict[str, Any]) -> Optional[int]:
+    for key in ("report_begin_date", "report_date", "date", "reported_date"):
+        raw = item.get(key)
+        if not raw:
+            continue
+        text = str(raw).strip()
+        for fmt in ("%m/%d/%Y", "%Y-%m-%d", "%m-%d-%Y"):
+            try:
+                return datetime.strptime(text[:10], fmt).year
+            except ValueError:
+                continue
+        for token in text.split():
+            if len(token) == 4 and token.isdigit():
+                y = int(token)
+                if 1900 <= y <= 2100:
+                    return y
+    return None
+
+
+def _extract_price(item: Dict[str, Any]) -> Optional[float]:
+    preferred_keys = [
+        "weighted_average",
+        "weighted_avg",
+        "avg_price",
+        "price",
+        "low_price",
+        "high_price",
+    ]
+    for key in preferred_keys:
+        if key in item:
+            v = _parse_float(item.get(key))
+            if v is not None and v > 0:
+                return v
+    for key, raw in item.items():
+        k = str(key).lower()
+        if "price" in k or "average" in k:
+            v = _parse_float(raw)
+            if v is not None and v > 0:
+                return v
+    return None
+
+
+def _parse_mars_response(payload: Dict[str, Any], crop: str, years: List[int]) -> pd.DataFrame:
+    annual: Dict[int, List[float]] = {y: [] for y in years}
+    for item in _walk_items(payload):
+        if not isinstance(item, dict):
+            continue
+        year = _extract_year(item)
+        if year not in annual:
+            continue
+        commodity = str(item.get("commodity", "")).strip().lower()
+        if commodity and crop.lower() not in commodity and commodity not in {"all", "all commodities"}:
+            continue
+        price = _extract_price(item)
+        if price is None:
+            continue
+        annual[year].append(float(price))
+
+    rows = []
+    for year in years:
+        vals = annual.get(year, [])
+        if vals:
+            rows.append({"year": int(year), "crop": crop, "avg_price": round(float(sum(vals) / len(vals)), 4)})
+    return pd.DataFrame(rows)
+
+
 def fetch_price_series(
     selected_crops: List[str],
     last_n_years: int = 3,
@@ -78,7 +177,14 @@ def fetch_price_series(
 
     template = os.environ.get("AMS_PRICE_URL_TEMPLATE", "").strip()
     api_key = os.environ.get("AMS_API_KEY", "").strip()
+    mars_key = os.environ.get("MARS_API_USERNAME", "").strip() or api_key
+    mars_endpoint = os.environ.get(
+        "AMS_MARS_REPORT_ENDPOINT",
+        "https://marsapi.ams.usda.gov/services/v1.2/reports/3046/Report Detail",
+    ).strip()
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+    start_str = f"01/01/{min(years)}"
+    end_str = f"12/31/{max(years)}"
 
     frames = []
     for crop in crops:
@@ -102,11 +208,37 @@ def fetch_price_series(
             except Exception as exc:
                 print(f"[agent][tool] ams crop={crop} source=api error={exc}", flush=True)
                 pass
+        elif mars_key:
+            try:
+                q = f"commodity={crop};report_begin_date={start_str}:{end_str}"
+                key = {"crop": crop, "years": years, "endpoint": mars_endpoint, "q": q}
+                payload = cached_json(
+                    namespace="ams",
+                    key=key,
+                    fetcher=lambda: _request_json(
+                        mars_endpoint,
+                        headers={},
+                        params={"q": q},
+                        auth=(mars_key, ""),
+                    ),
+                    ttl_hours=12,
+                    force_refresh=force_refresh,
+                )
+                df = _parse_mars_response(payload, crop, years)
+                if not df.empty:
+                    frames.append(df)
+                    print(f"[agent][tool] ams crop={crop} source=mars_api", flush=True)
+                    continue
+                print(f"[agent][tool] ams crop={crop} source=mars_api_empty", flush=True)
+            except Exception as exc:
+                print(f"[agent][tool] ams crop={crop} source=mars_api error={exc}", flush=True)
         else:
             print(f"[agent][tool] ams crop={crop} source=fallback reason=missing_template", flush=True)
         frames.append(pd.DataFrame(_fallback_price_series(crop, years)))
-        if template:
+        if template or mars_key:
             print(f"[agent][tool] ams crop={crop} source=fallback reason=api_unavailable", flush=True)
+        else:
+            print(f"[agent][tool] ams crop={crop} source=fallback reason=missing_api_config", flush=True)
 
     result = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["year", "crop", "avg_price"])
     save_parquet(parquet_path, result)

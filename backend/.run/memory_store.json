@@ -494,6 +494,114 @@
       "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
       "created_at": "2026-02-24T00:48:29.465110+00:00",
       "status": "completed"
+    },
+    "f68a3975-167f-4afd-b987-feaaf163d840": {
+      "id": "f68a3975-167f-4afd-b987-feaaf163d840",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Sandy Loam",
+        "selected_crops": [
+          "Wheat",
+          "Corn"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 737.89,
+          "profit_p10": 360.09,
+          "profit_p50": 737.89,
+          "profit_p90": 1115.7,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7379,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -18201.54,
+          "profit_p10": -8882.35,
+          "profit_p50": -18201.54,
+          "profit_p90": -27520.73,
+          "yield_forecast": 147.11,
+          "price_forecast": 4.065,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T00:58:37.189471+00:00",
+      "status": "completed"
+    },
+    "30f38b21-61dd-4286-b4a6-8117168b4855": {
+      "id": "30f38b21-61dd-4286-b4a6-8117168b4855",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 737.89,
+          "profit_p10": 360.09,
+          "profit_p50": 737.89,
+          "profit_p90": 1115.7,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7379,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -18201.54,
+          "profit_p10": -8882.35,
+          "profit_p50": -18201.54,
+          "profit_p90": -27520.73,
+          "yield_forecast": 147.11,
+          "price_forecast": 4.065,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-24T02:39:28.206601+00:00",
+      "status": "completed"
     }
   }
 }
