@@ -4,6 +4,7 @@ import hashlib
 import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import pandas as pd
 import requests
@@ -160,6 +161,55 @@ def _parse_mars_response(payload: Dict[str, Any], crop: str, years: List[int]) -
     return pd.DataFrame(rows)
 
 
+def _merge_mars_endpoint(base_detail_endpoint: str, slug_id: Any) -> str:
+    base = base_detail_endpoint.rstrip("/")
+    tail = f"/reports/{slug_id}/Report Detail"
+    if "/reports/" in base:
+        prefix = base.split("/reports/")[0]
+        return f"{prefix}{tail}"
+    return f"{base}{tail}"
+
+
+def _extract_slug_ids(payload: Dict[str, Any]) -> List[str]:
+    ids: List[str] = []
+    for item in _walk_items(payload):
+        if not isinstance(item, dict):
+            continue
+        for key in ("slug_id", "report_id", "slugId"):
+            if key in item and item.get(key) is not None:
+                text = str(item.get(key)).strip()
+                if text:
+                    ids.append(text)
+    dedup: List[str] = []
+    seen = set()
+    for sid in ids:
+        if sid not in seen:
+            seen.add(sid)
+            dedup.append(sid)
+    return dedup
+
+
+def _fetch_mars_payload(
+    endpoint: str,
+    q: str,
+    mars_key: str,
+    force_refresh: bool,
+    cache_key: Dict[str, Any],
+) -> Dict[str, Any]:
+    return cached_json(
+        namespace="ams",
+        key=cache_key,
+        fetcher=lambda: _request_json(
+            endpoint,
+            headers={},
+            params={"q": q},
+            auth=(mars_key, ""),
+        ),
+        ttl_hours=12,
+        force_refresh=force_refresh,
+    )
+
+
 def fetch_price_series(
     selected_crops: List[str],
     last_n_years: int = 3,
@@ -181,6 +231,10 @@ def fetch_price_series(
     mars_endpoint = os.environ.get(
         "AMS_MARS_REPORT_ENDPOINT",
         "https://marsapi.ams.usda.gov/services/v1.2/reports/3046/Report Detail",
+    ).strip()
+    mars_reports_endpoint = os.environ.get(
+        "AMS_MARS_REPORTS_ENDPOINT",
+        "https://marsapi.ams.usda.gov/services/v1.2/reports",
     ).strip()
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
     start_str = f"01/01/{min(years)}"
@@ -212,22 +266,57 @@ def fetch_price_series(
             try:
                 q = f"commodity={crop};report_begin_date={start_str}:{end_str}"
                 key = {"crop": crop, "years": years, "endpoint": mars_endpoint, "q": q}
-                payload = cached_json(
-                    namespace="ams",
-                    key=key,
-                    fetcher=lambda: _request_json(
-                        mars_endpoint,
-                        headers={},
-                        params={"q": q},
-                        auth=(mars_key, ""),
-                    ),
-                    ttl_hours=12,
-                    force_refresh=force_refresh,
+                payload = _fetch_mars_payload(
+                    mars_endpoint,
+                    q,
+                    mars_key,
+                    force_refresh,
+                    cache_key=key,
                 )
                 df = _parse_mars_response(payload, crop, years)
                 if not df.empty:
                     frames.append(df)
                     print(f"[agent][tool] ams crop={crop} source=mars_api", flush=True)
+                    continue
+                # Auto-discover other report ids for commodity when default report has no rows.
+                discovery_q = f"commodity={crop}"
+                discovery_key = {"crop": crop, "endpoint": mars_reports_endpoint, "q": discovery_q, "kind": "discover"}
+                discovered = _fetch_mars_payload(
+                    mars_reports_endpoint,
+                    discovery_q,
+                    mars_key,
+                    force_refresh,
+                    cache_key=discovery_key,
+                )
+                slug_ids = _extract_slug_ids(discovered)[:6]
+                matched = False
+                for sid in slug_ids:
+                    candidate_endpoint = _merge_mars_endpoint(mars_endpoint, sid)
+                    candidate_q = f"commodity={crop};report_begin_date={start_str}:{end_str}"
+                    candidate_key = {
+                        "crop": crop,
+                        "years": years,
+                        "endpoint": candidate_endpoint,
+                        "q": candidate_q,
+                        "slug_id": sid,
+                    }
+                    candidate_payload = _fetch_mars_payload(
+                        candidate_endpoint,
+                        candidate_q,
+                        mars_key,
+                        force_refresh,
+                        cache_key=candidate_key,
+                    )
+                    candidate_df = _parse_mars_response(candidate_payload, crop, years)
+                    if not candidate_df.empty:
+                        frames.append(candidate_df)
+                        print(
+                            f"[agent][tool] ams crop={crop} source=mars_api_discovered slug_id={sid}",
+                            flush=True,
+                        )
+                        matched = True
+                        break
+                if matched:
                     continue
                 print(f"[agent][tool] ams crop={crop} source=mars_api_empty", flush=True)
             except Exception as exc:
