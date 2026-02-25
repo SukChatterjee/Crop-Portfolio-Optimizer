@@ -6,8 +6,10 @@ import uuid
 from datetime import datetime
 
 class CropOptimizerAPITester:
-    def __init__(self, base_url="https://cropai-analytics.preview.emergentagent.com"):
-        self.base_url = base_url
+    # initializer uses local backend by default
+    def __init__(self, base_url=None):
+        # default to local server if no URL provided
+        self.base_url = base_url or "http://127.0.0.1:8000"
         self.token = None
         self.user_id = None
         self.tests_run = 0

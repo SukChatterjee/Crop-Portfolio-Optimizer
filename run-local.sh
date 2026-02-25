@@ -10,7 +10,7 @@ FRONTEND_PID_FILE="$RUN_DIR/frontend.pid"
 BACKEND_LOG="$RUN_DIR/backend.log"
 FRONTEND_LOG="$RUN_DIR/frontend.log"
 
-NODE_BIN="$ROOT_DIR/.tools/node-v20.19.1-darwin-arm64/bin"
+NODE_BIN="$ROOT_DIR/.tools/node-v20.19.1-darwin-x64/bin"
 
 is_running() {
   local pid="$1"
@@ -29,7 +29,23 @@ start_backend() {
   fi
 
   echo "Starting backend on http://127.0.0.1:8000 ..."
+<<<<<<< Updated upstream
   nohup bash -lc "cd '$ROOT_DIR/backend' && source .venv/bin/activate && uvicorn server:app --host 127.0.0.1 --port 8000" >"$BACKEND_LOG" 2>&1 &
+=======
+  # ensure we use the venv located at project root (not inside backend/)
+  local venv_path="$ROOT_DIR/.venv/bin/activate"
+  if [[ ! -f "$venv_path" ]]; then
+    echo "Virtual environment not found at $venv_path. Create one with python3 -m venv .venv" >&2
+    exit 1
+  fi
+  # if no Mongo URL specified, fall back to in-memory database for local dev
+  local mongo_env=""
+  if [[ -z "$(printenv MONGO_URL || true)" ]]; then
+      echo "No MONGO_URL set, falling back to in-memory DB (USE_INMEMORY_DB=1)" >>"$BACKEND_LOG"
+      mongo_env="export USE_INMEMORY_DB=1 && "
+  fi
+  nohup bash -lc "cd '$ROOT_DIR/backend' && source '$venv_path' && $mongo_env uvicorn server:app --host 127.0.0.1 --port 8000" >"$BACKEND_LOG" 2>&1 &
+>>>>>>> Stashed changes
   echo $! >"$BACKEND_PID_FILE"
 }
 
@@ -39,14 +55,33 @@ start_frontend() {
     return
   fi
 
-  if [[ ! -x "$NODE_BIN/node" ]] || [[ ! -x "$NODE_BIN/npm" ]]; then
-    echo "Portable Node not found at $NODE_BIN"
-    echo "Install it in-project first, then retry."
-    exit 1
+  local node_path=""
+  if [[ -x "$NODE_BIN/node" ]] && [[ -x "$NODE_BIN/npm" ]]; then
+    node_path="$NODE_BIN"
+  else
+    local sys_node sys_npm
+    sys_node="$(command -v node || true)"
+    sys_npm="$(command -v npm || true)"
+    if [[ -n "$sys_node" ]] && [[ -n "$sys_npm" ]]; then
+      echo "Portable Node not found at $NODE_BIN"
+      echo "Using system Node at $sys_node"
+    else
+      echo "Portable Node not found at $NODE_BIN"
+      echo "Install it in-project first, then retry."
+      exit 1
+    fi
   fi
 
   echo "Starting frontend on http://localhost:3000 ..."
+<<<<<<< Updated upstream
   nohup bash -lc "cd '$ROOT_DIR/frontend' && export PATH=\"$NODE_BIN:\$PATH\" && npm start" >"$FRONTEND_LOG" 2>&1 &
+=======
+  local export_path=""
+  if [[ -n "$node_path" ]]; then
+    export_path="export PATH=\"$node_path:\$PATH\" &&"
+  fi
+  nohup bash -lc "cd '$ROOT_DIR/frontend' && $export_path npm start" >"$FRONTEND_LOG" 2>&1 &
+>>>>>>> Stashed changes
   echo $! >"$FRONTEND_PID_FILE"
 }
 

@@ -199,8 +199,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 # ============ Mock Data Generator ============
 
-def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
-    """Generate realistic mock crop analysis results based on farm profile"""
+# def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
+#     """Generate realistic mock crop analysis results based on farm profile"""
     
     crops_data = [
         {"name": "Corn", "base_yield": 180, "base_price": 5.50, "water_need": "medium"},
@@ -225,32 +225,32 @@ def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
         ph_diff = abs(farm_profile.soil_ph - optimal_ph.get(crop["name"], 6.5))
         soil_compat = max(0.5, 1 - ph_diff * 0.15)
         
-        # Irrigation impact
-        irrigation_mult = 1.2 if farm_profile.has_irrigation and crop["water_need"] in ["high", "very_high"] else 1.0
+#         # Irrigation impact
+#         irrigation_mult = 1.2 if farm_profile.has_irrigation and crop["water_need"] in ["high", "very_high"] else 1.0
         
-        # Calculate yields and profits
-        yield_variation = random.uniform(0.85, 1.15)
-        price_variation = random.uniform(0.90, 1.10)
+#         # Calculate yields and profits
+#         yield_variation = random.uniform(0.85, 1.15)
+#         price_variation = random.uniform(0.90, 1.10)
         
-        base_yield = crop["base_yield"] * soil_compat * irrigation_mult * yield_variation
-        base_price = crop["base_price"] * price_variation
+#         base_yield = crop["base_yield"] * soil_compat * irrigation_mult * yield_variation
+#         base_price = crop["base_price"] * price_variation
         
-        gross_revenue = base_yield * base_price * farm_profile.acres
-        cost_per_acre = random.uniform(350, 550)
-        total_cost = cost_per_acre * farm_profile.acres
-        expected_profit = gross_revenue - total_cost
+#         gross_revenue = base_yield * base_price * farm_profile.acres
+#         cost_per_acre = random.uniform(350, 550)
+#         total_cost = cost_per_acre * farm_profile.acres
+#         expected_profit = gross_revenue - total_cost
         
-        # Risk calculations
-        risk_factor = {"conservative": 0.8, "moderate": 1.0, "aggressive": 1.2}.get(farm_profile.risk_preference, 1.0)
-        std_dev = expected_profit * 0.25 * risk_factor
+#         # Risk calculations
+#         risk_factor = {"conservative": 0.8, "moderate": 1.0, "aggressive": 1.2}.get(farm_profile.risk_preference, 1.0)
+#         std_dev = expected_profit * 0.25 * risk_factor
         
-        profit_p10 = expected_profit - 1.28 * std_dev
-        profit_p50 = expected_profit
-        profit_p90 = expected_profit + 1.28 * std_dev
+#         profit_p10 = expected_profit - 1.28 * std_dev
+#         profit_p50 = expected_profit
+#         profit_p90 = expected_profit + 1.28 * std_dev
         
-        # Risk score (0-100, lower is less risky)
-        risk_score = random.uniform(20, 80) * risk_factor
-        risk_level = "Low" if risk_score < 35 else "Medium" if risk_score < 65 else "High"
+#         # Risk score (0-100, lower is less risky)
+#         risk_score = random.uniform(20, 80) * risk_factor
+#         risk_level = "Low" if risk_score < 35 else "Medium" if risk_score < 65 else "High"
         
         # Soil explanation
         soil_explanations = {
@@ -264,41 +264,41 @@ def generate_mock_crop_results(farm_profile: FarmProfile) -> List[CropResult]:
             "Sunflower": f"Sunflowers perform well in {farm_profile.soil_type} with moderate fertility. Deep taproot accesses subsoil moisture.",
         }
         
-        results.append(CropResult(
-            crop_name=crop["name"],
-            expected_profit=round(expected_profit, 2),
-            profit_p10=round(profit_p10, 2),
-            profit_p50=round(profit_p50, 2),
-            profit_p90=round(profit_p90, 2),
-            yield_forecast=round(base_yield, 1),
-            price_forecast=round(base_price, 2),
-            soil_compatibility=round(soil_compat * 100, 1),
-            risk_score=round(risk_score, 1),
-            risk_level=risk_level,
-            soil_explanation=soil_explanations.get(crop["name"], f"{crop['name']} is compatible with {farm_profile.soil_type} soil.")
-        ))
+#         results.append(CropResult(
+#             crop_name=crop["name"],
+#             expected_profit=round(expected_profit, 2),
+#             profit_p10=round(profit_p10, 2),
+#             profit_p50=round(profit_p50, 2),
+#             profit_p90=round(profit_p90, 2),
+#             yield_forecast=round(base_yield, 1),
+#             price_forecast=round(base_price, 2),
+#             soil_compatibility=round(soil_compat * 100, 1),
+#             risk_score=round(risk_score, 1),
+#             risk_level=risk_level,
+#             soil_explanation=soil_explanations.get(crop["name"], f"{crop['name']} is compatible with {farm_profile.soil_type} soil.")
+#         ))
     
-    # Sort by expected profit (descending)
-    results.sort(key=lambda x: x.expected_profit, reverse=True)
-    return results
+#     # Sort by expected profit (descending)
+#     results.sort(key=lambda x: x.expected_profit, reverse=True)
+#     return results
 
-def generate_weather_summary(location: FarmLocation) -> str:
-    summaries = [
-        "Historical data indicates favorable growing conditions with adequate precipitation patterns. 30-year average shows reliable frost-free periods.",
-        "NOAA climate analysis suggests moderate drought risk. Consider irrigation-ready crops or drought-tolerant varieties.",
-        "Weather patterns show above-average precipitation expected. Plan for crops that tolerate wet conditions or ensure proper drainage.",
-        "Temperature trends indicate earlier spring onset. Extended growing season may allow for double-cropping opportunities.",
-    ]
-    return random.choice(summaries)
+# def generate_weather_summary(location: FarmLocation) -> str:
+#     summaries = [
+#         "Historical data indicates favorable growing conditions with adequate precipitation patterns. 30-year average shows reliable frost-free periods.",
+#         "NOAA climate analysis suggests moderate drought risk. Consider irrigation-ready crops or drought-tolerant varieties.",
+#         "Weather patterns show above-average precipitation expected. Plan for crops that tolerate wet conditions or ensure proper drainage.",
+#         "Temperature trends indicate earlier spring onset. Extended growing season may allow for double-cropping opportunities.",
+#     ]
+#     return random.choice(summaries)
 
-def generate_market_outlook() -> str:
-    outlooks = [
-        "USDA AMS data shows strengthening commodity prices driven by global demand. Export markets remain robust.",
-        "Market analysis indicates stable pricing with slight upward pressure from reduced planted acres nationwide.",
-        "Futures markets suggest volatility ahead. Diversification recommended to hedge against price swings.",
-        "Strong domestic demand combined with favorable export conditions support premium pricing opportunities.",
-    ]
-    return random.choice(outlooks)
+# def generate_market_outlook() -> str:
+#     outlooks = [
+#         "USDA AMS data shows strengthening commodity prices driven by global demand. Export markets remain robust.",
+#         "Market analysis indicates stable pricing with slight upward pressure from reduced planted acres nationwide.",
+#         "Futures markets suggest volatility ahead. Diversification recommended to hedge against price swings.",
+#         "Strong domestic demand combined with favorable export conditions support premium pricing opportunities.",
+#     ]
+#     return random.choice(outlooks)
 
 # ============ Routes ============
 
