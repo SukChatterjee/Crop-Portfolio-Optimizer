@@ -4,8 +4,6 @@ import json
 import os
 from typing import Any, Dict, List
 
-from openai import OpenAI
-
 from agent_tools.ams import fetch_price_series
 from agent_tools.compute import compute_forecasts
 from agent_tools.costs import fetch_cost_per_acre
@@ -46,6 +44,25 @@ def _default_market_outlook(market_stats: Dict[str, Any]) -> str:
         "Recent average pricing suggests mixed commodity momentum. "
         f"{best.get('crop')} currently shows the strongest observed average price."
     )
+
+
+def _extract_json_object(text: str) -> Dict[str, Any]:
+    payload = (text or "").strip()
+    if not payload:
+        return {}
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError:
+        pass
+
+    start = payload.find("{")
+    end = payload.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            return json.loads(payload[start : end + 1])
+        except json.JSONDecodeError:
+            return {}
+    return {}
 
 
 def _build_market_stats(price_df) -> Dict[str, Any]:
@@ -167,16 +184,16 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
             "market_outlook": _default_market_outlook(market_stats),
         }
 
-    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
-        errors.append("OPENAI_API_KEY not set; using deterministic summaries")
+        errors.append("GEMINI_API_KEY not set; using deterministic summaries")
         return {
             "errors": errors,
             "weather_summary": _default_weather_summary(weather_stats),
             "market_outlook": _default_market_outlook(market_stats),
         }
 
-    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
+    model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
     farm = dict(state.get("farm_profile") or {})
     top6 = crop_results[:6]
 
@@ -211,26 +228,36 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
     }
 
     system_msg = (
-        "You are an agricultural analyst. Respond ONLY with strict JSON and no markdown. "
-        "Schema: {\"weather_summary\":\"...\",\"market_outlook\":\"...\","
-        "\"soil_explanations\":{\"Crop\":\"...\"}}"
+        "You are an agricultural analyst. Return strict JSON only with this schema: "
+        "{\"weather_summary\":\"...\",\"market_outlook\":\"...\","
+        "\"soil_explanations\":{\"Crop\":\"...\"}}. "
+        "Do not include markdown, code fences, or extra keys."
     )
 
-    max_retries = int(os.environ.get("OPENAI_MAX_RETRIES", "0"))
-    client = OpenAI(api_key=api_key, max_retries=max_retries)
     try:
-        print(f"[agent][api-call] provider=openai model={model} max_retries={max_retries}", flush=True)
-        completion = client.chat.completions.create(
-            model=model,
-            temperature=0.2,
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": system_msg},
-                {"role": "user", "content": json.dumps(prompt_payload)},
-            ],
+        import google.generativeai as genai
+    except ImportError:
+        errors.append("google-generativeai not installed; using deterministic summaries")
+        return {
+            "errors": errors,
+            "weather_summary": _default_weather_summary(weather_stats),
+            "market_outlook": _default_market_outlook(market_stats),
+        }
+
+    genai.configure(api_key=api_key)
+    client = genai.GenerativeModel(model_name=model)
+    try:
+        print(f"[agent][api-call] provider=gemini model={model}", flush=True)
+        prompt = f"{system_msg}\n\nInput JSON:\n{json.dumps(prompt_payload)}"
+        response = client.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.2,
+                "response_mime_type": "application/json",
+            },
         )
-        text = completion.choices[0].message.content or "{}"
-        parsed = json.loads(text)
+        text = getattr(response, "text", "") or "{}"
+        parsed = _extract_json_object(text)
     except Exception as exc:
         errors.append(f"llm_enrich failed: {exc}")
         return {

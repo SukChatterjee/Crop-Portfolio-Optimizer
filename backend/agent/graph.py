@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from langgraph.graph import END, StateGraph
-
 from .nodes import fetch_and_compute, finalize, llm_enrich, validate_inputs
 from .state import AgentState
 
@@ -12,7 +10,23 @@ def _route_after_validate(state: AgentState) -> str:
     return "fetch_and_compute"
 
 
+class _FallbackGraph:
+    def invoke(self, state: AgentState):
+        current = dict(state)
+        current.update(validate_inputs(current))
+        if _route_after_validate(current) == "fetch_and_compute":
+            current.update(fetch_and_compute(current))
+            current.update(llm_enrich(current))
+        current.update(finalize(current))
+        return current
+
+
 def build_graph():
+    try:
+        from langgraph.graph import END, StateGraph
+    except ImportError:
+        return _FallbackGraph()
+
     graph = StateGraph(AgentState)
     graph.add_node("validate_inputs", validate_inputs)
     graph.add_node("fetch_and_compute", fetch_and_compute)
@@ -33,4 +47,3 @@ def build_graph():
     graph.add_edge("finalize", END)
 
     return graph.compile()
-

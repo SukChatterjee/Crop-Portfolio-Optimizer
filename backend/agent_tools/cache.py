@@ -49,12 +49,18 @@ def save_json(path: Path, value: Any) -> None:
 def load_parquet(path: Path) -> Optional[pd.DataFrame]:
     if not path.exists():
         return None
-    return pd.read_parquet(path)
+    try:
+        return pd.read_parquet(path)
+    except Exception:
+        return None
 
 
 def save_parquet(path: Path, df: pd.DataFrame) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(path, index=False)
+    try:
+        df.to_parquet(path, index=False)
+    except Exception:
+        return
 
 
 def is_fresh(path: Path, ttl_hours: Optional[int]) -> bool:

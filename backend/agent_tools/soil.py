@@ -5,7 +5,19 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import requests
-from tenacity import retry, stop_after_attempt, wait_exponential
+try:
+    from tenacity import retry, stop_after_attempt, wait_exponential
+except ImportError:
+    def retry(*args, **kwargs):
+        def _decorator(func):
+            return func
+        return _decorator
+
+    def stop_after_attempt(*args, **kwargs):
+        return None
+
+    def wait_exponential(*args, **kwargs):
+        return None
 
 from .cache import cached_json, load_parquet, parquet_cache_path, save_parquet
 

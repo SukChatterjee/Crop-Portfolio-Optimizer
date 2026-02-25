@@ -6,6 +6,13 @@
       "name": "Lahari Kankipati",
       "password": "$2b$12$SKB3N5dV39N7aAVBS8L4lun2VxP9Fhk.TQlO68mDQrxfVFlujJRkS",
       "created_at": "2026-02-22T21:54:53.614224+00:00"
+    },
+    "ithasa@mail.uc.edu": {
+      "id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+      "email": "ithasa@mail.uc.edu",
+      "name": "Sriharsha Itha",
+      "password": "$2b$12$SpC.juqvq/8MY0aqkgrS5OJGme/hh.U1io3ncD1A7PZT7Qha147vC",
+      "created_at": "2026-02-25T00:53:13.027771+00:00"
     }
   },
   "analyses": {
@@ -1589,6 +1596,294 @@
       "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
       "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
       "created_at": "2026-02-24T04:27:44.588685+00:00",
+      "status": "completed"
+    },
+    "c62a90ab-e0b2-4ef3-9464-4866610cf026": {
+      "id": "c62a90ab-e0b2-4ef3-9464-4866610cf026",
+      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": false,
+        "soil_type": "Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat"
+        ],
+        "risk_preference": "aggressive",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506556.52,
+          "profit_p10": -6591199.58,
+          "profit_p50": -13506556.52,
+          "profit_p90": -20421913.46,
+          "yield_forecast": 77.98,
+          "price_forecast": 6.736,
+          "soil_compatibility": 90.0,
+          "risk_score": 99.0,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23155363.83,
+          "profit_p10": -11299817.55,
+          "profit_p50": -23155363.83,
+          "profit_p90": -35010910.11,
+          "yield_forecast": 146.57,
+          "price_forecast": 4.0647,
+          "soil_compatibility": 90.0,
+          "risk_score": 99.0,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T00:54:20.859881+00:00",
+      "status": "completed"
+    },
+    "572b60b0-40da-4b4a-92ee-b936a5143eb4": {
+      "id": "572b60b0-40da-4b4a-92ee-b936a5143eb4",
+      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": false,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Soybeans",
+          "Rice",
+          "Cotton",
+          "Tomatoes",
+          "Potatoes",
+          "Onions",
+          "Lettuce",
+          "Apples"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Lettuce",
+          "expected_profit": 35009.12,
+          "profit_p10": 17084.45,
+          "profit_p50": 35009.12,
+          "profit_p90": 52933.8,
+          "yield_forecast": 271.55,
+          "price_forecast": 7.476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Potatoes",
+          "expected_profit": -85005.05,
+          "profit_p10": -41482.47,
+          "profit_p50": -85005.05,
+          "profit_p90": -128527.64,
+          "yield_forecast": 64.98,
+          "price_forecast": 9.2331,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Potatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Onions",
+          "expected_profit": -120387.86,
+          "profit_p10": -58749.27,
+          "profit_p50": -120387.86,
+          "profit_p90": -182026.44,
+          "yield_forecast": 78.22,
+          "price_forecast": 1.4845,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Onions suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -141947.06,
+          "profit_p10": -69270.16,
+          "profit_p50": -141947.06,
+          "profit_p90": -214623.95,
+          "yield_forecast": 42.02,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Apples",
+          "expected_profit": -174688.08,
+          "profit_p10": -85247.78,
+          "profit_p50": -174688.08,
+          "profit_p90": -264128.37,
+          "yield_forecast": 37.47,
+          "price_forecast": 9.4229,
+          "soil_compatibility": 95.0,
+          "risk_score": 94.8,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Apples suitability score is 95.0%."
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": -10805459.51,
+          "profit_p10": -5273064.24,
+          "profit_p50": -10805459.51,
+          "profit_p90": -16337854.78,
+          "yield_forecast": 50.87,
+          "price_forecast": 10.5692,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Soybeans suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506556.52,
+          "profit_p10": -6591199.58,
+          "profit_p50": -13506556.52,
+          "profit_p90": -20421913.46,
+          "yield_forecast": 77.98,
+          "price_forecast": 6.736,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23155363.83,
+          "profit_p10": -11299817.55,
+          "profit_p50": -23155363.83,
+          "profit_p90": -35010910.11,
+          "yield_forecast": 146.57,
+          "price_forecast": 4.0647,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Rice",
+          "expected_profit": -25751058.11,
+          "profit_p10": -12566516.36,
+          "profit_p50": -25751058.11,
+          "profit_p90": -38935599.86,
+          "yield_forecast": 137.73,
+          "price_forecast": 13.5392,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Rice suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -33501146.07,
+          "profit_p10": -16348559.28,
+          "profit_p50": -33501146.07,
+          "profit_p90": -50653732.85,
+          "yield_forecast": 134.14,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Cotton suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T00:57:07.245641+00:00",
+      "status": "completed"
+    },
+    "88b69e80-0711-4b70-be26-3eb3b7ba77fc": {
+      "id": "88b69e80-0711-4b70-be26-3eb3b7ba77fc",
+      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": false,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Lettuce",
+          "Cotton",
+          "Potatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Lettuce",
+          "expected_profit": 35009.12,
+          "profit_p10": 17084.45,
+          "profit_p50": 35009.12,
+          "profit_p90": 52933.8,
+          "yield_forecast": 271.55,
+          "price_forecast": 7.476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Potatoes",
+          "expected_profit": -85005.05,
+          "profit_p10": -41482.47,
+          "profit_p50": -85005.05,
+          "profit_p90": -128527.64,
+          "yield_forecast": 64.98,
+          "price_forecast": 9.2331,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Potatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -33501146.07,
+          "profit_p10": -16348559.28,
+          "profit_p50": -33501146.07,
+          "profit_p90": -50653732.85,
+          "yield_forecast": 134.14,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Cotton suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Cotton currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T01:01:33.938271+00:00",
       "status": "completed"
     }
   }
