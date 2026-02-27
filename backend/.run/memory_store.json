@@ -6,13 +6,6 @@
       "name": "Lahari Kankipati",
       "password": "$2b$12$SKB3N5dV39N7aAVBS8L4lun2VxP9Fhk.TQlO68mDQrxfVFlujJRkS",
       "created_at": "2026-02-22T21:54:53.614224+00:00"
-    },
-    "ithasa@mail.uc.edu": {
-      "id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
-      "email": "ithasa@mail.uc.edu",
-      "name": "Sriharsha Itha",
-      "password": "$2b$12$SpC.juqvq/8MY0aqkgrS5OJGme/hh.U1io3ncD1A7PZT7Qha147vC",
-      "created_at": "2026-02-25T00:53:13.027771+00:00"
     }
   },
   "analyses": {
@@ -1598,9 +1591,9 @@
       "created_at": "2026-02-24T04:27:44.588685+00:00",
       "status": "completed"
     },
-    "c62a90ab-e0b2-4ef3-9464-4866610cf026": {
-      "id": "c62a90ab-e0b2-4ef3-9464-4866610cf026",
-      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+    "a6a7e940-d88a-4cbc-bc88-07db2b68f382": {
+      "id": "a6a7e940-d88a-4cbc-bc88-07db2b68f382",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
       "farm_profile": {
         "location": {
           "lat": 39.8283,
@@ -1610,16 +1603,31 @@
           "state": ""
         },
         "acres": 100.0,
-        "has_irrigation": false,
-        "soil_type": "Loam",
+        "has_irrigation": true,
+        "soil_type": "Clay Loam",
         "selected_crops": [
           "Corn",
-          "Wheat"
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
         ],
-        "risk_preference": "aggressive",
+        "risk_preference": "moderate",
         "goal": "balanced"
       },
       "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131268.62,
+          "profit_p10": -64059.09,
+          "profit_p50": -131268.62,
+          "profit_p90": -198478.16,
+          "yield_forecast": 51.35,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Tomatoes suitability score is 90.0%."
+        },
         {
           "crop_name": "Wheat",
           "expected_profit": -13506556.52,
@@ -1629,9 +1637,9 @@
           "yield_forecast": 77.98,
           "price_forecast": 6.736,
           "soil_compatibility": 90.0,
-          "risk_score": 99.0,
+          "risk_score": 96.2,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Wheat suitability score is 90.0%."
         },
         {
           "crop_name": "Corn",
@@ -1642,118 +1650,59 @@
           "yield_forecast": 146.57,
           "price_forecast": 4.0647,
           "soil_compatibility": 90.0,
-          "risk_score": 99.0,
+          "risk_score": 96.2,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
+          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -33460190.3,
+          "profit_p10": -16328572.87,
+          "profit_p50": -33460190.3,
+          "profit_p90": -50591807.74,
+          "yield_forecast": 163.95,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Cotton suitability score is 90.0%."
         }
       ],
       "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-25T00:54:20.859881+00:00",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T00:24:11.904705+00:00",
       "status": "completed"
     },
-    "572b60b0-40da-4b4a-92ee-b936a5143eb4": {
-      "id": "572b60b0-40da-4b4a-92ee-b936a5143eb4",
-      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+    "6555b095-1629-4b24-8a69-ab9437714eb7": {
+      "id": "6555b095-1629-4b24-8a69-ab9437714eb7",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
       "farm_profile": {
         "location": {
-          "lat": 39.8283,
-          "lng": -98.5795,
-          "address": "",
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
           "county": "",
           "state": ""
         },
         "acres": 100.0,
-        "has_irrigation": false,
+        "has_irrigation": true,
         "soil_type": "Silt Loam",
         "selected_crops": [
           "Corn",
           "Wheat",
-          "Soybeans",
-          "Rice",
-          "Cotton",
-          "Tomatoes",
-          "Potatoes",
-          "Onions",
-          "Lettuce",
-          "Apples"
+          "Soybeans"
         ],
         "risk_preference": "moderate",
         "goal": "minimize_risk"
       },
       "results": [
         {
-          "crop_name": "Lettuce",
-          "expected_profit": 35009.12,
-          "profit_p10": 17084.45,
-          "profit_p50": 35009.12,
-          "profit_p90": 52933.8,
-          "yield_forecast": 271.55,
-          "price_forecast": 7.476,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -85005.05,
-          "profit_p10": -41482.47,
-          "profit_p50": -85005.05,
-          "profit_p90": -128527.64,
-          "yield_forecast": 64.98,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Onions",
-          "expected_profit": -120387.86,
-          "profit_p10": -58749.27,
-          "profit_p50": -120387.86,
-          "profit_p90": -182026.44,
-          "yield_forecast": 78.22,
-          "price_forecast": 1.4845,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Onions suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -141947.06,
-          "profit_p10": -69270.16,
-          "profit_p50": -141947.06,
-          "profit_p90": -214623.95,
-          "yield_forecast": 42.02,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Apples",
-          "expected_profit": -174688.08,
-          "profit_p10": -85247.78,
-          "profit_p50": -174688.08,
-          "profit_p90": -264128.37,
-          "yield_forecast": 37.47,
-          "price_forecast": 9.4229,
-          "soil_compatibility": 95.0,
-          "risk_score": 94.8,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Apples suitability score is 95.0%."
-        },
-        {
           "crop_name": "Soybeans",
-          "expected_profit": -10805459.51,
-          "profit_p10": -5273064.24,
-          "profit_p50": -10805459.51,
-          "profit_p90": -16337854.78,
-          "yield_forecast": 50.87,
+          "expected_profit": -10805262.08,
+          "profit_p10": -5272967.9,
+          "profit_p50": -10805262.08,
+          "profit_p90": -16337556.27,
+          "yield_forecast": 51.06,
           "price_forecast": 10.5692,
           "soil_compatibility": 90.0,
           "risk_score": 96.2,
@@ -1762,11 +1711,11 @@
         },
         {
           "crop_name": "Wheat",
-          "expected_profit": -13506556.52,
-          "profit_p10": -6591199.58,
-          "profit_p50": -13506556.52,
-          "profit_p90": -20421913.46,
-          "yield_forecast": 77.98,
+          "expected_profit": -13506363.64,
+          "profit_p10": -6591105.45,
+          "profit_p50": -13506363.64,
+          "profit_p90": -20421621.82,
+          "yield_forecast": 78.27,
           "price_forecast": 6.736,
           "soil_compatibility": 90.0,
           "risk_score": 96.2,
@@ -1775,52 +1724,26 @@
         },
         {
           "crop_name": "Corn",
-          "expected_profit": -23155363.83,
-          "profit_p10": -11299817.55,
-          "profit_p50": -23155363.83,
-          "profit_p90": -35010910.11,
-          "yield_forecast": 146.57,
+          "expected_profit": -23155145.07,
+          "profit_p10": -11299710.8,
+          "profit_p50": -23155145.07,
+          "profit_p90": -35010579.35,
+          "yield_forecast": 147.11,
           "price_forecast": 4.0647,
           "soil_compatibility": 90.0,
           "risk_score": 96.2,
           "risk_level": "High",
           "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Rice",
-          "expected_profit": -25751058.11,
-          "profit_p10": -12566516.36,
-          "profit_p50": -25751058.11,
-          "profit_p90": -38935599.86,
-          "yield_forecast": 137.73,
-          "price_forecast": 13.5392,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Rice suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Cotton",
-          "expected_profit": -33501146.07,
-          "profit_p10": -16348559.28,
-          "profit_p50": -33501146.07,
-          "profit_p90": -50653732.85,
-          "yield_forecast": 134.14,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Cotton suitability score is 90.0%."
         }
       ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
       "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-25T00:57:07.245641+00:00",
+      "created_at": "2026-02-25T01:56:39.701816+00:00",
       "status": "completed"
     },
-    "88b69e80-0711-4b70-be26-3eb3b7ba77fc": {
-      "id": "88b69e80-0711-4b70-be26-3eb3b7ba77fc",
-      "user_id": "d6fdd7ba-fed3-40da-bff9-5e45537345d8",
+    "a116ae9f-a59a-4dc6-8b4c-4e9da0ff1ffc": {
+      "id": "a116ae9f-a59a-4dc6-8b4c-4e9da0ff1ffc",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
       "farm_profile": {
         "location": {
           "lat": 39.8283,
@@ -1830,12 +1753,11 @@
           "state": ""
         },
         "acres": 100.0,
-        "has_irrigation": false,
+        "has_irrigation": true,
         "soil_type": "Silt Loam",
         "selected_crops": [
-          "Lettuce",
           "Cotton",
-          "Potatoes"
+          "Lettuce"
         ],
         "risk_preference": "moderate",
         "goal": "minimize_risk"
@@ -1843,11 +1765,11 @@
       "results": [
         {
           "crop_name": "Lettuce",
-          "expected_profit": 35009.12,
-          "profit_p10": 17084.45,
-          "profit_p50": 35009.12,
-          "profit_p90": 52933.8,
-          "yield_forecast": 271.55,
+          "expected_profit": 80122.26,
+          "profit_p10": 39099.66,
+          "profit_p50": 80122.26,
+          "profit_p90": 121144.86,
+          "yield_forecast": 331.89,
           "price_forecast": 7.476,
           "soil_compatibility": 90.0,
           "risk_score": 96.2,
@@ -1855,25 +1777,12 @@
           "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
         },
         {
-          "crop_name": "Potatoes",
-          "expected_profit": -85005.05,
-          "profit_p10": -41482.47,
-          "profit_p50": -85005.05,
-          "profit_p90": -128527.64,
-          "yield_forecast": 64.98,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
           "crop_name": "Cotton",
-          "expected_profit": -33501146.07,
-          "profit_p10": -16348559.28,
-          "profit_p50": -33501146.07,
-          "profit_p90": -50653732.85,
-          "yield_forecast": 134.14,
+          "expected_profit": -33460190.3,
+          "profit_p10": -16328572.87,
+          "profit_p50": -33460190.3,
+          "profit_p90": -50591807.74,
+          "yield_forecast": 163.95,
           "price_forecast": 13.7397,
           "soil_compatibility": 90.0,
           "risk_score": 96.2,
@@ -1883,7 +1792,2391 @@
       ],
       "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
       "market_outlook": "Recent average pricing suggests mixed commodity momentum. Cotton currently shows the strongest observed average price.",
-      "created_at": "2026-02-25T01:01:33.938271+00:00",
+      "created_at": "2026-02-25T03:43:23.159087+00:00",
+      "status": "completed"
+    },
+    "56d1d7a8-edeb-429d-a17f-ac757f79b19b": {
+      "id": "56d1d7a8-edeb-429d-a17f-ac757f79b19b",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Lettuce"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Lettuce",
+          "expected_profit": 80122.26,
+          "profit_p10": 39099.66,
+          "profit_p50": 80122.26,
+          "profit_p90": 121144.86,
+          "yield_forecast": 331.89,
+          "price_forecast": 7.476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Lettuce currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T03:46:28.164281+00:00",
+      "status": "completed"
+    },
+    "0f880d8b-8f17-4b3b-b1ee-90dc264f5ea4": {
+      "id": "0f880d8b-8f17-4b3b-b1ee-90dc264f5ea4",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Lettuce"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Lettuce",
+          "expected_profit": 80122.26,
+          "profit_p10": 39099.66,
+          "profit_p50": 80122.26,
+          "profit_p90": 121144.86,
+          "yield_forecast": 331.89,
+          "price_forecast": 7.476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Lettuce currently shows the strongest observed average price.",
+      "created_at": "2026-02-25T04:15:08.511180+00:00",
+      "status": "completed"
+    },
+    "dcb7dae1-e012-400b-9504-cbdbb01a77da": {
+      "id": "dcb7dae1-e012-400b-9504-cbdbb01a77da",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131268.62,
+          "profit_p10": -64059.09,
+          "profit_p50": -131268.62,
+          "profit_p90": -198478.16,
+          "yield_forecast": 51.35,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506592.71,
+          "profit_p10": -6591217.24,
+          "profit_p50": -13506592.71,
+          "profit_p90": -20421968.18,
+          "yield_forecast": 77.98,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T00:19:38.275232+00:00",
+      "status": "completed"
+    },
+    "9e1578ed-d726-445f-bc94-9496415582e3": {
+      "id": "9e1578ed-d726-445f-bc94-9496415582e3",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Tomatoes",
+          "Cotton",
+          "Lettuce"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Lettuce",
+          "expected_profit": 80122.26,
+          "profit_p10": 39099.66,
+          "profit_p50": 80122.26,
+          "profit_p90": 121144.86,
+          "yield_forecast": 331.89,
+          "price_forecast": 7.476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Lettuce suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131268.62,
+          "profit_p10": -64059.09,
+          "profit_p50": -131268.62,
+          "profit_p90": -198478.16,
+          "yield_forecast": 51.35,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506592.71,
+          "profit_p10": -6591217.24,
+          "profit_p50": -13506592.71,
+          "profit_p90": -20421968.18,
+          "yield_forecast": 77.98,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23155282.92,
+          "profit_p10": -11299778.06,
+          "profit_p50": -23155282.92,
+          "profit_p90": -35010787.77,
+          "yield_forecast": 146.57,
+          "price_forecast": 4.0703,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Corn suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -33460190.3,
+          "profit_p10": -16328572.87,
+          "profit_p50": -33460190.3,
+          "profit_p90": -50591807.74,
+          "yield_forecast": 163.95,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Cotton suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T00:46:30.397937+00:00",
+      "status": "completed"
+    },
+    "ad0b18c2-02d9-4865-8051-61575581b27f": {
+      "id": "ad0b18c2-02d9-4865-8051-61575581b27f",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.8283,
+          "lng": -98.5795,
+          "address": "",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131268.62,
+          "profit_p10": -64059.09,
+          "profit_p50": -131268.62,
+          "profit_p90": -198478.16,
+          "yield_forecast": 51.35,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23155282.92,
+          "profit_p10": -11299778.06,
+          "profit_p50": -23155282.92,
+          "profit_p90": -35010787.77,
+          "yield_forecast": 146.57,
+          "price_forecast": 4.0703,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Corn suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.56 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T00:59:46.939263+00:00",
+      "status": "completed"
+    },
+    "f4219694-6d36-4449-9f92-9727382c1c4d": {
+      "id": "f4219694-6d36-4449-9f92-9727382c1c4d",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T01:19:43.031203+00:00",
+      "status": "completed"
+    },
+    "175062f8-f547-4961-a74c-99f77e6ed022": {
+      "id": "175062f8-f547-4961-a74c-99f77e6ed022",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T01:26:12.431985+00:00",
+      "status": "completed"
+    },
+    "7ffa8b87-d7a2-4342-9002-4ad0a8388ec8": {
+      "id": "7ffa8b87-d7a2-4342-9002-4ad0a8388ec8",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T01:32:43.517683+00:00",
+      "status": "completed"
+    },
+    "bbe113f1-49d9-4474-8671-7086b60686b9": {
+      "id": "bbe113f1-49d9-4474-8671-7086b60686b9",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T01:40:55.497243+00:00",
+      "status": "completed"
+    },
+    "b7043dee-6730-4dae-9503-1db2eefe7287": {
+      "id": "b7043dee-6730-4dae-9503-1db2eefe7287",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T01:51:39.854056+00:00",
+      "status": "completed"
+    },
+    "24506de7-2d6d-4a76-864f-dee3aa9962b2": {
+      "id": "24506de7-2d6d-4a76-864f-dee3aa9962b2",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Tomatoes suitability score is 90.0%."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
+      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
+      "created_at": "2026-02-26T02:05:59.889973+00:00",
+      "status": "completed"
+    },
+    "24798f00-4c73-4c37-afd2-4ef0a1b0df19": {
+      "id": "24798f00-4c73-4c37-afd2-4ef0a1b0df19",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt loam soil is generally suitable for tomatoes, but the lack of organic matter and water holding capacity, combined with unknown drainage, may negatively impact tomato crop performance. Soil amendments and irrigation management are critical to mitigate these limitations."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage presents challenges due to zero reported organic matter and available water capacity, which may limit wheat growth and yield potential. This soil type generally supports wheat but requires improved soil health and water management."
+        }
+      ],
+      "weather_summary": "The area around Cincinnati, Ohio is experiencing high average precipitation at 12.94 mm/day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but the precipitation variability is moderate with a risk index of 0.95 indicating potential weather-related challenges.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting improving market conditions despite high risk and expected losses. Wheat prices are slightly declining with a negative trend of -0.1, indicating a less favorable market outlook. Both crops currently show high financial risk and negative expected profits, advising caution.",
+      "created_at": "2026-02-26T04:41:08.024599+00:00",
+      "status": "completed"
+    },
+    "aa0c5f3f-23b3-4baa-8957-617506d310cc": {
+      "id": "aa0c5f3f-23b3-4baa-8957-617506d310cc",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": -131052.97,
+          "profit_p10": -63953.85,
+          "profit_p50": -131052.97,
+          "profit_p90": -198152.09,
+          "yield_forecast": 51.54,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes have good soil compatibility with silt loam texture, but the lack of organic matter and water holding capacity in the soil could limit nutrient availability and water retention, increasing cultivation risk. Irrigation availability may mitigate some soil limitations, but overall risk remains high."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage presents challenges for wheat cultivation, especially with zero reported organic matter and water holding capacity, which are critical for wheat growth. This soil profile may contribute to the high risk and negative profit forecast for wheat."
+        }
+      ],
+      "weather_summary": "The area around Cincinnati, Ohio is experiencing high average precipitation of approximately 12.94 mm/day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but the precipitation variability is moderate, indicating a moist environment with stable weather conditions.",
+      "market_outlook": "Tomatoes show a positive price trend with increasing market prices expected over the next few years, while wheat prices are trending downward. Despite this, both crops currently present high financial risk with expected negative profits, suggesting caution in investment. Market conditions favor tomatoes for price growth but risk remains high for both crops.",
+      "created_at": "2026-02-26T04:49:19.611746+00:00",
+      "status": "completed"
+    },
+    "576cb065-517b-49ad-be17-d990825dc228": {
+      "id": "576cb065-517b-49ad-be17-d990825dc228",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes are compatible with Silt Loam soil, which generally provides good moisture retention and nutrient availability. However, the reported soil pH and organic matter are zero, suggesting data gaps or poor soil conditions. Improving organic matter and ensuring proper drainage will help reduce risk and support healthy tomato production."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. The soil pH and organic matter content are reported as zero, which may indicate missing data or poor soil health. Wheat typically prefers well-drained soils with moderate organic matter, so soil amendments and drainage improvements may be necessary to optimize wheat growth."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions for crop growth.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions. Wheat prices are declining with a negative trend of -0.1, indicating potential market challenges. Given the high risk scores for both crops, market volatility should be monitored closely.",
+      "created_at": "2026-02-26T04:57:15.659282+00:00",
+      "status": "completed"
+    },
+    "31023daf-8fa8-4319-a976-f59ad2485ce5": {
+      "id": "31023daf-8fa8-4319-a976-f59ad2485ce5",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 367175.28,
+          "profit_p10": 179181.54,
+          "profit_p50": 367175.28,
+          "profit_p90": 555169.02,
+          "yield_forecast": 487.18,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes are compatible with silt loam soils and have a high soil compatibility score of 90%. However, the absence of organic matter and pH data suggests soil amendments may be necessary to optimize growth."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13517463.87,
+          "profit_p10": -6596522.37,
+          "profit_p50": -13517463.87,
+          "profit_p90": -20438405.37,
+          "yield_forecast": 61.83,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat can grow in silt loam soils; however, the lack of soil pH and organic matter data and unknown drainage may affect its performance. The slope is moderate, which may require erosion control measures."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23164331.61,
+          "profit_p10": -11304193.82,
+          "profit_p50": -23164331.61,
+          "profit_p90": -35024469.39,
+          "yield_forecast": 124.34,
+          "price_forecast": 4.0703,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type with a 5.5% slope is generally suitable for Corn, but the soil profile shows zero pH and organic matter data, which is unusual and suggests the need for soil testing before planting. The unknown drainage class and zero available water capacity proxy indicate potential challenges in water retention and nutrient availability."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32173934.75,
+          "profit_p10": -15700880.16,
+          "profit_p50": -32173934.75,
+          "profit_p90": -48646989.34,
+          "yield_forecast": 1100.1,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton shows high soil compatibility with silt loam texture, but the soil profile's missing pH and organic matter data and unknown drainage status could impact yield. Given the high risk score and negative expected profit, careful management and soil improvement are advised."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable weather conditions with a moderate risk index of 0.95.",
+      "market_outlook": "Market prices show a slight upward trend for Cotton and Tomatoes, with Cotton prices increasing significantly. Corn prices are stable with a minimal positive trend, while Wheat prices are declining. Given the moderate risk preference and goal to minimize risk, Cotton and Tomatoes may offer better market opportunities despite higher risk scores.",
+      "created_at": "2026-02-26T05:00:34.870287+00:00",
+      "status": "completed"
+    },
+    "cc764180-d810-4b9b-9baa-8e3ed39b9281": {
+      "id": "cc764180-d810-4b9b-9baa-8e3ed39b9281",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Tomatoes",
+          "Potatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil is generally suitable for tomatoes, and the high soil compatibility score (90%) supports good growth potential, though low organic matter and unknown drainage may require management interventions."
+        },
+        {
+          "crop_name": "Potatoes",
+          "expected_profit": 250923.84,
+          "profit_p10": 122450.83,
+          "profit_p50": 250923.84,
+          "profit_p90": 379396.85,
+          "yield_forecast": 428.81,
+          "price_forecast": 9.2331,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Potatoes are compatible with Silt Loam soil, but the lack of organic matter and unknown drainage could affect tuber development and yield, necessitating careful soil and water management."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13506399.96,
+          "profit_p10": -6591123.18,
+          "profit_p50": -13506399.96,
+          "profit_p90": -20421676.73,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.7314,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil profile's unknown drainage and zero organic matter content are unfavorable for wheat, which requires well-drained soils and organic matter for optimal growth, contributing to its negative profit outlook."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23155063.86,
+          "profit_p10": -11299671.17,
+          "profit_p50": -23155063.86,
+          "profit_p90": -35010456.56,
+          "yield_forecast": 147.11,
+          "price_forecast": 4.0703,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil with unknown drainage and low organic matter may limit water retention and nutrient availability, which can negatively impact corn yields, especially without improved soil management."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating stable moisture conditions but missing temperature data limits full assessment.",
+      "market_outlook": "Tomatoes show a strong positive price trend and high expected profit despite high risk, making them attractive for profit-focused strategies. Potatoes have a declining price trend and moderate profit potential. Corn and Wheat both show negative expected profits and high risk, suggesting caution for risk-averse growers.",
+      "created_at": "2026-02-26T05:05:28.482792+00:00",
+      "status": "completed"
+    },
+    "a5875666-098b-4488-968b-89dafbb08962": {
+      "id": "a5875666-098b-4488-968b-89dafbb08962",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes",
+          "Wheat",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil with unknown drainage and low organic matter may limit nutrient availability, but the soil texture is generally favorable for Tomatoes, supporting good root development and moisture retention."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13514335.97,
+          "profit_p10": -6594995.95,
+          "profit_p50": -13514335.97,
+          "profit_p90": -20433675.99,
+          "yield_forecast": 46.8,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil's unknown drainage and zero organic matter content could negatively impact Wheat growth, as Wheat requires well-drained soils and adequate nutrients for optimal yield."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton may face challenges due to the soil's unknown drainage and lack of organic matter, which are critical for Cotton's water and nutrient needs, potentially increasing production risk."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating stable moisture conditions for crops.",
+      "market_outlook": "Market prices for Tomatoes, Wheat, and Cotton are trending upward, with Cotton showing the strongest price increase. However, expected profits vary significantly, with Tomatoes being the most profitable and Wheat and Cotton showing expected losses, suggesting cautious market conditions.",
+      "created_at": "2026-02-26T05:12:32.196731+00:00",
+      "status": "completed"
+    },
+    "4115cf0c-f34a-4559-9668-13f681f6aa35": {
+      "id": "4115cf0c-f34a-4559-9668-13f681f6aa35",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil with unknown drainage and moderate slope is generally suitable for Tomatoes, which have high soil compatibility and positive expected profit. Lack of organic matter data suggests monitoring soil fertility is important."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13484241.78,
+          "profit_p10": -6580309.99,
+          "profit_p50": -13484241.78,
+          "profit_p90": -20388173.58,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is Silt Loam with unknown drainage and a slope of 5.5%. The soil pH and organic matter data are unavailable, which may affect nutrient availability and crop performance. Wheat has good soil compatibility but shows high financial risk in this profile."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton shows high soil compatibility with Silt Loam texture but has a high financial risk with expected losses. Soil drainage is unknown and organic matter is not reported, which could impact cotton growth and yield."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but the precipitation variability is moderate with a risk index of 0.95.",
+      "market_outlook": "Market prices for Tomatoes, Cotton, and Wheat show positive trends for the next three years, with Cotton having the highest price increase trend, followed by Tomatoes and Wheat. However, current expected profits indicate high risk and potential losses for Wheat and Cotton, while Tomatoes show a positive expected profit despite high risk.",
+      "created_at": "2026-02-26T05:20:14.099969+00:00",
+      "status": "completed"
+    },
+    "1f5cff2a-29be-4f5b-84ed-250e98d8e340": {
+      "id": "1f5cff2a-29be-4f5b-84ed-250e98d8e340",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt loam soil is generally favorable for tomatoes due to good texture, but the lack of organic matter and water holding capacity may require supplemental irrigation and fertilization to optimize yields and profitability."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13484241.78,
+          "profit_p10": -6580309.99,
+          "profit_p50": -13484241.78,
+          "profit_p90": -20388173.58,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with unknown drainage and moderate slope may affect wheat growth, compounded by zero reported organic matter and water holding capacity, which could limit nutrient availability and water retention, contributing to the negative profit forecast."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton typically prefers well-drained soils; the unknown drainage status and zero organic matter in the silt loam soil may negatively impact cotton growth and profitability, as reflected in the expected losses."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, is characterized by an average precipitation of 12.94 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions with a high risk index of 0.95.",
+      "market_outlook": "Market prices for selected crops show a positive trend with cotton prices increasing the most, followed by tomatoes and wheat. Despite positive price trends, expected profits vary significantly, with tomatoes showing potential profitability, while wheat and cotton are forecasted to incur losses under current conditions.",
+      "created_at": "2026-02-26T05:24:16.060000+00:00",
+      "status": "completed"
+    },
+    "6fc2127d-b0f8-4327-bcfc-ea264f619112": {
+      "id": "6fc2127d-b0f8-4327-bcfc-ea264f619112",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 367175.28,
+          "profit_p10": 179181.54,
+          "profit_p50": 367175.28,
+          "profit_p90": 555169.02,
+          "yield_forecast": 487.18,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil texture is generally favorable for tomatoes, but the lack of organic matter and unknown drainage could require soil amendments and careful irrigation management to optimize yield."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13519270.84,
+          "profit_p10": -6597404.17,
+          "profit_p50": -13519270.84,
+          "profit_p90": -20441137.51,
+          "yield_forecast": 61.83,
+          "price_forecast": 6.4392,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is Silt Loam with unknown drainage and very low organic matter, which may limit nutrient availability and water retention, potentially impacting wheat growth negatively."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32173934.75,
+          "profit_p10": -15700880.16,
+          "profit_p50": -32173934.75,
+          "profit_p90": -48646989.34,
+          "yield_forecast": 1100.1,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton may struggle in this soil due to the low organic matter and unknown drainage status, which can affect root development and water availability, increasing production risk."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions with a moderate risk index of 0.95.",
+      "market_outlook": "Market prices for selected crops show a positive trend for Cotton and Tomatoes, with Cotton prices increasing significantly and Tomatoes showing moderate growth. Wheat prices are slightly declining. Given the high risk scores and current market trends, Tomatoes present the most balanced opportunity for profit.",
+      "created_at": "2026-02-26T05:32:44.257588+00:00",
+      "status": "completed"
+    },
+    "2179802a-8f18-4aca-b59a-d7583289bdfd": {
+      "id": "2179802a-8f18-4aca-b59a-d7583289bdfd",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, critical soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may indicate missing data or poor soil conditions. Silt Loam generally provides good water retention and nutrient availability, beneficial for tomato growth, but the unknown drainage and zero organic matter suggest the need for soil amendments and careful irrigation management to optimize crop performance and minimize risk."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from three nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days currently, indicating stable weather conditions with a moderate risk index of 0.95.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065 and a latest average price of $10.58 per unit. The market outlook for tomatoes over the next three years (2024-2026) appears favorable, supporting profitable cultivation despite the high risk score associated with this crop.",
+      "created_at": "2026-02-26T06:13:59.873398+00:00",
+      "status": "completed"
+    },
+    "a5207834-3f5c-4310-83d5-4fd01fa1cfc2": {
+      "id": "a5207834-3f5c-4310-83d5-4fd01fa1cfc2",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type is generally suitable for tomatoes, offering good water retention and nutrient availability. However, the soil profile shows unknown drainage and zero reported organic matter and available water capacity, which may require soil amendments and careful irrigation management to optimize tomato growth and yield."
+        }
+      ],
+      "weather_summary": "The region around Cincinnati, Ohio is experiencing high average precipitation at 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating a moist and stable growing environment.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions for the next few years (2024-2026).",
+      "created_at": "2026-02-26T06:29:29.319875+00:00",
+      "status": "completed"
+    },
+    "2e968e9e-7444-4c06-b5ba-6a582b142138": {
+      "id": "2e968e9e-7444-4c06-b5ba-6a582b142138",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The Silt Loam soil texture is generally suitable for tomatoes, but the unknown drainage and zero organic matter and pH values suggest potential soil health issues. Proper irrigation is available, which can help mitigate some soil limitations, but soil amendments may be necessary to optimize tomato production."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13508621.25,
+          "profit_p10": -6592207.17,
+          "profit_p50": -13508621.25,
+          "profit_p90": -20425035.33,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, which may indicate incomplete data or poor soil health. This could negatively impact wheat growth and yield, especially given the zero available water capacity proxy."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions with a high risk index of 0.95.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions. Conversely, wheat prices are slightly declining with a negative trend of -0.0719, indicating potential market challenges for wheat growers.",
+      "created_at": "2026-02-26T23:35:35.689728+00:00",
+      "status": "completed"
+    },
+    "268ca6c4-4271-4172-997b-ea5a46bbf00f": {
+      "id": "268ca6c4-4271-4172-997b-ea5a46bbf00f",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile data shows zero pH and organic matter values, which may indicate missing or incomplete data. Silt Loam generally supports tomato growth well, but soil amendments might be necessary to optimize fertility and drainage."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13508621.25,
+          "profit_p10": -6592207.17,
+          "profit_p50": -13508621.25,
+          "profit_p90": -20425035.33,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to tomatoes, wheat is grown in Silt Loam soil with unknown drainage and a 5.5% slope. The lack of organic matter and pH data suggests soil testing is recommended before planting. Wheat's negative expected profit and high risk score suggest it is less suitable under current conditions despite soil compatibility."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from three nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions. Wheat prices show a slight downward trend of -0.0719, indicating potential market challenges. Given the moderate risk preference and goal to minimize risk, tomatoes appear to be the more viable crop economically despite their high risk score.",
+      "created_at": "2026-02-27T00:20:56.553300+00:00",
+      "status": "completed"
+    },
+    "4fa42ac4-aeca-4988-8140-250583673aa8": {
+      "id": "4fa42ac4-aeca-4988-8140-250583673aa8",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes generally thrive in well-drained, fertile soils with good organic matter. The current soil profile indicates unknown drainage and zero organic matter, which could limit tomato productivity. Given the silt loam texture and slope, improving soil organic content and ensuring proper drainage will be important to reduce risk and enhance tomato yield."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13484241.78,
+          "profit_p10": -6580309.99,
+          "profit_p50": -13484241.78,
+          "profit_p90": -20388173.58,
+          "yield_forecast": 78.27,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, which may indicate incomplete data or poor soil health. Wheat typically prefers well-drained soils with moderate organic matter, so soil amendments and drainage improvements might be necessary to optimize wheat growth."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from three nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data available. There are no extreme heat or freeze days expected, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Market prices for both tomatoes and wheat are trending upward, with tomatoes showing a stronger price increase. Tomatoes have a latest average price of $10.58 per unit with a positive trend of 0.41, while wheat is priced at $8.98 with a trend of 0.32. This suggests favorable market conditions for both crops over the next few years.",
+      "created_at": "2026-02-27T00:29:59.770749+00:00",
+      "status": "completed"
+    },
+    "2f9f61a1-0c5d-404c-855f-50c40265d1c7": {
+      "id": "2f9f61a1-0c5d-404c-855f-50c40265d1c7",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may affect nutrient availability and water retention. Despite this, the soil compatibility score for tomatoes is high (90%), suggesting that with proper management and irrigation, tomatoes can perform well."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13514335.97,
+          "profit_p10": -6594995.95,
+          "profit_p50": -13514335.97,
+          "profit_p90": -20433675.99,
+          "yield_forecast": 46.8,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to tomatoes, wheat is grown on Silt Loam soil with a 5.5% slope. The lack of detailed soil fertility data and water holding capacity could pose risks, especially given the high risk score and negative expected profit. Soil conditions may require amendments and careful management to improve wheat viability."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions for crop growth.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions. Wheat prices also show a positive trend of 0.3231, but expected profits are negative, indicating potential market challenges. Overall, tomatoes present a better market opportunity under current conditions.",
+      "created_at": "2026-02-27T00:34:28.262982+00:00",
+      "status": "completed"
+    },
+    "2152aaec-2b0d-48f8-8917-7fe77a5be762": {
+      "id": "2152aaec-2b0d-48f8-8917-7fe77a5be762",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may indicate incomplete data or the need for soil amendments. Despite this, the soil compatibility for tomatoes is high at 90%, and irrigation is available, which can help mitigate some soil limitations."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days expected, indicating stable conditions for crop growth.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065. The latest average price is $10.58 per unit, suggesting favorable market conditions for selling tomatoes over the next few years.",
+      "created_at": "2026-02-27T00:38:46.301563+00:00",
+      "status": "completed"
+    },
+    "5d543971-3232-468f-89a9-d947ed468301": {
+      "id": "5d543971-3232-468f-89a9-d947ed468301",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage presents moderate conditions for tomato cultivation. However, the soil profile shows zero pH and organic matter values, which may indicate missing data or poor soil health, potentially impacting nutrient availability and crop performance. Irrigation availability can help mitigate some soil limitations."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13528912.8,
+          "profit_p10": -6602109.45,
+          "profit_p50": -13528912.8,
+          "profit_p90": -20455716.16,
+          "yield_forecast": 46.8,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat faces similar soil conditions with silt loam texture and unknown drainage. The lack of organic matter and pH data suggests potential soil fertility issues. Given the high risk score and negative expected profit, wheat cultivation may be less suitable under current soil and market conditions despite moderate soil compatibility."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day with no recorded temperature data available. There are no extreme heat or freeze days expected, indicating stable weather conditions with a high risk index of 0.95 due to precipitation variability.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions. Wheat prices are slightly declining with a negative trend of -0.0719, indicating potential market challenges ahead.",
+      "created_at": "2026-02-27T00:45:40.193480+00:00",
+      "status": "completed"
+    },
+    "60ab6144-c814-43ed-b9ff-a895e14dbc48": {
+      "id": "60ab6144-c814-43ed-b9ff-a895e14dbc48",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Tomatoes",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. Organic matter and available water capacity are reported as zero, which may indicate data limitations or poor soil fertility. Despite this, tomatoes have a high soil compatibility score of 90%, suggesting they can perform well if irrigation is managed properly."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13508621.25,
+          "profit_p10": -6592207.17,
+          "profit_p50": -13508621.25,
+          "profit_p90": -20425035.33,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soil compatibility estimated from soil_type='Silt Loam'. Wheat suitability score is 90.0%."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but the precipitation variability is moderate with a risk index of 0.95 indicating relatively stable conditions.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.4065, suggesting favorable market conditions for tomatoes in the coming years. Conversely, wheat prices are slightly declining with a negative trend of -0.0719, indicating potential market challenges for wheat. Given the high risk scores for both crops, market volatility should be monitored closely.",
+      "created_at": "2026-02-27T00:56:50.639232+00:00",
+      "status": "completed"
+    },
+    "ea295fb0-2bc0-40dd-84b4-780285a1b2be": {
+      "id": "ea295fb0-2bc0-40dd-84b4-780285a1b2be",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 367175.28,
+          "profit_p10": 179181.54,
+          "profit_p50": 367175.28,
+          "profit_p90": 555169.02,
+          "yield_forecast": 487.18,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil with low organic matter and unknown drainage presents challenges, but tomatoes show high soil compatibility and strong market prices, though the crop carries high risk."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13519218.7,
+          "profit_p10": -6597378.73,
+          "profit_p50": -13519218.7,
+          "profit_p90": -20441058.68,
+          "yield_forecast": 61.83,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and very low organic matter and available water capacity, which may limit wheat growth and contribute to the high risk and negative profit forecast."
+        }
+      ],
+      "weather_summary": "The area around Cincinnati, Ohio is experiencing high average precipitation at 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating a moist and stable weather pattern.",
+      "market_outlook": "Tomato prices are trending upward with a positive price trend of 0.41, suggesting favorable market conditions. Wheat prices are slightly declining with a negative trend of -0.07, indicating potential market challenges ahead.",
+      "created_at": "2026-02-27T01:30:59.538554+00:00",
+      "status": "completed"
+    },
+    "e52c0a01-ef43-4034-b3e4-61432342614e": {
+      "id": "e52c0a01-ef43-4034-b3e4-61432342614e",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, indicating incomplete data or poor soil health, which could impact corn growth and yield potential."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, cotton is grown on Silt Loam soil with unknown drainage and a 5.5% slope. The lack of organic matter and pH data suggests potential soil fertility issues that may affect cotton productivity and risk management."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions for the growing season.",
+      "market_outlook": "Corn prices are showing a modest upward trend with a latest average price of $7.28 per unit, while cotton prices are increasing more sharply with a latest average price of $10.08 per unit. Despite these trends, both crops currently present high financial risk with expected negative profits, suggesting caution for investment.",
+      "created_at": "2026-02-27T01:35:13.774672+00:00",
+      "status": "completed"
+    },
+    "9e55eb8e-cf0d-49b6-b631-716a9b9bc41c": {
+      "id": "9e55eb8e-cf0d-49b6-b631-716a9b9bc41c",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Cotton",
+          "Corn"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Corn is moderately compatible with the silt loam soil type, but the lack of organic matter and water holding capacity could stress the crop, especially under high precipitation variability, increasing production risk."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with unknown drainage and zero measured organic matter or available water capacity presents challenges for cotton cultivation, potentially limiting water retention and nutrient availability, which may increase crop risk."
+        }
+      ],
+      "weather_summary": "The area near Cincinnati, Ohio is experiencing high average precipitation at 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating a moist and stable weather pattern.",
+      "market_outlook": "Corn prices are trending slightly upward with a positive price trend of 9.25%, while cotton prices are declining significantly with a negative trend of -50.67%. Market conditions suggest caution for cotton due to falling prices and high risk levels for both crops.",
+      "created_at": "2026-02-27T01:45:29.795437+00:00",
+      "status": "completed"
+    },
+    "bf96d37d-d173-4678-80cc-6aada2235653": {
+      "id": "bf96d37d-d173-4678-80cc-6aada2235653",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. The soil pH and organic matter content are reported as zero, which may indicate missing data or poor soil conditions. The available water capacity is also zero, which could impact crop growth unless irrigation is used. Corn has high soil compatibility at 90%, but soil amendments may be necessary to optimize yield."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, cotton is grown on Silt Loam soil with unknown drainage and a 5.5% slope. The soil lacks reported organic matter and water capacity, which are critical for cotton growth. Despite high soil compatibility, the soil profile suggests potential limitations that should be addressed through soil management practices and irrigation to reduce risk."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions.",
+      "market_outlook": "Corn prices are showing a modest upward trend with a latest average price of $7.28 per unit, while cotton prices are increasing more sharply with a latest average price of $10.08 per unit. However, both crops currently show high risk and negative expected profits, suggesting caution in market engagement.",
+      "created_at": "2026-02-27T01:50:08.934454+00:00",
+      "status": "completed"
+    },
+    "05b93a9b-3389-4f8c-bd1a-c1d4c0f5ce47": {
+      "id": "05b93a9b-3389-4f8c-bd1a-c1d4c0f5ce47",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, which may indicate missing data or poor soil health. The soil compatibility for corn is high at 90%, but the lack of available water capacity (AWC) could impact crop performance without irrigation."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, cotton is grown on Silt Loam soil with unknown drainage and a 5.5% slope. Soil health indicators such as pH and organic matter are reported as zero, suggesting data gaps or poor conditions. Cotton also has a 90% soil compatibility rating, but the absence of water retention capacity highlights the importance of irrigation for this crop."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio shows an average precipitation of 12.94 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days expected, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Corn prices are trending slightly upward with a positive price trend of 9.25%, while cotton prices are expected to decline significantly with a negative trend of -50.67%. Given the high risk scores and negative expected profits for both crops, market conditions suggest caution, especially for cotton.",
+      "created_at": "2026-02-27T01:52:28.768647+00:00",
+      "status": "completed"
+    },
+    "d99eda03-f9b3-4f39-bb2e-a633ddd445fd": {
+      "id": "d99eda03-f9b3-4f39-bb2e-a633ddd445fd",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may indicate incomplete data or poor soil conditions. This could affect nutrient availability and water retention, potentially impacting corn growth."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, cotton is grown on Silt Loam soil with a 5.5% slope but lacks detailed soil chemistry and moisture data. The unknown drainage and zero organic matter content may pose challenges for cotton cultivation, requiring careful management and possibly supplemental irrigation."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Corn prices are trending slightly upward with a positive price trend of 9.25%, while cotton prices are expected to decline significantly with a negative trend of -50.67%. Market conditions suggest moderate caution for cotton due to falling prices.",
+      "created_at": "2026-02-27T02:08:08.773813+00:00",
+      "status": "completed"
+    },
+    "9f756cae-38fa-4b72-aa85-25833b8f0944": {
+      "id": "9f756cae-38fa-4b72-aa85-25833b8f0944",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Corn",
+          "Cotton",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes are well suited to silt loam soils, but the low organic matter and unknown drainage require careful irrigation management to optimize yield and reduce risk."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13508621.25,
+          "profit_p10": -6592207.17,
+          "profit_p50": -13508621.25,
+          "profit_p90": -20425035.33,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with unknown drainage and low organic matter may limit wheat productivity and increase risk, especially with a 5.5% slope affecting water retention."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt loam texture is generally favorable for corn, but the lack of organic matter and unknown drainage could pose challenges for nutrient availability and water management."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton may struggle in this soil profile due to low organic matter and unknown drainage, which can affect root development and water uptake."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days expected, indicating stable weather conditions with a high risk index of 0.95 due to precipitation variability.",
+      "market_outlook": "Market prices for tomatoes are trending strongly upward, suggesting good potential returns despite high risk. Corn prices show a modest upward trend, while cotton and wheat prices are declining. Given the moderate risk preference and goal to minimize risk, careful consideration should be given to crop selection and market timing.",
+      "created_at": "2026-02-27T02:10:15.438807+00:00",
+      "status": "completed"
+    },
+    "b996dfef-32c2-440f-967f-9a1938ca8c37": {
+      "id": "b996dfef-32c2-440f-967f-9a1938ca8c37",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton",
+          "Tomatoes",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes are well-suited to the silt loam texture but may be impacted by the soil's low organic matter and unknown drainage. Irrigation can mitigate moisture stress."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13508621.25,
+          "profit_p10": -6592207.17,
+          "profit_p50": -13508621.25,
+          "profit_p90": -20425035.33,
+          "yield_forecast": 78.27,
+          "price_forecast": 6.4476,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat may struggle in this soil profile due to the unknown drainage and zero organic matter, which can affect root development and nutrient uptake."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with unknown drainage and zero reported organic matter and available water capacity may limit Corn productivity despite good soil texture compatibility. Irrigation is beneficial here."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton faces challenges due to the soil's unknown drainage and lack of organic matter, which may affect water retention and nutrient availability, increasing production risk."
+        }
+      ],
+      "weather_summary": "The area around Cincinnati, Ohio is experiencing high average precipitation at 12.94 mm/day with no recorded extreme heat or freeze days recently, indicating a moist and stable weather pattern favorable for crop growth.",
+      "market_outlook": "Market prices show a positive trend for Corn and Tomatoes, with Tomatoes having the strongest price increase. Cotton and Wheat prices are trending downward, suggesting caution for these crops in the near term.",
+      "created_at": "2026-02-27T03:47:49.145553+00:00",
+      "status": "completed"
+    },
+    "7b022a2e-1a2e-4e69-810f-1e0e1f80cbbf": {
+      "id": "7b022a2e-1a2e-4e69-810f-1e0e1f80cbbf",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 1018907.1,
+          "profit_p10": 497226.66,
+          "profit_p50": 1018907.1,
+          "profit_p90": 1540587.53,
+          "yield_forecast": 1057.04,
+          "price_forecast": 11.4368,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil is generally suitable for tomatoes, and the high soil compatibility score (90%) supports this. However, the lack of organic matter and water holding capacity may require irrigation and soil amendments to optimize yields."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13514335.97,
+          "profit_p10": -6594995.95,
+          "profit_p50": -13514335.97,
+          "profit_p90": -20433675.99,
+          "yield_forecast": 46.8,
+          "price_forecast": 9.5624,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil's unknown drainage and lack of organic matter could negatively impact wheat yields, aligning with the forecasted negative profits."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23109282.85,
+          "profit_p10": -11277330.03,
+          "profit_p50": -23109282.85,
+          "profit_p90": -34941235.67,
+          "yield_forecast": 142.46,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil with unknown drainage and zero measured organic matter or available water capacity may limit corn growth potential, contributing to negative profit forecasts despite good soil texture."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -32251748.43,
+          "profit_p10": -15738853.23,
+          "profit_p50": -32251748.43,
+          "profit_p90": -48764643.62,
+          "yield_forecast": 1043.47,
+          "price_forecast": 13.7397,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton typically prefers well-drained soils; unknown drainage and zero organic matter may hinder cotton performance, reflected in the negative profit outlook despite good soil texture."
+        }
+      ],
+      "weather_summary": "The local weather shows a high average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days recently, indicating stable but wet conditions.",
+      "market_outlook": "Market prices for selected crops show positive trends, with cotton prices increasing strongly, followed by tomatoes, wheat, and corn. However, despite favorable price trends, expected profits for most crops are negative except tomatoes, indicating market or cost challenges.",
+      "created_at": "2026-02-27T04:24:42.966241+00:00",
+      "status": "completed"
+    },
+    "99a4bceb-ada8-4994-8846-143d206107d8": {
+      "id": "99a4bceb-ada8-4994-8846-143d206107d8",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Wheat",
+          "Tomatoes",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 179963.03,
+          "profit_p10": 87821.96,
+          "profit_p50": 179963.03,
+          "profit_p90": 272104.1,
+          "yield_forecast": 1057.04,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes have high soil compatibility with silt loam, but the lack of organic matter and water holding capacity could challenge optimal growth; however, irrigation availability may mitigate these issues, supporting positive profit expectations."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13542707.34,
+          "profit_p10": -6608841.18,
+          "profit_p50": -13542707.34,
+          "profit_p90": -20476573.5,
+          "yield_forecast": 46.8,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat faces similar soil constraints with unknown drainage and low organic matter, which may hinder growth and yield potential, reflected in its high risk and negative profit outlook."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23165080.08,
+          "profit_p10": -11304559.08,
+          "profit_p50": -23165080.08,
+          "profit_p90": -35025601.09,
+          "yield_forecast": 142.46,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with unknown drainage and zero measured organic matter or available water capacity may limit corn productivity and increase risk, contributing to the negative profit forecast."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -33320233.22,
+          "profit_p10": -16260273.81,
+          "profit_p50": -33320233.22,
+          "profit_p90": -50380192.63,
+          "yield_forecast": 1043.47,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton's growth may be adversely affected by the soil's unknown drainage and lack of organic matter, leading to high risk and negative profitability despite soil texture suitability."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 12.94 mm/day with no recorded temperature data. There are no extreme heat or freeze days reported, indicating stable weather conditions with a high risk index of 0.95 due to precipitation variability.",
+      "market_outlook": "Market conditions currently show no active crop market data points, suggesting uncertainty or lack of recent market activity. Given the high risk scores and negative expected profits for most crops except tomatoes, a cautious market approach is advised.",
+      "created_at": "2026-02-27T05:38:10.962342+00:00",
+      "status": "completed"
+    },
+    "8956b87b-0de3-4956-bea3-b684080e9f3e": {
+      "id": "8956b87b-0de3-4956-bea3-b684080e9f3e",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Wheat",
+          "Corn",
+          "Cotton",
+          "Tomatoes"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Tomatoes",
+          "expected_profit": 179963.03,
+          "profit_p10": 87821.96,
+          "profit_p50": 179963.03,
+          "profit_p90": 272104.1,
+          "yield_forecast": 1057.04,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes can grow well in Silt Loam soils if drainage and organic matter are adequate. The current soil data is incomplete, but the high soil compatibility score (90%) suggests tomatoes are relatively well-suited to the site despite data gaps."
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": -13542707.34,
+          "profit_p10": -6608841.18,
+          "profit_p50": -13542707.34,
+          "profit_p90": -20476573.5,
+          "yield_forecast": 46.8,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, indicating incomplete data or poor soil health, which may negatively impact wheat growth and yield."
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23165080.08,
+          "profit_p10": -11304559.08,
+          "profit_p50": -23165080.08,
+          "profit_p90": -35025601.09,
+          "yield_forecast": 142.46,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt Loam soil texture is generally suitable for corn, but the lack of organic matter and unknown drainage status could limit nutrient availability and water retention, increasing production risk."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -28836584.61,
+          "profit_p10": -14072253.29,
+          "profit_p50": -28836584.61,
+          "profit_p90": -43600915.93,
+          "yield_forecast": 1043.47,
+          "price_forecast": 46.4687,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton typically prefers well-drained soils; the unknown drainage and zero organic matter in this Silt Loam soil may hinder cotton development and contribute to high production risk."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 12.94 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable weather conditions with a high risk index of 0.95 due to precipitation variability.",
+      "market_outlook": "Market prices for Corn, Tomatoes, and Wheat are stable with no significant trends expected through 2026. Cotton prices show a slight downward trend of -3.01%. Given the high risk scores and negative expected profits for most crops except Tomatoes, market conditions suggest cautious crop selection to minimize financial risk.",
+      "created_at": "2026-02-27T18:52:26.572955+00:00",
       "status": "completed"
     }
   }

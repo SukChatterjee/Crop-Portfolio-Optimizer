@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-from .nodes import fetch_and_compute, finalize, llm_enrich, plan_sources, validate_inputs
+from .nodes import (
+    fetch_and_compute,
+    fetch_ams_prices,
+    finalize,
+    llm_enrich,
+    plan_ams_params,
+    plan_sources,
+    validate_inputs,
+)
 from .state import AgentState
 
 
@@ -16,6 +24,8 @@ class _FallbackGraph:
         current.update(validate_inputs(current))
         if _route_after_validate(current) == "plan_sources":
             current.update(plan_sources(current))
+            current.update(plan_ams_params(current))
+            current.update(fetch_ams_prices(current))
             current.update(fetch_and_compute(current))
             current.update(llm_enrich(current))
         current.update(finalize(current))
@@ -31,6 +41,8 @@ def build_graph():
     graph = StateGraph(AgentState)
     graph.add_node("validate_inputs", validate_inputs)
     graph.add_node("plan_sources", plan_sources)
+    graph.add_node("plan_ams_params", plan_ams_params)
+    graph.add_node("fetch_ams_prices", fetch_ams_prices)
     graph.add_node("fetch_and_compute", fetch_and_compute)
     graph.add_node("llm_enrich", llm_enrich)
     graph.add_node("finalize", finalize)
@@ -44,7 +56,9 @@ def build_graph():
             "finalize": "finalize",
         },
     )
-    graph.add_edge("plan_sources", "fetch_and_compute")
+    graph.add_edge("plan_sources", "plan_ams_params")
+    graph.add_edge("plan_ams_params", "fetch_ams_prices")
+    graph.add_edge("fetch_ams_prices", "fetch_and_compute")
     graph.add_edge("fetch_and_compute", "llm_enrich")
     graph.add_edge("llm_enrich", "finalize")
     graph.add_edge("finalize", END)

@@ -5,8 +5,10 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List
 from openai import OpenAI
+import pandas as pd
 
-from agent_tools.ams import discover_mars_params, fetch_price_series
+from agent.planners.ams_planner import plan_ams_for_crop
+from agent_tools.ams import get_prices_for_crop_with_plan
 from agent_tools.compute import compute_forecasts
 from agent_tools.costs import fetch_cost_per_acre
 from agent_tools.nass import discover_nass_params, fetch_ohio_crop_stats
@@ -124,20 +126,43 @@ def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, An
     return out
 
 
+def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, Any]) -> pd.DataFrame:
+    rows = []
+    for crop in selected_crops:
+        payload = ams_prices.get(crop) if isinstance(ams_prices, dict) else None
+        series = payload.get("series") if isinstance(payload, dict) else None
+        if not isinstance(series, list):
+            continue
+        grouped: Dict[int, List[float]] = {}
+        for row in series:
+            if not isinstance(row, dict):
+                continue
+            date_s = str(row.get("date", "")).strip()
+            if len(date_s) < 4 or not date_s[:4].isdigit():
+                continue
+            year = int(date_s[:4])
+            try:
+                price = float(row.get("price_avg"))
+            except (TypeError, ValueError):
+                continue
+            grouped.setdefault(year, []).append(price)
+        for year, prices in grouped.items():
+            if not prices:
+                continue
+            rows.append({"year": int(year), "crop": crop, "avg_price": round(sum(prices) / len(prices), 4)})
+    return pd.DataFrame(rows)
+
+
 def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
         print("[agent][tool] param-planner source=skipped reason=missing_openai_api_key", flush=True)
-        return {"nass": {}, "ams": {}}
+        return {"nass": {}}
 
     model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
-    ams_endpoint_hint = os.environ.get(
-        "AMS_MARS_REPORTS_ENDPOINT",
-        "https://marsapi.ams.usda.gov/services/v1.1/reports",
-    ).strip()
     system_msg = (
         "You are an API query planner. Return strict JSON only. "
-        "Given user crop names, propose candidate query parameters for USDA NASS and AMS MARS APIs. "
+        "Given user crop names, propose candidate query parameters for USDA NASS API. "
         "Output schema: "
         "{\"nass\":{\"<crop>\":{\"queries\":["
         "{\"state_name\":\"...\",\"agg_level_desc\":\"...\",\"sector_desc\":\"...\","
@@ -146,17 +171,9 @@ def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) ->
         "\"group_desc\":\"...\",\"commodity_desc\":\"...\",\"statisticcat_desc\":\"PRODUCTION\"},"
         "{\"state_name\":\"...\",\"agg_level_desc\":\"...\",\"sector_desc\":\"...\","
         "\"group_desc\":\"...\",\"commodity_desc\":\"...\",\"statisticcat_desc\":\"AREA HARVESTED\"}"
-        "]}},"
-        "\"ams\":{\"<crop>\":{\"queries\":[{\"endpoint\":\"...\",\"q\":\"...\",\"params\":{\"key\":\"value\"}}]}}}. "
+        "]}}}. "
         "Prefer actual commodity strings used by API responses. Return at least one query per crop if possible. "
         "Do not assume a fixed state unless user context implies it; include national candidates too. "
-        "Use fully-qualified https endpoints for AMS. "
-        "For AMS params, choose the API style supported by endpoint; prefer explicit params object over q-style. "
-        "For example use endpoint "
-        + ams_endpoint_hint
-        + " with params like "
-        "{\"commodity\":\"Tomato\",\"state\":\"Illinois\",\"reportDate\":\"2024-01-01\"}. "
-        "Use only endpoint+params that are likely to return rows for the crop; avoid generic empty probes. "
         "Use empty strings when unknown. No markdown."
     )
     payload = {
@@ -167,7 +184,6 @@ def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) ->
             "region": farm_profile.get("region"),
         },
         "nass_context": {"years": 3},
-        "ams_context": {"years": 3},
     }
 
     parsed = _openai_generate_json(
@@ -177,10 +193,9 @@ def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) ->
         purpose="param_planner",
     )
     nass = _normalize_plan_keys(parsed.get("nass", {}), selected_crops)
-    ams = _normalize_plan_keys(parsed.get("ams", {}), selected_crops)
-    if not nass and not ams:
+    if not nass:
         print("[agent][tool] param-planner source=empty", flush=True)
-    return {"nass": nass, "ams": ams}
+    return {"nass": nass}
 
 
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
@@ -224,6 +239,7 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
 
     farm = dict(state.get("farm_profile") or {})
     api_plan = dict(state.get("api_plan") or {})
+    ams_prices = dict(state.get("ams_prices") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     location = dict(farm.get("location") or {})
     lat = float(location.get("lat", 39.8283))
@@ -241,16 +257,8 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
                 force_live_calls,
                 api_plan.get("nass", {}),
             )
-            future_prices = ex.submit(
-                fetch_price_series,
-                selected_crops,
-                3,
-                force_live_calls,
-                api_plan.get("ams", {}),
-                api_plan.get("ams_seed", {}),
-            )
             nass_df = future_nass.result()
-            price_df = future_prices.result()
+        price_df = _build_price_df_from_ams(selected_crops, ams_prices)
 
         weather = fetch_weather_features(
             lat, lng, last_n_years=3, max_stations=3, force_refresh=force_live_calls
@@ -281,6 +289,7 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
             "price_rows": int(len(price_df)) if price_df is not None else 0,
             "costs": costs,
             "api_plan": api_plan,
+            "ams_prices": ams_prices,
         }
         return {"crop_results": crop_results, "datasets_summary": datasets_summary}
     except Exception as exc:
@@ -296,21 +305,7 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     farm = dict(state.get("farm_profile") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     llm_seed_plan = _llm_plan_params(selected_crops, farm)
-    for crop in selected_crops:
-        ams_seed = (llm_seed_plan.get("ams", {}) or {}).get(crop, {})
-        if isinstance(ams_seed, dict):
-            queries = ams_seed.get("queries")
-            if isinstance(queries, list) and queries:
-                q0 = queries[0] if isinstance(queries[0], dict) else {}
-                print(
-                    f"[agent][tool] ams-seed crop={crop} queries={len(queries)} "
-                    f"endpoint={str(q0.get('endpoint',''))[:120]} "
-                    f"params_keys={list((q0.get('params') or {}).keys()) if isinstance(q0.get('params'), dict) else []}",
-                    flush=True,
-                )
-            else:
-                print(f"[agent][tool] ams-seed crop={crop} queries=0", flush=True)
-    api_plan: Dict[str, Any] = {"nass": {}, "ams": {}, "ams_seed": llm_seed_plan.get("ams", {})}
+    api_plan: Dict[str, Any] = {"nass": {}}
     try:
         api_plan["nass"] = discover_nass_params(
             selected_crops,
@@ -322,18 +317,70 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     except Exception as exc:
         print(f"[agent][tool] nass-discovery source=error error={exc}", flush=True)
 
-    try:
-        api_plan["ams"] = discover_mars_params(
-            selected_crops,
-            last_n_years=3,
-            # Keep discovery cache on even in live mode for faster repeated runs.
-            force_refresh=False,
-            seed_plan=llm_seed_plan.get("ams", {}),
-        )
-    except Exception as exc:
-        print(f"[agent][tool] ams-discovery source=error error={exc}", flush=True)
-
     return {"api_plan": api_plan}
+
+
+def plan_ams_params(state: AgentState) -> Dict[str, Any]:
+    errors = list(state.get("errors") or [])
+    if errors:
+        return {}
+    farm = dict(state.get("farm_profile") or {})
+    selected_crops = _ensure_list(farm.get("selected_crops"))
+    state_name = "OHIO"
+    lookback_days = 1095
+
+    out: Dict[str, Any] = {}
+    for crop in selected_crops:
+        plan = plan_ams_for_crop(crop_name=crop, state_name=state_name, lookback_days=lookback_days)
+        out[crop] = plan
+        status = (plan.get("plan") or {}).get("status")
+        if status == "no_data":
+            print(
+                f"[agent][tool] ams-planner crop={crop} source=no_data reason={((plan.get('plan') or {}).get('reason',''))}",
+                flush=True,
+            )
+        else:
+            cq = ((plan.get("plan") or {}).get("catalog_query") or {})
+            filters = cq.get("filters") if isinstance(cq.get("filters"), dict) else {}
+            contains_any = filters.get("contains_any") if isinstance(filters.get("contains_any"), list) else []
+            print(
+                f"[agent][tool] ams-planner crop={crop} contains_any={contains_any[:6]} max_candidates={cq.get('max_candidates', 30)}",
+                flush=True,
+            )
+    return {"ams_plans": out}
+
+
+def fetch_ams_prices(state: AgentState) -> Dict[str, Any]:
+    errors = list(state.get("errors") or [])
+    if errors:
+        return {}
+    farm = dict(state.get("farm_profile") or {})
+    selected_crops = _ensure_list(farm.get("selected_crops"))
+    plans = dict(state.get("ams_plans") or {})
+    state_name = "OHIO"
+    lookback_days = 1095
+    out: Dict[str, Any] = {}
+
+    for crop in selected_crops:
+        plan = plans.get(crop, {})
+        result = get_prices_for_crop_with_plan(
+            crop_name=crop,
+            state_name=state_name,
+            lookback_days=lookback_days,
+            planner_json=plan,
+        )
+        out[crop] = result
+        if result.get("status") == "ok":
+            print(
+                f"[agent][tool] ams crop={crop} source=ok slug_id={result.get('chosen_slug_id')} rows={len(result.get('series') or [])}",
+                flush=True,
+            )
+        else:
+            print(
+                f"[agent][tool] ams crop={crop} source=no_data reason={result.get('reason', 'unknown')}",
+                flush=True,
+            )
+    return {"ams_prices": out}
 
 
 def llm_enrich(state: AgentState) -> Dict[str, Any]:
