@@ -87,6 +87,27 @@ def _contains_any(text: str, needles: List[str]) -> bool:
     return any(n in t for n in needles)
 
 
+def _crop_terms(crop: str) -> List[str]:
+    c = crop.lower().strip()
+    if not c:
+        return []
+    terms = [c]
+    if c.endswith("s") and len(c) > 3:
+        terms.append(c[:-1])
+    if c.endswith("es") and len(c) > 3:
+        terms.append(c[:-2])
+    return list(dict.fromkeys(terms))
+
+
+def _ers_row_matches_crop(row: Dict[str, Any], crop: str) -> bool:
+    terms = _crop_terms(crop)
+    hay = " ".join(
+        str(row.get(k, "") or "")
+        for k in ("farmType", "category", "categoryValue", "category2", "category2Value", "variableName", "variableDesc")
+    ).lower()
+    return any(t in hay for t in terms)
+
+
 def _pick_cost_from_rows(rows: List[Dict[str, Any]], crop: str) -> Optional[float]:
     """Select best per-acre cost estimate from ARMS survey rows."""
     scored: List[tuple] = []
@@ -164,6 +185,49 @@ def _extract_cost_rows(payload: Dict, crops: List[str]) -> Dict[str, float]:
             if c in n or n in c:
                 out[crop] = float(value)
                 break
+
+    # ERS ARMS survey schema fallback:
+    # rows often carry crop in category/categoryValue and value in estimate.
+    if len(out) < len(crops):
+        divisor = float(os.environ.get("ERS_PER_FARM_TO_PER_ACRE_DIVISOR", "1000"))
+        for crop in crops:
+            if crop in out:
+                continue
+            best: Optional[tuple] = None  # (score, value)
+            for row in rows:
+                if not isinstance(row, dict) or not _ers_row_matches_crop(row, crop):
+                    continue
+                name = str(row.get("variableName", "")).lower()
+                desc = str(row.get("variableDesc", "")).lower()
+                unit = str(row.get("variableUnit", "")).lower()
+                blob = f"{name} {desc} {unit}"
+                if not _contains_any(blob, ["expense", "cost", "operating"]):
+                    continue
+                if _contains_any(blob, ["income", "revenue", "return"]):
+                    continue
+                raw = row.get("estimate")
+                value = _to_float(raw)
+                if not pd.notna(value) or value <= 0:
+                    continue
+                # Prefer total cost metrics.
+                score = 0
+                if "total cash expenses" in blob:
+                    score += 5
+                if "total expenses" in blob:
+                    score += 4
+                if "variable expenses" in blob:
+                    score += 3
+                if "fixed expenses" in blob:
+                    score += 2
+                if "per acre" in blob or "/acre" in blob:
+                    score += 4
+                if "dollars per farm" in blob:
+                    # Convert per-farm estimate into a conservative per-acre proxy.
+                    value = float(value) / max(divisor, 1.0)
+                if best is None or score > best[0]:
+                    best = (score, float(value))
+            if best and best[1] > 0:
+                out[crop] = round(best[1], 2)
     return out
 
 

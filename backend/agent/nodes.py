@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List
+from openai import OpenAI
 
-from agent_tools.ams import fetch_price_series
+from agent_tools.ams import discover_mars_params, fetch_price_series
 from agent_tools.compute import compute_forecasts
 from agent_tools.costs import fetch_cost_per_acre
-from agent_tools.nass import fetch_ohio_crop_stats
+from agent_tools.nass import discover_nass_params, fetch_ohio_crop_stats
 from agent_tools.noaa import fetch_weather_features
 from agent_tools.soil import fetch_soil_features
 
@@ -65,6 +67,29 @@ def _extract_json_object(text: str) -> Dict[str, Any]:
     return {}
 
 
+def _openai_generate_json(api_key: str, model: str, prompt: str, purpose: str) -> Dict[str, Any]:
+    chosen = (model or "").strip()
+    if not chosen:
+        return {}
+    try:
+        print(f"[agent][api-call] provider=openai model={chosen} purpose={purpose}", flush=True)
+        client = OpenAI(api_key=api_key, max_retries=int(os.environ.get("OPENAI_MAX_RETRIES", "2")))
+        response = client.chat.completions.create(
+            model=chosen,
+            temperature=0.1,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": "Return strict JSON only."},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        text = response.choices[0].message.content or "{}"
+        return _extract_json_object(text)
+    except Exception as exc:
+        print(f"[agent][tool] openai source=error purpose={purpose} model={chosen} error={exc}", flush=True)
+        return {}
+
+
 def _build_market_stats(price_df) -> Dict[str, Any]:
     if price_df is None or price_df.empty:
         return {"crops": [], "series_points": 0}
@@ -83,6 +108,79 @@ def _build_market_stats(price_df) -> Dict[str, Any]:
             }
         )
     return {"crops": rows, "series_points": int(len(price_df))}
+
+
+def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, Any]:
+    if not isinstance(plan, dict):
+        return {}
+    out: Dict[str, Any] = {}
+    by_lower = {c.lower(): c for c in crops}
+    for k, v in plan.items():
+        key = str(k).strip()
+        if not key:
+            continue
+        canonical = by_lower.get(key.lower(), key)
+        out[canonical] = v
+    return out
+
+
+def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        print("[agent][tool] param-planner source=skipped reason=missing_openai_api_key", flush=True)
+        return {"nass": {}, "ams": {}}
+
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
+    ams_endpoint_hint = os.environ.get(
+        "AMS_MARS_REPORTS_ENDPOINT",
+        "https://marsapi.ams.usda.gov/services/v1.1/reports",
+    ).strip()
+    system_msg = (
+        "You are an API query planner. Return strict JSON only. "
+        "Given user crop names, propose candidate query parameters for USDA NASS and AMS MARS APIs. "
+        "Output schema: "
+        "{\"nass\":{\"<crop>\":{\"queries\":["
+        "{\"state_name\":\"...\",\"agg_level_desc\":\"...\",\"sector_desc\":\"...\","
+        "\"group_desc\":\"...\",\"commodity_desc\":\"...\",\"statisticcat_desc\":\"YIELD\"},"
+        "{\"state_name\":\"...\",\"agg_level_desc\":\"...\",\"sector_desc\":\"...\","
+        "\"group_desc\":\"...\",\"commodity_desc\":\"...\",\"statisticcat_desc\":\"PRODUCTION\"},"
+        "{\"state_name\":\"...\",\"agg_level_desc\":\"...\",\"sector_desc\":\"...\","
+        "\"group_desc\":\"...\",\"commodity_desc\":\"...\",\"statisticcat_desc\":\"AREA HARVESTED\"}"
+        "]}},"
+        "\"ams\":{\"<crop>\":{\"queries\":[{\"endpoint\":\"...\",\"q\":\"...\",\"params\":{\"key\":\"value\"}}]}}}. "
+        "Prefer actual commodity strings used by API responses. Return at least one query per crop if possible. "
+        "Do not assume a fixed state unless user context implies it; include national candidates too. "
+        "Use fully-qualified https endpoints for AMS. "
+        "For AMS params, choose the API style supported by endpoint; prefer explicit params object over q-style. "
+        "For example use endpoint "
+        + ams_endpoint_hint
+        + " with params like "
+        "{\"commodity\":\"Tomato\",\"state\":\"Illinois\",\"reportDate\":\"2024-01-01\"}. "
+        "Use only endpoint+params that are likely to return rows for the crop; avoid generic empty probes. "
+        "Use empty strings when unknown. No markdown."
+    )
+    payload = {
+        "crops": selected_crops,
+        "farm_profile": {
+            "location": farm_profile.get("location"),
+            "state": farm_profile.get("state"),
+            "region": farm_profile.get("region"),
+        },
+        "nass_context": {"years": 3},
+        "ams_context": {"years": 3},
+    }
+
+    parsed = _openai_generate_json(
+        api_key,
+        model,
+        f"{system_msg}\n\nInput:\n{json.dumps(payload)}",
+        purpose="param_planner",
+    )
+    nass = _normalize_plan_keys(parsed.get("nass", {}), selected_crops)
+    ams = _normalize_plan_keys(parsed.get("ams", {}), selected_crops)
+    if not nass and not ams:
+        print("[agent][tool] param-planner source=empty", flush=True)
+    return {"nass": nass, "ams": ams}
 
 
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
@@ -125,6 +223,7 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
         return {}
 
     farm = dict(state.get("farm_profile") or {})
+    api_plan = dict(state.get("api_plan") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     location = dict(farm.get("location") or {})
     lat = float(location.get("lat", 39.8283))
@@ -133,14 +232,32 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
 
     try:
         print(f"[agent][run] force_live_api_calls={force_live_calls}", flush=True)
-        nass_df = fetch_ohio_crop_stats(selected_crops, last_n_years=3, force_refresh=force_live_calls)
+        max_workers = max(2, int(os.environ.get("AGENT_PROVIDER_MAX_WORKERS", "2")))
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            future_nass = ex.submit(
+                fetch_ohio_crop_stats,
+                selected_crops,
+                3,
+                force_live_calls,
+                api_plan.get("nass", {}),
+            )
+            future_prices = ex.submit(
+                fetch_price_series,
+                selected_crops,
+                3,
+                force_live_calls,
+                api_plan.get("ams", {}),
+                api_plan.get("ams_seed", {}),
+            )
+            nass_df = future_nass.result()
+            price_df = future_prices.result()
+
         weather = fetch_weather_features(
             lat, lng, last_n_years=3, max_stations=3, force_refresh=force_live_calls
         )
         soil = fetch_soil_features(
             lat, lng, soil_type=str(farm.get("soil_type", "")), force_refresh=force_live_calls
         )
-        price_df = fetch_price_series(selected_crops, last_n_years=3, force_refresh=force_live_calls)
         costs = fetch_cost_per_acre(selected_crops, force_refresh=force_live_calls)
         crop_results = compute_forecasts(
             farm_profile=farm,
@@ -163,11 +280,60 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
             "nass_rows": int(len(nass_df)) if nass_df is not None else 0,
             "price_rows": int(len(price_df)) if price_df is not None else 0,
             "costs": costs,
+            "api_plan": api_plan,
         }
         return {"crop_results": crop_results, "datasets_summary": datasets_summary}
     except Exception as exc:
         errors.append(f"fetch_and_compute failed: {exc}")
         return {"errors": errors}
+
+
+def plan_sources(state: AgentState) -> Dict[str, Any]:
+    errors = list(state.get("errors") or [])
+    if errors:
+        return {}
+
+    farm = dict(state.get("farm_profile") or {})
+    selected_crops = _ensure_list(farm.get("selected_crops"))
+    llm_seed_plan = _llm_plan_params(selected_crops, farm)
+    for crop in selected_crops:
+        ams_seed = (llm_seed_plan.get("ams", {}) or {}).get(crop, {})
+        if isinstance(ams_seed, dict):
+            queries = ams_seed.get("queries")
+            if isinstance(queries, list) and queries:
+                q0 = queries[0] if isinstance(queries[0], dict) else {}
+                print(
+                    f"[agent][tool] ams-seed crop={crop} queries={len(queries)} "
+                    f"endpoint={str(q0.get('endpoint',''))[:120]} "
+                    f"params_keys={list((q0.get('params') or {}).keys()) if isinstance(q0.get('params'), dict) else []}",
+                    flush=True,
+                )
+            else:
+                print(f"[agent][tool] ams-seed crop={crop} queries=0", flush=True)
+    api_plan: Dict[str, Any] = {"nass": {}, "ams": {}, "ams_seed": llm_seed_plan.get("ams", {})}
+    try:
+        api_plan["nass"] = discover_nass_params(
+            selected_crops,
+            last_n_years=3,
+            # Keep discovery cache on even in live mode for faster repeated runs.
+            force_refresh=False,
+            seed_plan=llm_seed_plan.get("nass", {}),
+        )
+    except Exception as exc:
+        print(f"[agent][tool] nass-discovery source=error error={exc}", flush=True)
+
+    try:
+        api_plan["ams"] = discover_mars_params(
+            selected_crops,
+            last_n_years=3,
+            # Keep discovery cache on even in live mode for faster repeated runs.
+            force_refresh=False,
+            seed_plan=llm_seed_plan.get("ams", {}),
+        )
+    except Exception as exc:
+        print(f"[agent][tool] ams-discovery source=error error={exc}", flush=True)
+
+    return {"api_plan": api_plan}
 
 
 def llm_enrich(state: AgentState) -> Dict[str, Any]:
@@ -184,16 +350,16 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
             "market_outlook": _default_market_outlook(market_stats),
         }
 
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
-        errors.append("GEMINI_API_KEY not set; using deterministic summaries")
+        errors.append("OPENAI_API_KEY not set; using deterministic summaries")
         return {
             "errors": errors,
             "weather_summary": _default_weather_summary(weather_stats),
             "market_outlook": _default_market_outlook(market_stats),
         }
 
-    model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     farm = dict(state.get("farm_profile") or {})
     top6 = crop_results[:6]
 
@@ -234,32 +400,14 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
         "Do not include markdown, code fences, or extra keys."
     )
 
-    try:
-        import google.generativeai as genai
-    except ImportError:
-        errors.append("google-generativeai not installed; using deterministic summaries")
-        return {
-            "errors": errors,
-            "weather_summary": _default_weather_summary(weather_stats),
-            "market_outlook": _default_market_outlook(market_stats),
-        }
-
-    genai.configure(api_key=api_key)
-    client = genai.GenerativeModel(model_name=model)
-    try:
-        print(f"[agent][api-call] provider=gemini model={model}", flush=True)
-        prompt = f"{system_msg}\n\nInput JSON:\n{json.dumps(prompt_payload)}"
-        response = client.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.2,
-                "response_mime_type": "application/json",
-            },
-        )
-        text = getattr(response, "text", "") or "{}"
-        parsed = _extract_json_object(text)
-    except Exception as exc:
-        errors.append(f"llm_enrich failed: {exc}")
+    parsed = _openai_generate_json(
+        api_key,
+        model,
+        f"{system_msg}\n\nInput JSON:\n{json.dumps(prompt_payload)}",
+        purpose="enrich",
+    )
+    if not parsed:
+        errors.append("llm_enrich failed: openai returned empty/invalid json")
         return {
             "errors": errors,
             "weather_summary": _default_weather_summary(weather_stats),
