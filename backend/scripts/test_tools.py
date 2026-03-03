@@ -46,6 +46,7 @@ def main() -> None:
         [{"year": y, "crop": c, "avg_price": 3.5} for c in crops for y in years]
     )
     costs = fetch_cost_per_acre(crops)
+    
     results = compute_forecasts(farm_profile, nass_df, price_df, costs, weather)
 
     print("Weather summary:")
