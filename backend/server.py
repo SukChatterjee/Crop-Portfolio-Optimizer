@@ -197,6 +197,10 @@ class CropResult(BaseModel):
     risk_score: float
     risk_level: str
     soil_explanation: str
+    cost_per_acre: float = 0.0
+    forecast_source: str = "deterministic_fallback"
+    forecast_confidence: float = 0.0
+    cost_source: str = "api_or_default"
 
 class AnalysisResponse(BaseModel):
     id: str

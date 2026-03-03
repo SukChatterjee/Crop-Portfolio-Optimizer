@@ -4,11 +4,36 @@ from typing import Dict, List, Optional, Tuple
 
 import json
 import os
+import re
 
 import pandas as pd
 
 
 HIGH_WATER_CROPS = {"rice", "cotton", "tomatoes", "lettuce"}
+DEFAULT_PRICE_BY_CROP = {
+    "corn": 3.5,
+    "wheat": 3.5,
+    "soybeans": 10.0,
+    "rice": 12.0,
+    "cotton": 0.8,
+    "tomatoes": 3.5,
+    "potatoes": 8.0,
+    "onions": 8.0,
+    "apples": 25.0,
+    "lettuce": 18.0,
+}
+DEFAULT_YIELD_BY_CROP = {
+    "corn": 150.0,
+    "wheat": 55.0,
+    "soybeans": 50.0,
+    "rice": 7000.0,
+    "cotton": 950.0,
+    "tomatoes": 900.0,
+    "potatoes": 450.0,
+    "onions": 550.0,
+    "apples": 16000.0,
+    "lettuce": 300.0,
+}
 
 
 def _safe_series_stats(series: pd.Series, default: float) -> Dict[str, float]:
@@ -51,6 +76,17 @@ def _coerce_float(value: object, default: float) -> float:
     try:
         return float(value)
     except (TypeError, ValueError):
+        pass
+    text = str(value or "").strip().replace(",", "")
+    if not text:
+        return default
+    # Keep first numeric token from strings like "$3.5/bu", "about 50", "3.5 USD".
+    m = re.search(r"-?\d+(?:\.\d+)?", text)
+    if not m:
+        return default
+    try:
+        return float(m.group(0))
+    except (TypeError, ValueError):
         return default
 
 
@@ -59,6 +95,10 @@ def _coerce_int(value: object, default: int) -> int:
         return int(float(value))
     except (TypeError, ValueError):
         return default
+
+
+def _canonical_crop_key(value: object) -> str:
+    return str(value or "").strip().lower()
 
 
 def _build_llm_payload(
@@ -107,26 +147,64 @@ def _build_llm_payload(
     return payload
 
 
-def _llm_forecast(
+def _price_baseline_by_crop(selected_crops: List[str], price_df: pd.DataFrame) -> Dict[str, Optional[float]]:
+    out: Dict[str, float] = {}
+    for crop in selected_crops:
+        key = _canonical_crop_key(crop)
+        fallback = float(DEFAULT_PRICE_BY_CROP.get(key, 3.5))
+        if price_df is None or price_df.empty:
+            out[key] = fallback
+            continue
+        mask = price_df["crop"].str.lower() == key
+        series = pd.to_numeric(price_df.loc[mask, "avg_price"], errors="coerce").dropna()
+        if series.empty:
+            out[key] = fallback
+        else:
+            out[key] = max(0.05, float(series.iloc[-1]))
+    return out
+
+
+def _yield_baseline_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) -> Dict[str, Optional[float]]:
+    out: Dict[str, Optional[float]] = {}
+    for crop in selected_crops:
+        key = _canonical_crop_key(crop)
+        fallback = float(DEFAULT_YIELD_BY_CROP.get(key, 120.0))
+        if nass_df is None or nass_df.empty:
+            out[key] = fallback
+            continue
+        mask = nass_df["crop"].str.lower() == key
+        series = pd.to_numeric(nass_df.loc[mask, "yield"], errors="coerce").dropna()
+        if series.empty:
+            out[key] = fallback
+        else:
+            out[key] = max(0.01, float(series.iloc[-1]))
+    return out
+
+
+def _llm_predict_current_year(
     farm_profile: Dict,
     nass_df: pd.DataFrame,
     price_df: pd.DataFrame,
     costs_per_acre: Dict[str, float],
     weather: Dict,
-) -> Tuple[Optional[List[Dict]], Optional[str]]:
-    if os.environ.get("USE_LLM_FORECAST", "0") != "1":
+) -> Tuple[Optional[Dict[str, Dict[str, float]]], Optional[str]]:
+    # Enabled by default. Set USE_LLM_FORECAST=0 to disable.
+    if os.environ.get("USE_LLM_FORECAST", "1") != "1":
+        print("[agent][tool] llm-forecast source=skipped reason=USE_LLM_FORECAST_disabled", flush=True)
         return None, "USE_LLM_FORECAST disabled"
 
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
+        print("[agent][tool] llm-forecast source=skipped reason=missing_openai_api_key", flush=True)
         return None, "OPENAI_API_KEY not set"
 
     try:
         from openai import OpenAI
     except ImportError:
+        print("[agent][tool] llm-forecast source=skipped reason=openai_import_failed", flush=True)
         return None, "openai not installed"
 
-    model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     client = OpenAI(api_key=api_key)
 
     prompt_payload = _build_llm_payload(
@@ -136,63 +214,150 @@ def _llm_forecast(
         costs_per_acre=costs_per_acre,
         weather=weather,
     )
+    selected_crops = [str(c).strip() for c in (farm_profile.get("selected_crops") or []) if str(c).strip()]
+    price_baseline = _price_baseline_by_crop(selected_crops, price_df)
+    yield_baseline = _yield_baseline_by_crop(selected_crops, nass_df)
 
     system_msg = (
-        "You are an agricultural forecasting analyst. Use only the provided 3-year data to forecast. "
-        "Return strict JSON only as a list of crop result objects with this exact schema: "
-        "[{\"crop_name\":\"...\",\"yield_forecast\":0.0,\"price_forecast\":0.0,"
-        "\"expected_profit\":0.0,\"profit_p10\":0.0,\"profit_p50\":0.0,\"profit_p90\":0.0,"
-        "\"soil_compatibility\":0.0,\"risk_score\":0.0,\"risk_level\":\"Low|Medium|High\","
-        "\"soil_explanation\":\"Human-readable formula used for this crop.\"}]. "
-        "The soil_explanation must describe the formula in words and math, and mention the input series used. "
-        "Do not include markdown, code fences, or extra keys."
+        "You are ONE autonomous analysis agent.\n"
+        "Task inside a single pass: preprocess API data -> infer features -> forecast this-year inputs -> validate trustability.\n"
+        "Return strict JSON only with this schema:\n"
+        "{"
+        "\"agent_summary\":{\"status\":\"ok|partial|no_data\",\"notes\":\"...\"},"
+        "\"predictions\":["
+        "{"
+        "\"crop_name\":\"...\","
+        "\"cleaned_features\":{\"price_last\":0.0,\"price_trend\":0.0,\"yield_last\":0.0,\"yield_trend\":0.0,\"cost_api\":0.0},"
+        "\"prediction\":{\"yield_forecast\":0.0,\"price_forecast\":0.0,\"cost_adjustment_factor\":1.0,\"cost_per_acre\":0.0},"
+        "\"quality_checks\":{\"unit_consistency\":true,\"range_sanity\":true,\"data_sufficiency\":true,\"approved\":true,\"issues\":[]},"
+        "\"confidence\":0.0,"
+        "\"reasoning\":\"short reason\""
+        "}"
+        "]"
+        "}.\n"
+        "Rules:\n"
+        "- Use ONLY the provided API-derived input.\n"
+        "- cost_adjustment_factor must be in [0.7, 1.4].\n"
+        "- If prediction is not trustworthy, set approved=false and explain in issues.\n"
+        "- Do not compute profit/p10/p50/p90/risk.\n"
+        "- No markdown/code fences/extra keys."
     )
 
     try:
+        print(f"[agent][api-call] provider=openai model={model} purpose=forecast_current_year", flush=True)
         prompt = f"{system_msg}\n\nInput JSON:\n{json.dumps(prompt_payload)}"
-        response = client.responses.create(
+        response = client.chat.completions.create(
             model=model,
-            input=prompt,
-            temperature=0.2,
+            temperature=0.1,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": "Return strict JSON only."},
+                {"role": "user", "content": prompt},
+            ],
         )
-        text = getattr(response, "output_text", "") or ""
+        text = response.choices[0].message.content or ""
         parsed = _parse_json_payload(text)
     except Exception as exc:
+        print(f"[agent][tool] llm-forecast source=error error={exc}", flush=True)
         return None, f"LLM call failed: {exc}"
 
-    if isinstance(parsed, dict) and isinstance(parsed.get("crop_results"), list):
-        parsed = parsed["crop_results"]
-    if not isinstance(parsed, list):
-        return None, "LLM response not a list"
+    predictions_raw = parsed.get("predictions") if isinstance(parsed, dict) else None
+    if not isinstance(predictions_raw, list):
+        preview = text[:600].replace("\n", " ")
+        print(
+            f"[agent][tool] llm-forecast source=empty reason=missing_predictions_list raw_preview={preview}",
+            flush=True,
+        )
+        return None, "LLM response missing predictions list"
 
-    results: List[Dict] = []
-    for item in parsed:
+    out: Dict[str, Dict[str, float]] = {}
+    dropped_rows = 0
+    for item in predictions_raw:
         if not isinstance(item, dict):
+            dropped_rows += 1
             continue
         crop_name = str(item.get("crop_name") or "").strip()
         if not crop_name:
+            dropped_rows += 1
             continue
-        results.append(
-            {
-                "crop_name": crop_name,
-                "yield_forecast": round(_coerce_float(item.get("yield_forecast"), 0.0), 2),
-                "price_forecast": round(_coerce_float(item.get("price_forecast"), 0.0), 4),
-                "expected_profit": round(_coerce_float(item.get("expected_profit"), 0.0), 2),
-                "profit_p10": round(_coerce_float(item.get("profit_p10"), 0.0), 2),
-                "profit_p50": round(_coerce_float(item.get("profit_p50"), 0.0), 2),
-                "profit_p90": round(_coerce_float(item.get("profit_p90"), 0.0), 2),
-                "soil_compatibility": round(_coerce_float(item.get("soil_compatibility"), 0.0), 1),
-                "risk_score": round(_coerce_float(item.get("risk_score"), 0.0), 1),
-                "risk_level": str(item.get("risk_level") or "Medium"),
-                "soil_explanation": str(item.get("soil_explanation") or ""),
-            }
-        )
+        pred = item.get("prediction") if isinstance(item.get("prediction"), dict) else item
+        quality = item.get("quality_checks") if isinstance(item.get("quality_checks"), dict) else {}
+        yhat = _coerce_float(pred.get("yield_forecast"), 0.0)
+        phat = _coerce_float(pred.get("price_forecast"), 0.0)
+        chat = _coerce_float(pred.get("cost_per_acre"), 0.0)
+        crop_key = _canonical_crop_key(crop_name)
+        yield_imputed = False
+        price_imputed = False
+        if yhat <= 0.0:
+            yhat = float(yield_baseline.get(crop_key, DEFAULT_YIELD_BY_CROP.get(crop_key, 120.0)))
+            yield_imputed = True
+            print(
+                f"[agent][tool] llm-forecast crop={crop_name} yield_imputed_from_baseline={yhat:.4f}",
+                flush=True,
+            )
+        if phat <= 0.0:
+            baseline = price_baseline.get(crop_key)
+            phat = float(baseline if baseline and baseline > 0.0 else DEFAULT_PRICE_BY_CROP.get(crop_key, 3.5))
+            price_imputed = True
+            print(
+                f"[agent][tool] llm-forecast crop={crop_name} price_imputed_from_baseline={phat:.4f}",
+                flush=True,
+            )
+        if not crop_key:
+            dropped_rows += 1
+            print(
+                f"[agent][tool] llm-forecast row-dropped crop={crop_name or 'unknown'} reason=invalid_crop_key raw_pred={pred}",
+                flush=True,
+            )
+            continue
+        issues = quality.get("issues") if isinstance(quality.get("issues"), list) else []
+        approved = bool(quality.get("approved", True))
+        only_missing_price_issue = all(
+            isinstance(x, str) and "no price data available" in x.lower() for x in issues
+        ) if issues else False
+        soft_approved = (not approved) and price_imputed and only_missing_price_issue
 
-    if not results:
-        print(f"empty results using fallback")
+        row_obj = {
+            "yield_forecast": float(yhat),
+            "price_forecast": float(phat),
+            "cost_per_acre": float(chat) if chat > 0.0 else 0.0,
+            "cost_adjustment_factor": float(_coerce_float(pred.get("cost_adjustment_factor"), 1.0)),
+            "confidence": max(0.0, min(1.0, _coerce_float(item.get("confidence"), 0.6))),
+            "reasoning": str(item.get("reasoning") or "").strip(),
+            "approved": approved,
+            "soft_approved": soft_approved,
+            "price_imputed": price_imputed,
+            "yield_imputed": yield_imputed,
+            "issues": issues,
+        }
+        if crop_key in out:
+            prev_conf = float(out[crop_key].get("confidence", 0.0))
+            if row_obj["confidence"] <= prev_conf:
+                dropped_rows += 1
+                print(
+                    f"[agent][tool] llm-forecast row-dropped crop={crop_key} reason=duplicate_lower_confidence prev={prev_conf:.2f} new={row_obj['confidence']:.2f}",
+                    flush=True,
+                )
+                continue
+        out[crop_key] = row_obj
+
+    if not out:
+        preview = text[:600].replace("\n", " ")
+        print(
+            f"[agent][tool] llm-forecast source=empty reason=no_valid_prediction_rows dropped_rows={dropped_rows} raw_preview={preview}",
+            flush=True,
+        )
         return None, "LLM returned empty results"
-    results.sort(key=lambda r: r.get("expected_profit", 0.0), reverse=True)
-    return results, None
+    print(
+        f"[agent][tool] llm-forecast source=ok crops={list(out.keys())} dropped_rows={dropped_rows}",
+        flush=True,
+    )
+    for crop_key, pred in out.items():
+        print(
+            f"[agent][tool] llm-forecast crop={crop_key} approved={pred['approved']} soft_approved={pred.get('soft_approved', False)} price_imputed={pred.get('price_imputed', False)} yield_imputed={pred.get('yield_imputed', False)} yield={pred['yield_forecast']:.4f} price={pred['price_forecast']:.4f} cost={pred['cost_per_acre']:.4f} factor={pred['cost_adjustment_factor']:.3f} confidence={pred['confidence']:.2f} issues={pred['issues']}",
+            flush=True,
+        )
+    return out, None
 
 
 def _soil_compatibility(soil_type: str, crop: str) -> float:
@@ -226,6 +391,34 @@ def _soil_explanation(soil_type: str, crop: str, score: float) -> str:
     )
 
 
+def _prediction_is_plausible(
+    pred_yield: float,
+    pred_price: float,
+    pred_factor: float,
+    yield_stats: Dict[str, float],
+    price_stats: Dict[str, float],
+) -> Tuple[bool, List[str]]:
+    issues: List[str] = []
+
+    # Absolute bounds.
+    if pred_yield <= 0 or pred_yield > 50000:
+        issues.append("yield_out_of_abs_range")
+    if pred_price < 0.05 or pred_price > 100:
+        issues.append("price_out_of_abs_range")
+    if pred_factor < 0.7 or pred_factor > 1.4:
+        issues.append("cost_factor_out_of_range")
+
+    # Relative-to-history bounds.
+    y_last = max(1.0, float(yield_stats.get("last", 1.0)))
+    p_mean = max(0.05, float(price_stats.get("mean", 0.05)))
+    if pred_yield < 0.4 * y_last or pred_yield > 2.5 * y_last:
+        issues.append("yield_out_of_hist_range")
+    if pred_price < 0.4 * p_mean or pred_price > 2.5 * p_mean:
+        issues.append("price_out_of_hist_range")
+
+    return (len(issues) == 0), issues
+
+
 def compute_forecasts(
     farm_profile: Dict,
     nass_df: pd.DataFrame,
@@ -233,15 +426,15 @@ def compute_forecasts(
     costs_per_acre: Dict[str, float],
     weather: Dict,
 ) -> List[Dict]:
-    llm_results, _ = _llm_forecast(
+    llm_predictions, llm_err = _llm_predict_current_year(
         farm_profile=farm_profile,
         nass_df=nass_df,
         price_df=price_df,
         costs_per_acre=costs_per_acre,
         weather=weather,
     )
-    if llm_results:
-        return llm_results
+    if llm_err:
+        print(f"[agent][tool] llm-forecast source=fallback reason={llm_err}", flush=True)
 
     selected_crops = farm_profile.get("selected_crops") or []
     acres = float(farm_profile.get("acres", 0.0))
@@ -274,10 +467,48 @@ def compute_forecasts(
             irrigation_mult = 1.10 if has_irrigation else 0.90
 
         weather_yield_adj = max(0.82, min(1.08, 1.0 - 0.18 * weather_risk + 0.03 * (1 - precip_cv)))
-        yield_forecast = yield_stats["last"] * (1.0 + 0.25 * yield_trend) * (0.85 + 0.30 * soil_comp) * irrigation_mult * weather_yield_adj
-        price_forecast = max(0.05, price_stats["last"] * (1.0 + 0.20 * price_trend))
+        # Fallback baseline must be last-year observed values (no synthetic drift).
+        last_year_yield_forecast = max(0.01, float(yield_stats["last"]))
+        last_year_price_forecast = max(0.05, float(price_stats["last"]))
 
-        cost_per_acre = float(costs_per_acre.get(crop, costs_per_acre.get(crop.lower(), 700.0)))
+        llm_item = (llm_predictions or {}).get(_canonical_crop_key(crop), {})
+        llm_gate_pass = isinstance(llm_item, dict) and bool(llm_item)
+        if (
+            isinstance(llm_item, dict)
+            and llm_item.get("yield_forecast")
+            and llm_item.get("price_forecast")
+            and llm_gate_pass
+        ):
+            yield_forecast = float(llm_item["yield_forecast"])
+            price_forecast = max(0.05, float(llm_item["price_forecast"]))
+            forecast_source = "llm_api_based"
+            forecast_confidence = float(llm_item.get("confidence") or 0.0)
+        else:
+            # If LLM is unavailable/unapproved, use last observed year, not trend projection.
+            yield_forecast = float(last_year_yield_forecast)
+            price_forecast = float(last_year_price_forecast)
+            forecast_source = "fallback_last_year_observed"
+            forecast_confidence = 0.0
+        print(
+            f"[agent][tool] compute crop={str(crop).lower()} forecast_source={forecast_source} yield={yield_forecast:.4f} price={price_forecast:.4f}",
+            flush=True,
+        )
+
+        api_cost = float(costs_per_acre.get(crop, costs_per_acre.get(crop.lower(), 700.0)))
+        llm_cost = float(llm_item.get("cost_per_acre") or 0.0) if isinstance(llm_item, dict) else 0.0
+        llm_factor = float(llm_item.get("cost_adjustment_factor") or 1.0) if isinstance(llm_item, dict) else 1.0
+        # Guardrail: always derive final cost from API baseline via bounded LLM factor.
+        llm_factor = max(0.7, min(1.4, llm_factor))
+        if forecast_source == "llm_api_based":
+            cost_per_acre = api_cost * llm_factor
+            cost_source = "llm_api_based_factor_bounded"
+        else:
+            cost_per_acre = api_cost
+            cost_source = "api_or_default"
+        print(
+            f"[agent][tool] compute-cost crop={str(crop).lower()} cost_source={cost_source} api_cost={api_cost:.4f} llm_abs_cost={llm_cost:.4f} factor={llm_factor:.3f} cost_per_acre={cost_per_acre:.4f}",
+            flush=True,
+        )
         expected_profit = acres * (yield_forecast * price_forecast - cost_per_acre)
 
         uncertainty = max(0.10, min(0.40, 0.14 + 0.35 * weather_risk + 0.25 * abs(price_trend) + 0.15 * precip_cv))
@@ -307,6 +538,10 @@ def compute_forecasts(
                 "risk_score": round(float(risk_score), 1),
                 "risk_level": risk_level,
                 "soil_explanation": _soil_explanation(soil_type, crop, soil_comp),
+                "forecast_source": forecast_source,
+                "forecast_confidence": round(float(forecast_confidence), 2),
+                "cost_per_acre": round(float(cost_per_acre), 2),
+                "cost_source": cost_source,
             }
         )
 

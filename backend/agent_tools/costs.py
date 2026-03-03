@@ -39,6 +39,19 @@ DEFAULT_COSTS = {
 }
 
 
+def _is_plausible_cost(crop: str, value: float) -> bool:
+    if not pd.notna(value):
+        return False
+    v = float(value)
+    # Generic per-acre sanity bounds.
+    if v < 50 or v > 20000:
+        return False
+    base = float(DEFAULT_COSTS.get(str(crop).lower(), 1200.0))
+    lower = max(50.0, 0.35 * base)
+    upper = min(20000.0, 5.0 * base)
+    return lower <= v <= upper
+
+
 def _seeded_float(seed: str, low: float, high: float) -> float:
     h = int(hashlib.sha256(seed.encode("utf-8")).hexdigest()[:12], 16)
     ratio = (h % 10_000) / 10_000
@@ -183,7 +196,8 @@ def _extract_cost_rows(payload: Dict, crops: List[str]) -> Dict[str, float]:
             c = crop.lower()
             n = crop_name.lower()
             if c in n or n in c:
-                out[crop] = float(value)
+                if _is_plausible_cost(crop, float(value)):
+                    out[crop] = float(value)
                 break
 
     # ERS ARMS survey schema fallback:
@@ -226,7 +240,7 @@ def _extract_cost_rows(payload: Dict, crops: List[str]) -> Dict[str, float]:
                     value = float(value) / max(divisor, 1.0)
                 if best is None or score > best[0]:
                     best = (score, float(value))
-            if best and best[1] > 0:
+            if best and best[1] > 0 and _is_plausible_cost(crop, best[1]):
                 out[crop] = round(best[1], 2)
     return out
 
@@ -343,7 +357,9 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
             for crop in crops:
                 vals = by_crop_series.get(crop, [])
                 if vals:
-                    costs[crop] = round(float(sum(vals) / len(vals)), 2)
+                    avg = round(float(sum(vals) / len(vals)), 2)
+                    if _is_plausible_cost(crop, avg):
+                        costs[crop] = avg
 
             if costs:
                 print(f"[agent][tool] costs source=api years={years} year_hits={year_hits}", flush=True)
@@ -362,6 +378,9 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
                 costs[crop] = known
             else:
                 costs[crop] = round(_seeded_float(f"cost:{crop}", 550.0, 2200.0), 2)
+        elif not _is_plausible_cost(crop, costs[crop]):
+            known = DEFAULT_COSTS.get(crop.lower())
+            costs[crop] = known if known is not None else round(_seeded_float(f"cost:{crop}", 550.0, 2200.0), 2)
 
     save_parquet(
         parquet_path,

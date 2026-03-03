@@ -127,29 +127,133 @@ def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, An
 
 
 def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, Any]) -> pd.DataFrame:
+    target_by_crop = {
+        "corn": "usd_per_bu",
+        "wheat": "usd_per_bu",
+        "soybeans": "usd_per_bu",
+        "rice": "usd_per_cwt",
+        "cotton": "usd_per_lb",
+        "tomatoes": "usd_per_cwt",
+        "potatoes": "usd_per_cwt",
+        "onions": "usd_per_cwt",
+        "lettuce": "usd_per_cwt",
+        "apples": "usd_per_cwt",
+    }
+
+    def _unit_key(unit: str) -> str:
+        u = str(unit or "").strip().lower()
+        if not u:
+            return "missing"
+        if any(tok in u for tok in ["index", "%", "percent", "rating", "score"]):
+            return "non_price"
+        is_cents = any(tok in u for tok in ["cent", "cents", "¢"])
+        if "bu" in u or "bushel" in u:
+            return "cents_per_bu" if is_cents else "usd_per_bu"
+        if "cwt" in u:
+            return "cents_per_cwt" if is_cents else "usd_per_cwt"
+        # Keep /lb before generic 'lb' token.
+        if "/lb" in u or " per lb" in u or " pound" in u or "lb" in u:
+            return "cents_per_lb" if is_cents else "usd_per_lb"
+        if "ton" in u:
+            return "cents_per_ton" if is_cents else "usd_per_ton"
+        if "box" in u:
+            return "cents_per_box" if is_cents else "usd_per_box"
+        if any(tok in u for tok in ["$", "usd", "dollar"]):
+            return "usd_unknown_basis"
+        return "unknown"
+
+    def _convert_to_target(raw_price: float, from_key: str, target_key: str) -> Any:
+        p = float(raw_price)
+        factors = {
+            ("usd_per_bu", "usd_per_bu"): 1.0,
+            ("cents_per_bu", "usd_per_bu"): 0.01,
+            ("usd_per_lb", "usd_per_lb"): 1.0,
+            ("cents_per_lb", "usd_per_lb"): 0.01,
+            ("usd_per_cwt", "usd_per_cwt"): 1.0,
+            ("cents_per_cwt", "usd_per_cwt"): 0.01,
+            ("usd_per_ton", "usd_per_ton"): 1.0,
+            ("cents_per_ton", "usd_per_ton"): 0.01,
+            ("usd_per_box", "usd_per_box"): 1.0,
+            ("cents_per_box", "usd_per_box"): 0.01,
+            # Cross-basis conversions where physically valid.
+            ("usd_per_cwt", "usd_per_lb"): 0.01,
+            ("cents_per_cwt", "usd_per_lb"): 0.0001,
+            ("usd_per_lb", "usd_per_cwt"): 100.0,
+            ("cents_per_lb", "usd_per_cwt"): 1.0,
+        }
+        factor = factors.get((from_key, target_key))
+        if factor is None:
+            return None
+        return p * factor
+
     rows = []
     for crop in selected_crops:
         payload = ams_prices.get(crop) if isinstance(ams_prices, dict) else None
         series = payload.get("series") if isinstance(payload, dict) else None
+        target_key = target_by_crop.get(str(crop).strip().lower())
         if not isinstance(series, list):
             continue
         grouped: Dict[int, List[float]] = {}
+        unit_counts: Dict[str, int] = {}
+        kept_rows = 0
+        dropped_rows = 0
         for row in series:
             if not isinstance(row, dict):
                 continue
+            row_unit = str(row.get("unit") or "").strip().lower()
             date_s = str(row.get("date", "")).strip()
             if len(date_s) < 4 or not date_s[:4].isdigit():
+                dropped_rows += 1
                 continue
             year = int(date_s[:4])
             try:
                 price = float(row.get("price_avg"))
             except (TypeError, ValueError):
+                dropped_rows += 1
+                continue
+            src_key = _unit_key(row_unit)
+            unit_counts[src_key] = int(unit_counts.get(src_key, 0)) + 1
+            if src_key in {"non_price", "unknown", "missing", "usd_unknown_basis"}:
+                dropped_rows += 1
+                continue
+            effective_target = target_key or src_key.replace("cents_", "usd_")
+            normalized = _convert_to_target(price, src_key, effective_target)
+            if normalized is None:
+                dropped_rows += 1
+                continue
+            price = float(normalized)
+            # Generic sanity range for price inputs used by forecast model.
+            if price < 0.05 or price > 100.0:
+                dropped_rows += 1
                 continue
             grouped.setdefault(year, []).append(price)
+            kept_rows += 1
         for year, prices in grouped.items():
             if not prices:
                 continue
-            rows.append({"year": int(year), "crop": crop, "avg_price": round(sum(prices) / len(prices), 4)})
+            s = pd.Series(prices, dtype=float)
+            if len(s) >= 4:
+                q1, q3 = s.quantile(0.25), s.quantile(0.75)
+                iqr = float(q3 - q1)
+                lo = float(q1 - 3.0 * iqr)
+                hi = float(q3 + 3.0 * iqr)
+                s = s[(s >= lo) & (s <= hi)]
+            if s.empty:
+                continue
+            rows.append({"year": int(year), "crop": crop, "avg_price": round(float(s.mean()), 4)})
+        total = kept_rows + dropped_rows
+        valid_ratio = (kept_rows / total) if total > 0 else 0.0
+        if kept_rows < 12 or valid_ratio < 0.5:
+            rows = [r for r in rows if str(r.get("crop")) != str(crop)]
+            print(
+                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=rejected_low_quality",
+                flush=True,
+            )
+            continue
+        print(
+            f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts}",
+            flush=True,
+        )
     return pd.DataFrame(rows)
 
 

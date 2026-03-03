@@ -336,6 +336,16 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Price Forecast</h4>
                         <p className="font-display text-xl font-bold text-emerald-950">${selectedCrop.price_forecast.toFixed(2)}/bu</p>
                       </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Cost per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">${(selectedCrop.cost_per_acre ?? 0).toLocaleString()}</p>
+                        <p className="text-xs text-slate-500">Source: {selectedCrop.cost_source || 'api_or_default'}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Forecast Source</h4>
+                        <p className="font-display text-sm font-bold text-emerald-950">{selectedCrop.forecast_source || 'deterministic_fallback'}</p>
+                        <p className="text-xs text-slate-500">Confidence: {((selectedCrop.forecast_confidence ?? 0) * 100).toFixed(0)}%</p>
+                      </div>
                     </div>
 
                     {/* Soil Compatibility */}
