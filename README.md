@@ -59,27 +59,12 @@ The system recommends:
 # 🧠 System Architecture
 
 The system combines **AI agents, external APIs, and full-stack web architecture**.
-# 
-Farmer Input (React Frontend)
-↓
-Backend API Layer
-↓
-Decision Agent (API Selection)
-↓
-External Data Retrieval
-↓
-Data Processing & Crop Suitability Analysis
-↓
-Portfolio Optimization
-↓
-Validator Agent
-↓
-Final Crop Recommendation
-↓
-Stored in MongoDB & Displayed in UI
+
 ---
 
-
+Farmer Input (React Frontend)->  Backend API Layer -> Decision Agent (API Selection) -> External Data Retrieval -> Data Processing & Crop Suitability Analysis
+-> Portfolio Optimization -> Validator Agent -> Final Crop Recommendation
+         
 ---
 
 # 🤖 Multi-Agent Architecture
@@ -170,6 +155,8 @@ Example output:
 Corn | 40% | High |
 Soybean | 35% | Medium |
 Wheat | 25% | Medium |
+
+<img width="1853" height="803" alt="image" src="https://github.com/user-attachments/assets/e7c9b78c-bca7-47b3-8ddb-601f32bbdd43" />
 
 ---
 
@@ -324,6 +311,8 @@ Wheat: 25 acres
 
 Expected Yield Stability: High
 Climate Risk Exposure: Moderate
+
+<img width="1804" height="794" alt="image" src="https://github.com/user-attachments/assets/4a0ef612-d2b3-4fa7-a9d0-996f31599a3a" />
 
 
 ---
