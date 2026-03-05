@@ -186,6 +186,35 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
             return None
         return p * factor
 
+    def _try_infer_normalized_price(raw_price: float, target_key: str) -> Any:
+        """
+        For AMS rows with missing/unknown unit, try plausible interpretations
+        and keep the first normalized value that passes sanity bounds.
+        """
+        p = float(raw_price)
+        candidates: List[str] = []
+        if target_key:
+            candidates.append(target_key)
+            if target_key.startswith("usd_"):
+                candidates.append(target_key.replace("usd_", "cents_", 1))
+            elif target_key.startswith("cents_"):
+                candidates.append(target_key.replace("cents_", "usd_", 1))
+        # Preserve order and remove duplicates.
+        seen = set()
+        ordered = []
+        for c in candidates:
+            if c and c not in seen:
+                ordered.append(c)
+                seen.add(c)
+        for source_key in ordered:
+            normalized = _convert_to_target(p, source_key, target_key)
+            if normalized is None:
+                continue
+            val = float(normalized)
+            if 0.05 <= val <= 100.0:
+                return val
+        return None
+
     rows = []
     for crop in selected_crops:
         payload = ams_prices.get(crop) if isinstance(ams_prices, dict) else None
@@ -197,6 +226,7 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
         unit_counts: Dict[str, int] = {}
         kept_rows = 0
         dropped_rows = 0
+        inferred_rows = 0
         for row in series:
             if not isinstance(row, dict):
                 continue
@@ -213,11 +243,16 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
                 continue
             src_key = _unit_key(row_unit)
             unit_counts[src_key] = int(unit_counts.get(src_key, 0)) + 1
-            if src_key in {"non_price", "unknown", "missing", "usd_unknown_basis"}:
+            effective_target = target_key or src_key.replace("cents_", "usd_")
+            if src_key == "non_price":
                 dropped_rows += 1
                 continue
-            effective_target = target_key or src_key.replace("cents_", "usd_")
-            normalized = _convert_to_target(price, src_key, effective_target)
+            if src_key in {"unknown", "missing", "usd_unknown_basis"}:
+                normalized = _try_infer_normalized_price(price, effective_target)
+                if normalized is not None:
+                    inferred_rows += 1
+            else:
+                normalized = _convert_to_target(price, src_key, effective_target)
             if normalized is None:
                 dropped_rows += 1
                 continue
@@ -246,12 +281,12 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
         if kept_rows < 12 or valid_ratio < 0.5:
             rows = [r for r in rows if str(r.get("crop")) != str(crop)]
             print(
-                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=rejected_low_quality",
+                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=rejected_low_quality",
                 flush=True,
             )
             continue
         print(
-            f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts}",
+            f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts}",
             flush=True,
         )
     return pd.DataFrame(rows)

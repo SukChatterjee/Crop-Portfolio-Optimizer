@@ -117,4 +117,3 @@ def plan_ams_for_crop(crop_name: str, state_name: str = "OHIO", lookback_days: i
     except Exception as exc:
         print(f"[agent][tool] ams-planner source=error crop={crop_name} error={exc}", flush=True)
         return _default_no_data(crop_name, state_name, lookback_days, f"planner_error:{exc}")
-

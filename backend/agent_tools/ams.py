@@ -151,6 +151,25 @@ def _row_text(row: Dict[str, Any]) -> str:
     return " ".join(parts).lower()
 
 
+def _crop_aliases(crop_name: str) -> List[str]:
+    c = str(crop_name or "").strip().lower()
+    aliases = {c} if c else set()
+    if c == "tomatoes":
+        aliases.update({"tomato"})
+    elif c == "tomato":
+        aliases.update({"tomatoes"})
+    elif c == "cotton":
+        aliases.update({"cottonseed"})
+    return [a for a in aliases if a]
+
+
+def _contains_any_token(text: str, tokens: List[str]) -> bool:
+    t = str(text or "").lower()
+    if not t or not tokens:
+        return False
+    return any(tok in t for tok in tokens if tok)
+
+
 def _normalize_rows(payload: Any) -> List[Dict[str, Any]]:
     if isinstance(payload, list):
         return [x for x in payload if isinstance(x, dict)]
@@ -224,6 +243,7 @@ def parse_details_to_price_series(
 ) -> List[Dict[str, Any]]:
     crop = str(crop_name or "").strip()
     crop_l = crop.lower()
+    crop_aliases = _crop_aliases(crop)
     hints = parse_hints or {}
     unit_regex = str(hints.get("acceptable_units_regex") or r"(\$\s*/\s*BU|\$/BU|BUSHEL|\$\s*/\s*CWT|\$/CWT|CWT)")
     fields_priority = hints.get("price_fields_priority")
@@ -234,10 +254,10 @@ def parse_details_to_price_series(
     out: List[Dict[str, Any]] = []
     for r in rows:
         text = _row_text(r)
-        if crop_l and crop_l not in text:
+        if crop_l and not _contains_any_token(text, crop_aliases):
             # soft filter: if commodity-like fields are absent, keep row.
             commodity = str(r.get("commodity") or r.get("commodity_desc") or "").strip().lower()
-            if commodity and crop_l not in commodity:
+            if commodity and not _contains_any_token(commodity, crop_aliases):
                 continue
 
         date = (
@@ -368,6 +388,15 @@ def _apply_catalog_filters(catalog: List[Dict[str, Any]], filters: Dict[str, Any
     return [x[2] for x in out[:max_candidates]]
 
 
+def _fallback_filters_for_crop(crop_name: str) -> Dict[str, Any]:
+    c = str(crop_name or "").strip().lower()
+    if c in {"tomatoes", "tomato"}:
+        return {"contains_any": ["tomato", "shipping point", "fob"], "exclude_any": []}
+    if c == "cotton":
+        return {"contains_any": ["cotton", "spot", "market"], "exclude_any": []}
+    return {"contains_any": [c], "exclude_any": []}
+
+
 def get_prices_for_crop_with_plan(
     crop_name: str,
     state_name: str,
@@ -471,6 +500,44 @@ def get_prices_for_crop_with_plan(
             best_series = series
 
     if best_sid is None or not best_series:
+        # Fallback path: planner filters can overfit to state words and miss valid
+        # slugs (especially for tomatoes). Retry with relaxed crop-centric filters.
+        retry_filters = _fallback_filters_for_crop(crop)
+        retry_candidates = _apply_catalog_filters(catalog, retry_filters, max_candidates=max_candidates)
+        retry_slug_ids: List[int] = []
+        for row in retry_candidates:
+            raw_sid = row.get("slug_id") or row.get("report_id") or row.get("slugId")
+            try:
+                sid = int(raw_sid)
+            except (TypeError, ValueError):
+                continue
+            if sid not in retry_slug_ids:
+                retry_slug_ids.append(sid)
+            if len(retry_slug_ids) >= MAX_SLUG_IDS_PER_CROP:
+                break
+
+        for sid in retry_slug_ids:
+            if sid in detail_cache:
+                details = detail_cache[sid]
+            else:
+                try:
+                    details = fetch_report_details(sid, lookback_days=lookback_days)
+                except Exception:
+                    continue
+                detail_cache[sid] = details
+            series = parse_details_to_price_series(details, crop, sid, parse_hints=parse_hints)
+            parsed_count = len(series)
+            units = [str(r.get("unit", "")).strip() for r in series if str(r.get("unit", "")).strip()]
+            unit_mode = Counter(units).most_common(1)[0][0] if units else None
+            unit_match = 1 if (unit_mode and unit_pattern and unit_pattern.search(unit_mode)) else 0
+            tested.append({"slug_id": sid, "parsed_count": parsed_count, "unit_mode": unit_mode, "fallback": True})
+            score = (parsed_count, unit_match)
+            if score > best_score:
+                best_score = score
+                best_sid = sid
+                best_series = series
+
+    if best_sid is None or not best_series:
         return {
             "status": "no_data",
             "crop": crop,
@@ -490,4 +557,3 @@ def get_prices_for_crop_with_plan(
         "series": best_series,
         "summary": summary,
     }
-
