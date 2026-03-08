@@ -322,7 +322,7 @@ def _llm_predict_current_year(
             "price_forecast": float(phat),
             "cost_per_acre": float(chat) if chat > 0.0 else 0.0,
             "cost_adjustment_factor": float(_coerce_float(pred.get("cost_adjustment_factor"), 1.0)),
-            "confidence": max(0.0, min(1.0, _coerce_float(item.get("confidence"), 0.6))),
+            "confidence": 0.0,
             "reasoning": str(item.get("reasoning") or "").strip(),
             "approved": approved,
             "soft_approved": soft_approved,
@@ -331,14 +331,11 @@ def _llm_predict_current_year(
             "issues": issues,
         }
         if crop_key in out:
-            prev_conf = float(out[crop_key].get("confidence", 0.0))
-            if row_obj["confidence"] <= prev_conf:
-                dropped_rows += 1
-                print(
-                    f"[agent][tool] llm-forecast row-dropped crop={crop_key} reason=duplicate_lower_confidence prev={prev_conf:.2f} new={row_obj['confidence']:.2f}",
-                    flush=True,
-                )
-                continue
+            dropped_rows += 1
+            print(
+                f"[agent][tool] llm-forecast row-dropped crop={crop_key} reason=duplicate_replaced_with_latest",
+                flush=True,
+            )
         out[crop_key] = row_obj
 
     if not out:
@@ -354,7 +351,7 @@ def _llm_predict_current_year(
     )
     for crop_key, pred in out.items():
         print(
-            f"[agent][tool] llm-forecast crop={crop_key} approved={pred['approved']} soft_approved={pred.get('soft_approved', False)} price_imputed={pred.get('price_imputed', False)} yield_imputed={pred.get('yield_imputed', False)} yield={pred['yield_forecast']:.4f} price={pred['price_forecast']:.4f} cost={pred['cost_per_acre']:.4f} factor={pred['cost_adjustment_factor']:.3f} confidence={pred['confidence']:.2f} issues={pred['issues']}",
+            f"[agent][tool] llm-forecast crop={crop_key} approved={pred['approved']} soft_approved={pred.get('soft_approved', False)} price_imputed={pred.get('price_imputed', False)} yield_imputed={pred.get('yield_imputed', False)} yield={pred['yield_forecast']:.4f} price={pred['price_forecast']:.4f} cost={pred['cost_per_acre']:.4f} factor={pred['cost_adjustment_factor']:.3f} issues={pred['issues']}",
             flush=True,
         )
     return out, None
@@ -482,7 +479,7 @@ def compute_forecasts(
             yield_forecast = float(llm_item["yield_forecast"])
             price_forecast = max(0.05, float(llm_item["price_forecast"]))
             forecast_source = "llm_api_based"
-            forecast_confidence = float(llm_item.get("confidence") or 0.0)
+            forecast_confidence = 0.0
         else:
             # If LLM is unavailable/unapproved, use last observed year, not trend projection.
             yield_forecast = float(last_year_yield_forecast)
@@ -494,17 +491,29 @@ def compute_forecasts(
             flush=True,
         )
 
-        api_cost = float(costs_per_acre.get(crop, costs_per_acre.get(crop.lower(), 700.0)))
+        api_cost_raw = costs_per_acre.get(crop, costs_per_acre.get(crop.lower()))
         llm_cost = float(llm_item.get("cost_per_acre") or 0.0) if isinstance(llm_item, dict) else 0.0
         llm_factor = float(llm_item.get("cost_adjustment_factor") or 1.0) if isinstance(llm_item, dict) else 1.0
         # Guardrail: always derive final cost from API baseline via bounded LLM factor.
         llm_factor = max(0.7, min(1.4, llm_factor))
-        if forecast_source == "llm_api_based":
-            cost_per_acre = api_cost * llm_factor
-            cost_source = "llm_api_based_factor_bounded"
+        if api_cost_raw is not None:
+            api_cost = float(api_cost_raw)
+            if forecast_source == "llm_api_based":
+                cost_per_acre = api_cost * llm_factor
+                cost_source = "llm_api_based_factor_bounded"
+            else:
+                cost_per_acre = api_cost
+                cost_source = "api_or_default"
+        elif llm_cost > 0.0:
+            cost_per_acre = llm_cost
+            cost_source = "llm_abs_no_api_cost"
+            api_cost = 0.0
         else:
-            cost_per_acre = api_cost
-            cost_source = "api_or_default"
+            print(
+                f"[agent][tool] compute-cost crop={str(crop).lower()} cost_source=missing_no_api_no_llm action=skip",
+                flush=True,
+            )
+            continue
         print(
             f"[agent][tool] compute-cost crop={str(crop).lower()} cost_source={cost_source} api_cost={api_cost:.4f} llm_abs_cost={llm_cost:.4f} factor={llm_factor:.3f} cost_per_acre={cost_per_acre:.4f}",
             flush=True,

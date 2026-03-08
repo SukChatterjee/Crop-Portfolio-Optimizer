@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CountUp from 'react-countup';
 import { 
   BarChart, 
@@ -112,9 +112,23 @@ const CropCard = ({ crop, rank, isSelected, onClick }) => {
 };
 
 export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
-  const [selectedCrop, setSelectedCrop] = useState(analysis?.results?.[0] || null);
+  const safeResults = useMemo(() => {
+    if (!Array.isArray(analysis?.results)) return [];
+    return analysis.results.filter((r) => r && typeof r === 'object' && r.crop_name);
+  }, [analysis]);
+  const [selectedCrop, setSelectedCrop] = useState(safeResults[0] || null);
 
-  if (!analysis || !analysis.results) {
+  useEffect(() => {
+    if (!safeResults.length) {
+      setSelectedCrop(null);
+      return;
+    }
+    if (!selectedCrop || !safeResults.some((r) => r.crop_name === selectedCrop.crop_name)) {
+      setSelectedCrop(safeResults[0]);
+    }
+  }, [safeResults, selectedCrop]);
+
+  if (!analysis) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <p className="text-slate-500">No analysis data available</p>
@@ -122,15 +136,32 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
     );
   }
 
-  const topCrop = analysis.results[0];
-  const profitDistributionData = analysis.results.map(crop => ({
+  if (!safeResults.length) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-center min-h-[260px]">
+          <p className="text-slate-500">No analyzable crop results were returned for this run.</p>
+        </div>
+        {Array.isArray(analysis?.errors) && analysis.errors.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50">
+            <CardContent className="p-4">
+              <p className="text-sm text-amber-800">Issues: {analysis.errors.join(' | ')}</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  const topCrop = safeResults[0];
+  const profitDistributionData = safeResults.map(crop => ({
     name: crop.crop_name,
     p10: crop.profit_p10,
     p50: crop.profit_p50,
     p90: crop.profit_p90,
   }));
 
-  const yieldComparisonData = analysis.results.map(crop => ({
+  const yieldComparisonData = safeResults.map(crop => ({
     name: crop.crop_name,
     yield: crop.yield_forecast,
     price: crop.price_forecast * 100, // Scale for visibility
@@ -234,7 +265,7 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
             Crop Rankings
           </h2>
           <div className="space-y-3">
-            {analysis.results.map((crop, index) => (
+            {safeResults.map((crop, index) => (
               <CropCard
                 key={crop.crop_name}
                 crop={crop}

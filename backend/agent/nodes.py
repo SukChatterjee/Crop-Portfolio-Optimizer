@@ -139,6 +139,18 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
         "lettuce": "usd_per_cwt",
         "apples": "usd_per_cwt",
     }
+    reference_price_by_crop = {
+        "corn": 3.5,
+        "wheat": 3.5,
+        "soybeans": 10.0,
+        "rice": 12.0,
+        "cotton": 0.8,
+        "tomatoes": 3.5,
+        "potatoes": 8.0,
+        "onions": 8.0,
+        "lettuce": 18.0,
+        "apples": 25.0,
+    }
 
     def _unit_key(unit: str) -> str:
         u = str(unit or "").strip().lower()
@@ -186,10 +198,27 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
             return None
         return p * factor
 
-    def _try_infer_normalized_price(raw_price: float, target_key: str) -> Any:
+    def _crop_price_bounds(crop_name: str, target_key: str) -> Tuple[float, float]:
+        c = str(crop_name or "").strip().lower()
+        # Conservative bounds in normalized target units to prevent obvious unit mistakes.
+        if target_key == "usd_per_bu":
+            return (1.0, 25.0) if c in {"corn", "wheat", "soybeans"} else (0.5, 50.0)
+        if target_key == "usd_per_lb":
+            return (0.2, 3.5)
+        if target_key == "usd_per_cwt":
+            if c in {"tomatoes", "potatoes", "onions", "lettuce"}:
+                return (1.0, 120.0)
+            if c in {"rice"}:
+                return (5.0, 80.0)
+            if c in {"apples"}:
+                return (5.0, 200.0)
+            return (0.5, 200.0)
+        return (0.05, 100.0)
+
+    def _try_infer_normalized_price(raw_price: float, target_key: str, crop_name: str) -> Any:
         """
         For AMS rows with missing/unknown unit, try plausible interpretations
-        and keep the first normalized value that passes sanity bounds.
+        and choose the value most plausible for the crop.
         """
         p = float(raw_price)
         candidates: List[str] = []
@@ -206,14 +235,22 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
             if c and c not in seen:
                 ordered.append(c)
                 seen.add(c)
+        ckey = str(crop_name or "").strip().lower()
+        ref = float(reference_price_by_crop.get(ckey, 3.5))
+        lo, hi = _crop_price_bounds(ckey, target_key)
+        viable: List[Tuple[float, float]] = []  # (distance_to_ref, normalized)
         for source_key in ordered:
             normalized = _convert_to_target(p, source_key, target_key)
             if normalized is None:
                 continue
             val = float(normalized)
-            if 0.05 <= val <= 100.0:
-                return val
-        return None
+            if not (lo <= val <= hi):
+                continue
+            viable.append((abs(val - ref), val))
+        if not viable:
+            return None
+        viable.sort(key=lambda x: x[0])
+        return float(viable[0][1])
 
     rows = []
     for crop in selected_crops:
@@ -245,22 +282,32 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
             unit_counts[src_key] = int(unit_counts.get(src_key, 0)) + 1
             effective_target = target_key or src_key.replace("cents_", "usd_")
             if src_key == "non_price":
-                dropped_rows += 1
-                continue
-            if src_key in {"unknown", "missing", "usd_unknown_basis"}:
-                normalized = _try_infer_normalized_price(price, effective_target)
+                # Do not drop: pass through numeric value for downstream model handling.
+                normalized = float(price)
+                inferred_rows += 1
+            elif src_key in {"unknown", "missing", "usd_unknown_basis"}:
+                normalized = _try_infer_normalized_price(price, effective_target, crop)
                 if normalized is not None:
+                    inferred_rows += 1
+                else:
+                    # Best-effort retention: keep raw numeric value when unit inference fails.
+                    normalized = float(price)
                     inferred_rows += 1
             else:
                 normalized = _convert_to_target(price, src_key, effective_target)
-            if normalized is None:
-                dropped_rows += 1
-                continue
+                if normalized is None:
+                    # Best-effort retention: keep raw numeric value if conversion map is missing.
+                    normalized = float(price)
+                    inferred_rows += 1
             price = float(normalized)
-            # Generic sanity range for price inputs used by forecast model.
-            if price < 0.05 or price > 100.0:
-                dropped_rows += 1
-                continue
+            lo, hi = _crop_price_bounds(crop, effective_target)
+            # Do not drop out-of-range rows; clamp to crop-specific bounds.
+            if price < lo:
+                price = float(lo)
+                inferred_rows += 1
+            elif price > hi:
+                price = float(hi)
+                inferred_rows += 1
             grouped.setdefault(year, []).append(price)
             kept_rows += 1
         for year, prices in grouped.items():
@@ -278,10 +325,9 @@ def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, An
             rows.append({"year": int(year), "crop": crop, "avg_price": round(float(s.mean()), 4)})
         total = kept_rows + dropped_rows
         valid_ratio = (kept_rows / total) if total > 0 else 0.0
-        if kept_rows < 12 or valid_ratio < 0.5:
-            rows = [r for r in rows if str(r.get("crop")) != str(crop)]
+        if kept_rows == 0:
             print(
-                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=rejected_low_quality",
+                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept=0 dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=no_rows_after_normalization",
                 flush=True,
             )
             continue
@@ -337,6 +383,48 @@ def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) ->
     return {"nass": nass}
 
 
+def _llm_plan_costs_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        return {"query_candidates": []}
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
+    state_name = str(((farm_profile.get("location") or {}).get("state")) or "OHIO").strip().upper() or "OHIO"
+    prompt = (
+        "You are an API query planner for production cost-per-acre extraction.\n"
+        "Return strict JSON only with schema:\n"
+        "{\"query_candidates\":[{\"report\":\"...\",\"category\":\"...\",\"category_value\":\"...\",\"state\":\"...\",\"state_name\":\"...\"}]}\n"
+        "Rules:\n"
+        "- Build 3-8 candidates for ERS/ARMS-like APIs.\n"
+        "- Include state/state_name and set them to requested state when possible.\n"
+        "- Prefer cost/expense oriented report terms.\n"
+        "- No markdown."
+    )
+    payload = {
+        "selected_crops": selected_crops,
+        "state": state_name,
+        "goal": farm_profile.get("goal"),
+        "risk_preference": farm_profile.get("risk_preference"),
+    }
+    parsed = _openai_generate_json(
+        api_key,
+        model,
+        f"{prompt}\n\nInput:\n{json.dumps(payload)}",
+        purpose="costs_param_planner",
+    )
+    candidates = parsed.get("query_candidates") if isinstance(parsed, dict) else []
+    if not isinstance(candidates, list):
+        candidates = []
+    cleaned = []
+    for c in candidates:
+        if not isinstance(c, dict):
+            continue
+        cc = {str(k): str(v) for k, v in c.items() if str(v).strip()}
+        if cc:
+            cleaned.append(cc)
+    print(f"[agent][tool] costs-planner candidates={len(cleaned)}", flush=True)
+    return {"query_candidates": cleaned}
+
+
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
     farm = dict(state.get("farm_profile") or {})
     errors = list(state.get("errors") or [])
@@ -387,6 +475,15 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
 
     try:
         print(f"[agent][run] force_live_api_calls={force_live_calls}", flush=True)
+        # Fetch costs first so downstream compute/LLM always receives the latest
+        # cost-per-acre context before other data collection and forecasting.
+        costs = fetch_cost_per_acre(
+            selected_crops,
+            force_refresh=force_live_calls,
+            api_plan=(api_plan.get("costs", {}) if isinstance(api_plan, dict) else {}),
+        )
+        print(f"[agent][tool] costs-prefetch crops={len(selected_crops)}", flush=True)
+
         max_workers = max(2, int(os.environ.get("AGENT_PROVIDER_MAX_WORKERS", "2")))
         with ThreadPoolExecutor(max_workers=max_workers) as ex:
             future_nass = ex.submit(
@@ -405,7 +502,6 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
         soil = fetch_soil_features(
             lat, lng, soil_type=str(farm.get("soil_type", "")), force_refresh=force_live_calls
         )
-        costs = fetch_cost_per_acre(selected_crops, force_refresh=force_live_calls)
         crop_results = compute_forecasts(
             farm_profile=farm,
             nass_df=nass_df,
@@ -444,7 +540,7 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     farm = dict(state.get("farm_profile") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     llm_seed_plan = _llm_plan_params(selected_crops, farm)
-    api_plan: Dict[str, Any] = {"nass": {}}
+    api_plan: Dict[str, Any] = {"nass": {}, "costs": {}}
     try:
         api_plan["nass"] = discover_nass_params(
             selected_crops,
@@ -455,6 +551,10 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
         )
     except Exception as exc:
         print(f"[agent][tool] nass-discovery source=error error={exc}", flush=True)
+    try:
+        api_plan["costs"] = _llm_plan_costs_params(selected_crops, farm)
+    except Exception as exc:
+        print(f"[agent][tool] costs-planner source=error error={exc}", flush=True)
 
     return {"api_plan": api_plan}
 

@@ -64,16 +64,13 @@ const SOIL_TYPES = [
 
 const CROPS = [
   'Corn',
-  'Wheat',
   'Soybeans',
   'Rice',
   'Cotton',
-  'Tomatoes',
-  'Potatoes',
-  'Onions',
-  'Apples',
-  'Lettuce',
 ];
+
+const isDefaultCrop = (cropName) =>
+  CROPS.some((crop) => crop.toLowerCase() === String(cropName || '').toLowerCase());
 
 // Map click handler component
 const LocationMarker = ({ position, setPosition }) => {
@@ -193,8 +190,20 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
     if (!crop) {
       return;
     }
-    const isInDefaultList = CROPS.some(c => c.toLowerCase() === crop.toLowerCase());
-    if (!isInDefaultList && !formData.selected_crops.some(c => c.toLowerCase() === crop.toLowerCase())) {
+    const isInDefaultList = isDefaultCrop(crop);
+    const alreadySelected = formData.selected_crops.some(c => c.toLowerCase() === crop.toLowerCase());
+
+    if (isInDefaultList && !alreadySelected) {
+      const normalizedDefaultCrop = CROPS.find(c => c.toLowerCase() === crop.toLowerCase()) || crop;
+      setFormData(prev => ({
+        ...prev,
+        selected_crops: [...prev.selected_crops, normalizedDefaultCrop],
+        other_crop_text: '',
+      }));
+      return;
+    }
+
+    if (!isInDefaultList && !alreadySelected) {
       setFormData(prev => ({
         ...prev,
         selected_crops: [...prev.selected_crops, crop],
@@ -238,6 +247,9 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  const customSelectedCrops = formData.selected_crops.filter((crop) => !isDefaultCrop(crop));
+  const cropsToDisplay = [...CROPS, ...customSelectedCrops];
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4" data-testid="farm-wizard-overlay">
@@ -477,9 +489,10 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {CROPS.map((crop) => {
+                {cropsToDisplay.map((crop) => {
                   const isSelected = formData.selected_crops.includes(crop);
                   const cropTestId = `crop-select-${crop.toLowerCase().replace(/\s+/g, '-')}`;
+                  const isCustomCrop = !isDefaultCrop(crop);
                   return (
                     <button
                       key={crop}
@@ -496,7 +509,7 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
                         {isSelected && <Check className="w-4 h-4 text-emerald-500" />}
                       </div>
                       <span className="text-xs text-slate-400">
-                        {isSelected ? 'Selected' : 'Not selected'}
+                        {isSelected ? 'Selected' : 'Not selected'}{isCustomCrop ? ' • Custom' : ''}
                       </span>
                     </button>
                   );
