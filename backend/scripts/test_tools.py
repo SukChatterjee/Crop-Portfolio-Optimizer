@@ -12,6 +12,7 @@ if str(BACKEND_DIR) not in sys.path:
 
 from agent_tools.compute import compute_forecasts
 from agent_tools.costs import fetch_cost_per_acre
+from agent_tools.fred import fetch_fred_series
 from agent_tools.nass import fetch_ohio_crop_stats
 from agent_tools.noaa import fetch_weather_features
 import pandas as pd
@@ -40,6 +41,15 @@ def main() -> None:
 
     nass_df = fetch_ohio_crop_stats(crops, last_n_years=3)
     weather = fetch_weather_features(lat, lng, last_n_years=3)
+    fred_data = fetch_fred_series(
+        {
+            "lookback_years": 5,
+            "query_candidates": [
+                {"series_id": "CPIAUCSL", "title": "CPI", "purpose": "inflation", "units": "pc1"},
+                {"series_id": "DCOILWTICO", "title": "WTI Oil", "purpose": "input costs", "units": "lin"},
+            ],
+        }
+    )
     now_year = pd.Timestamp.utcnow().year
     years = list(range(now_year - 2, now_year + 1))
     price_df = pd.DataFrame(
@@ -47,10 +57,12 @@ def main() -> None:
     )
     costs = fetch_cost_per_acre(crops)
     
-    results = compute_forecasts(farm_profile, nass_df, price_df, costs, weather)
+    results = compute_forecasts(farm_profile, nass_df, price_df, costs, weather, fred_data=fred_data)
 
     print("Weather summary:")
     print(weather.get("summary", "N/A"))
+    print("\nFRED summary:")
+    print(json.dumps((fred_data or {}).get("summary", {}), indent=2))
     print("\nForecasts:")
     print(json.dumps(results, indent=2))
 

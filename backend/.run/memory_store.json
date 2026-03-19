@@ -8394,6 +8394,1274 @@
       "market_outlook": "Corn prices are trending strongly upward with a significant increase expected over the next few years, making it a potentially profitable crop despite its high risk. Wheat prices show a slight positive trend, suggesting stable but modest gains. Soybeans data is limited, but given the conservative risk preference, wheat may be a safer choice compared to corn.",
       "created_at": "2026-03-08T03:27:44.683418+00:00",
       "status": "completed"
+    },
+    "c5212c17-d870-4d01-ae1f-e7d9c7973e92": {
+      "id": "c5212c17-d870-4d01-ae1f-e7d9c7973e92",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice"
+        ],
+        "risk_preference": "conservative",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 3682863.0,
+          "profit_p10": 1797237.14,
+          "profit_p50": 3682863.0,
+          "profit_p90": 5568488.86,
+          "yield_forecast": 7520.0,
+          "price_forecast": 5.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "Rice shows high compatibility (90%) with the silt loam soil, but typical rice cultivation requires well-managed water conditions. Given the unknown drainage and zero available water capacity, irrigation is essential and already present on the farm to support rice growth.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": 50334.0,
+          "profit_p10": 24562.99,
+          "profit_p50": 50334.0,
+          "profit_p90": 76105.01,
+          "yield_forecast": 154.0,
+          "price_forecast": 7.6,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage presents moderate physical conditions. However, the soil profile shows zero pH and organic matter values, which may indicate missing data or poor soil health. Corn is compatible with this soil type at 90%, but soil amendments may be needed to optimize growth.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 13593.0,
+          "profit_p10": 6633.38,
+          "profit_p50": 13593.0,
+          "profit_p90": 20552.62,
+          "yield_forecast": 53.3,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans have a 90% compatibility with the silt loam soil type. Despite the unknown drainage and zero organic matter reported, soybeans can tolerate a range of soil conditions but may benefit from improved soil health for better yields.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio shows an average precipitation of 13.16 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable weather conditions.",
+      "market_outlook": "Corn prices are trending upward with a recent average price of $25.00 and a positive price trend of 1.91, suggesting favorable market conditions. Rice prices remain stable at $5.00 with no significant trend change. Soybeans market data is not provided, indicating uncertainty or stable conditions.",
+      "created_at": "2026-03-08T03:46:48.870432+00:00",
+      "status": "completed"
+    },
+    "764fbd17-26c3-4326-b341-07085a000ca8": {
+      "id": "764fbd17-26c3-4326-b341-07085a000ca8",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans"
+        ],
+        "risk_preference": "conservative",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 8153.94,
+          "profit_p10": 3979.12,
+          "profit_p50": 8153.94,
+          "profit_p90": 12328.75,
+          "yield_forecast": 47.86,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, indicating limited soil data availability. Despite this, soybeans have a high soil compatibility score of 90%, suggesting suitability for this crop under current conditions.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather summary from 3 nearby NOAA stations indicates an average precipitation of 13.16 mm/day with no available temperature data. There are no extreme heat or freeze days reported, and the overall weather risk index is low at 0.95.",
+      "market_outlook": "The market outlook for soybeans shows a high risk level with a forecasted yield of 47.86 and a price forecast of $10.00 per unit. Expected profit is moderate at $8,153.94, but the conservative risk preference suggests caution due to the high risk score of 81.8.",
+      "created_at": "2026-03-08T04:06:13.866633+00:00",
+      "status": "completed"
+    },
+    "f6b83bd6-3374-43c8-b08a-462b95895a25": {
+      "id": "f6b83bd6-3374-43c8-b08a-462b95895a25",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 8153.0,
+          "profit_p10": 3978.66,
+          "profit_p50": 8153.0,
+          "profit_p90": 12327.34,
+          "yield_forecast": 47.86,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and very low organic matter and available water capacity, which may limit nutrient and water retention. The moderate slope of 5.5% could affect erosion risk. Despite these limitations, soybeans have a high soil compatibility score of 90%, indicating they are well-suited to this soil type with proper management and irrigation.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The region around Cincinnati, Ohio is experiencing high average precipitation at 13.16 mm/day with no recorded extreme heat or freeze days recently, indicating a moist and stable weather pattern favorable for crop growth.",
+      "market_outlook": "Soybeans show a strong profit potential with an expected profit of $8,153 per 100 acres despite a high risk score of 96.2. Market prices are forecasted at $10.00 per unit, suggesting a positive outlook but with considerable volatility.",
+      "created_at": "2026-03-08T04:17:09.529811+00:00",
+      "status": "completed"
+    },
+    "3e6f0ef7-8992-4412-a62b-d6bcc43c361d": {
+      "id": "3e6f0ef7-8992-4412-a62b-d6bcc43c361d",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton",
+          "tomatoes",
+          "wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Cotton",
+          "expected_profit": 176626.4,
+          "profit_p10": 86193.68,
+          "profit_p50": 176626.4,
+          "profit_p90": 267059.12,
+          "yield_forecast": 1010.0,
+          "price_forecast": 2.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton is compatible with silt loam soils and shows high soil compatibility (90%). Despite the unknown drainage and zero organic matter, cotton can perform well if irrigation is managed properly, especially given the farm's irrigation capability.",
+          "cost_per_acre": 758.74,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": 56494.0,
+          "profit_p10": 27569.07,
+          "profit_p50": 56494.0,
+          "profit_p90": 85418.93,
+          "yield_forecast": 154.0,
+          "price_forecast": 8.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type with a 5.5% slope is generally suitable for corn, offering good water retention and nutrient availability. However, the soil profile shows zero organic matter and unknown drainage, which may require soil amendments and careful water management to optimize corn growth.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "wheat",
+          "expected_profit": 16383.05,
+          "profit_p10": 7994.93,
+          "profit_p50": 16383.05,
+          "profit_p90": 24771.17,
+          "yield_forecast": 50.0,
+          "price_forecast": 11.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat is adaptable to silt loam soils and moderate slopes. The lack of organic matter and unknown drainage status suggest that soil fertility and water management practices should be enhanced to support healthy wheat growth.",
+          "cost_per_acre": 411.17,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "tomatoes",
+          "expected_profit": 10000.0,
+          "profit_p10": 4880.0,
+          "profit_p50": 10000.0,
+          "profit_p90": 15120.0,
+          "yield_forecast": 1000.0,
+          "price_forecast": 2.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Tomatoes prefer well-drained soils with good organic content. The current soil profile lacks organic matter and has unknown drainage, which could pose challenges. Amendments to improve organic matter and drainage will be beneficial for tomato cultivation.",
+          "cost_per_acre": 1900.0,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 13.16 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions for crop growth.",
+      "market_outlook": "Corn prices are trending upward with a positive price trend of 1.91, suggesting favorable market conditions. Wheat prices also show a moderate positive trend of 0.10. Cotton prices are declining slightly with a negative trend of -0.10, while tomato prices remain stable with no significant trend. Overall, corn and wheat present better market opportunities currently.",
+      "created_at": "2026-03-08T04:21:15.716145+00:00",
+      "status": "completed"
+    },
+    "32441d75-92af-4c47-8147-e6b426a43557": {
+      "id": "32441d75-92af-4c47-8147-e6b426a43557",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice",
+          "wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 3682863.0,
+          "profit_p10": 1797237.14,
+          "profit_p50": 3682863.0,
+          "profit_p90": 5568488.86,
+          "yield_forecast": 7520.0,
+          "price_forecast": 5.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice typically requires well-drained to flooded soils; the silt loam texture is compatible, but unknown drainage and zero organic matter suggest potential challenges in water retention and nutrient supply that should be addressed.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": 59574.0,
+          "profit_p10": 29072.11,
+          "profit_p50": 59574.0,
+          "profit_p90": 90075.89,
+          "yield_forecast": 154.0,
+          "price_forecast": 8.2,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type with a 5.5% slope is generally suitable for corn, but the soil profile shows zero pH and organic matter values, indicating incomplete data or poor soil health which may require soil amendments for optimal growth.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 13593.0,
+          "profit_p10": 6633.38,
+          "profit_p50": 13593.0,
+          "profit_p90": 20552.62,
+          "yield_forecast": 53.3,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans can grow in silt loam soils; however, the lack of organic matter and unknown drainage status may affect nutrient availability and water management, necessitating soil testing and possible improvement.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "wheat",
+          "expected_profit": 4456.5,
+          "profit_p10": 2174.77,
+          "profit_p50": 4456.5,
+          "profit_p90": 6738.23,
+          "yield_forecast": 50.25,
+          "price_forecast": 9.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat can adapt to silt loam soils with moderate slopes, but the absence of organic matter and unknown drainage conditions may limit nutrient availability and water management, requiring soil enhancement for better yields.",
+          "cost_per_acre": 432.81,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from three nearby NOAA stations, shows an average precipitation of 13.16 mm/day with no recorded temperature data available. There are no extreme heat or freeze days reported, indicating stable weather conditions with a high risk index of 0.95.",
+      "market_outlook": "Corn prices are trending upward with an increase of 1.91, suggesting a favorable market. Rice and wheat prices remain stable with no significant trend changes. Market conditions favor corn for potential profit growth, while rice and wheat offer price stability.",
+      "created_at": "2026-03-08T04:28:23.617347+00:00",
+      "status": "completed"
+    },
+    "625688ab-c262-4d0f-8ae5-a841a525a55e": {
+      "id": "625688ab-c262-4d0f-8ae5-a841a525a55e",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "wheat"
+        ],
+        "risk_preference": "conservative",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 59854.0,
+          "profit_p10": 29208.75,
+          "profit_p50": 59854.0,
+          "profit_p90": 90499.25,
+          "yield_forecast": 158.2,
+          "price_forecast": 8.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type with a 5.5% slope presents moderate physical conditions for corn growth. However, the soil profile shows zero pH and organic matter values, and unknown drainage, which may indicate incomplete data or potential soil health concerns that could affect nutrient availability and water retention. Despite this, corn has a high soil compatibility score of 90%, suggesting it is generally suitable for this soil type.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "wheat",
+          "expected_profit": 37184.0,
+          "profit_p10": 18145.79,
+          "profit_p50": 37184.0,
+          "profit_p90": 56222.21,
+          "yield_forecast": 84.7,
+          "price_forecast": 9.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "Wheat is compatible with silt loam soils and shares the same soil compatibility score of 90%. The unknown drainage and zero organic matter reported may impact wheat growth, but the moderate slope is manageable. Soil amendments might be necessary to optimize wheat yield.",
+          "cost_per_acre": 432.81,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 9568.0,
+          "profit_p10": 4669.18,
+          "profit_p50": 9568.0,
+          "profit_p90": 14466.82,
+          "yield_forecast": 54.75,
+          "price_forecast": 9.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 81.8,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans also have a high soil compatibility score of 90% with silt loam soils. The lack of organic matter and unknown drainage status could pose challenges for soybean nutrient uptake and water management. Given the conservative risk preference, soil testing and possible amendments are recommended to minimize risk.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 13.16 mm/day with no recorded temperature data. There are no extreme heat or freeze days reported, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Corn prices are trending upward with a recent average price of $25.00 and a positive price trend of 1.91, suggesting favorable market conditions. Wheat prices remain stable at $9.50 with no significant trend change. Soybeans data is not available for price trends, indicating uncertainty in market outlook for this crop.",
+      "created_at": "2026-03-08T22:31:39.731026+00:00",
+      "status": "completed"
+    },
+    "c4ad4b42-483c-445b-9eaf-4b7fc2672bd0": {
+      "id": "c4ad4b42-483c-445b-9eaf-4b7fc2672bd0",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 187679.6,
+          "profit_p10": 91587.64,
+          "profit_p50": 187679.6,
+          "profit_p90": 283771.56,
+          "yield_forecast": 158.2,
+          "price_forecast": 16.08,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope provides good texture for corn growth, but the unknown drainage and zero organic matter and water holding capacity may require irrigation and soil amendments to optimize yield.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": 131902.56,
+          "profit_p10": 64368.45,
+          "profit_p50": 131902.56,
+          "profit_p90": 199436.67,
+          "yield_forecast": 1009.44,
+          "price_forecast": 1.99,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Silt loam soil is generally suitable for cotton, but the lack of organic matter and unknown drainage could affect water retention and nutrient availability, necessitating careful management.",
+          "cost_per_acre": 689.76,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 15043.0,
+          "profit_p10": 7340.98,
+          "profit_p50": 15043.0,
+          "profit_p90": 22745.02,
+          "yield_forecast": 54.75,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans can grow in silt loam soils; however, the absence of organic matter and unknown drainage conditions suggest that soil fertility and moisture management will be critical for successful cultivation.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather near Cincinnati, Ohio shows an average precipitation of 13.16 mm/day with no recorded temperature data. There are no extreme heat or freeze days recently, indicating stable conditions for crop growth.",
+      "market_outlook": "Corn prices are trending upward with an average price of $25.00 and a positive price trend, suggesting favorable market conditions. Cotton prices show a slight downward trend with an average price of $0.4675, indicating potential market challenges. Soybeans data is limited but expected to have moderate returns.",
+      "created_at": "2026-03-08T22:39:58.553848+00:00",
+      "status": "completed"
+    },
+    "b092cdff-41cf-4433-81d3-dad9d62875dc": {
+      "id": "b092cdff-41cf-4433-81d3-dad9d62875dc",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 1000.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 34978630.0,
+          "profit_p10": 17069571.44,
+          "profit_p50": 34978630.0,
+          "profit_p90": 52887688.56,
+          "yield_forecast": 7150.0,
+          "price_forecast": 5.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice is highly compatible with the silt loam soil (90%) and benefits from the farm's irrigation capabilities. However, the unknown drainage status requires careful water management to prevent issues such as waterlogging.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": 558710.0,
+          "profit_p10": 272650.48,
+          "profit_p50": 558710.0,
+          "profit_p90": 844769.52,
+          "yield_forecast": 157.15,
+          "price_forecast": 7.8,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil type with a 5.5% slope and unknown drainage presents moderate challenges. The soil pH and organic matter data are unavailable, which may affect nutrient management. Corn shows high soil compatibility (90%) indicating it can perform well under these conditions with proper management.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 374690.0,
+          "profit_p10": 182848.72,
+          "profit_p50": 374690.0,
+          "profit_p90": 566531.28,
+          "yield_forecast": 85.0,
+          "price_forecast": 9.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat also shows high compatibility (90%) with the silt loam soil. The moderate slope and unknown drainage necessitate erosion control and water management practices to maintain soil health and crop productivity.",
+          "cost_per_acre": 432.81,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 150430.0,
+          "profit_p10": 73409.84,
+          "profit_p50": 150430.0,
+          "profit_p90": 227450.16,
+          "yield_forecast": 54.75,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans have high soil compatibility (90%) with silt loam texture, but the lack of organic matter and unknown drainage could impact growth. Attention to soil amendments and irrigation is recommended to optimize yield.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 13.16 mm/day with no recorded temperature data available. There are no extreme heat or freeze days reported, indicating stable weather conditions with a high risk index of 0.95.",
+      "market_outlook": "Corn prices are trending upward with an increase of approximately 1.91% over recent years, suggesting favorable market conditions. Rice and Wheat prices remain stable with no significant trend changes. Market conditions favor Corn for potential profit growth, while Rice and Wheat offer price stability.",
+      "created_at": "2026-03-08T23:01:55.742144+00:00",
+      "status": "completed"
+    },
+    "bad8e41c-989c-441f-aa49-92757869f17a": {
+      "id": "bad8e41c-989c-441f-aa49-92757869f17a",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Rice",
+          "Soybeans",
+          "Wheat"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 3682648.0,
+          "profit_p10": 1797132.22,
+          "profit_p50": 3682648.0,
+          "profit_p90": 5568163.78,
+          "yield_forecast": 7519.57,
+          "price_forecast": 5.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice shows high soil compatibility (90%) with the silt loam texture, but the unknown drainage and zero organic matter could pose challenges. Irrigation availability is beneficial for rice cultivation in this soil type.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": 318194.0,
+          "profit_p10": 155278.67,
+          "profit_p50": 318194.0,
+          "profit_p90": 481109.33,
+          "yield_forecast": 153.96,
+          "price_forecast": 25.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage class may affect water retention and root development. Despite zero reported organic matter and available water capacity, the soil compatibility for corn is high at 90%, indicating suitability with proper management.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 13573.0,
+          "profit_p10": 6623.62,
+          "profit_p50": 13573.0,
+          "profit_p90": 20522.38,
+          "yield_forecast": 53.28,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans have a high soil compatibility of 90% with the silt loam soil. However, the lack of organic matter and water holding capacity suggests the need for soil amendments to optimize growth.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Wheat",
+          "expected_profit": 4456.5,
+          "profit_p10": 2174.77,
+          "profit_p50": 4456.5,
+          "profit_p90": 6738.23,
+          "yield_forecast": 50.25,
+          "price_forecast": 9.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Wheat is compatible with the silt loam soil at 90%, but similar to other crops, the unknown drainage and low organic matter require attention to maintain soil health and productivity.",
+          "cost_per_acre": 432.81,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 13.16 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions for crop growth.",
+      "market_outlook": "Corn prices are trending upward with an average price of $25.00 and a positive price trend, suggesting favorable market conditions. Rice and Wheat prices remain stable with no significant trend changes. Soybeans data is limited but expected to follow similar market patterns.",
+      "created_at": "2026-03-08T23:14:03.408857+00:00",
+      "status": "completed"
+    },
+    "b0777b7c-621d-4fe0-ab11-ba5d9180464f": {
+      "id": "b0777b7c-621d-4fe0-ab11-ba5d9180464f",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans",
+          "Corn"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": 318194.0,
+          "profit_p10": 155278.67,
+          "profit_p50": 318194.0,
+          "profit_p90": 481109.33,
+          "yield_forecast": 153.96,
+          "price_forecast": 25.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may indicate incomplete data or the need for soil testing. Despite this, the soil compatibility score for corn is high at 90%, suggesting that the soil texture and other factors are generally suitable for corn cultivation.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 13563.0,
+          "profit_p10": 6618.74,
+          "profit_p50": 13563.0,
+          "profit_p90": 20507.26,
+          "yield_forecast": 53.27,
+          "price_forecast": 10.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, soybeans have a soil compatibility score of 90% with the Silt Loam texture. The lack of detailed soil chemistry and organic matter data means that additional soil analysis is recommended to optimize soybean growth and yield potential.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 13.16 mm/day with no recorded temperature data available. There are no extreme heat or freeze days reported, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Corn prices are trending upward with a latest average price of $25.00 and a positive price trend of 1.91, suggesting favorable market conditions. Soybeans have lower expected profits and similar risk levels, making corn the more lucrative option under current market trends.",
+      "created_at": "2026-03-09T21:21:49.880079+00:00",
+      "status": "completed"
+    },
+    "693b748c-3d07-4bbc-bb99-6841f5815454": {
+      "id": "693b748c-3d07-4bbc-bb99-6841f5815454",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 3682648.0,
+          "profit_p10": 1797132.22,
+          "profit_p50": 3682648.0,
+          "profit_p90": 5568163.78,
+          "yield_forecast": 7519.57,
+          "price_forecast": 5.0,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice shows a high soil compatibility of 90% with the silt loam texture, which is beneficial for water retention needed for rice cultivation. The unknown drainage and zero organic matter levels are concerns but can be managed with irrigation and soil management practices to optimize growth.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -11336.0,
+          "profit_p10": -5531.97,
+          "profit_p50": -11336.0,
+          "profit_p90": -17140.03,
+          "yield_forecast": 158.2,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage class may limit water retention, but irrigation availability can mitigate this. The soil's pH and organic matter data are unavailable, which could affect nutrient availability and crop performance. Corn's soil compatibility is rated at 90%, suggesting generally favorable conditions.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": -20544.5,
+          "profit_p10": -10025.72,
+          "profit_p50": -20544.5,
+          "profit_p90": -31063.28,
+          "yield_forecast": 54.75,
+          "price_forecast": 3.5,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans have a 90% soil compatibility rating with the silt loam texture. However, the lack of organic matter and unknown drainage could impact root development and nutrient uptake. Irrigation can help manage moisture levels, but soil amendments might be necessary for optimal yields.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from three nearby NOAA stations, shows an average precipitation of 13.16 mm per day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but precipitation variability is moderate with a risk index of 0.95 indicating stable conditions.",
+      "market_outlook": "Market prices for Corn, Rice, and Soybeans are currently stable with no significant price trends expected through 2026. Rice commands the highest price at $5.00 per unit, while Corn and Soybeans are priced at $3.50 each. Given the current forecasts, Rice presents the highest profit potential despite higher risk.",
+      "created_at": "2026-03-17T21:58:55.376188+00:00",
+      "status": "completed"
+    },
+    "0ccab18d-bc20-4813-9684-a2ea161267a9": {
+      "id": "0ccab18d-bc20-4813-9684-a2ea161267a9",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans",
+          "Rice"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 9300109.3,
+          "profit_p10": 5635419.83,
+          "profit_p50": 9300109.3,
+          "profit_p90": 12964798.77,
+          "yield_forecast": 7520.0,
+          "price_forecast": 12.48,
+          "soil_compatibility": 90.0,
+          "risk_score": 57.7,
+          "risk_level": "Medium",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. Organic matter and available water capacity are reported as zero, which may require soil amendments or irrigation management to optimize Rice growth.",
+          "cost_per_acre": 848.51,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 11119.9,
+          "profit_p10": 6738.13,
+          "profit_p50": 11119.9,
+          "profit_p90": 15501.67,
+          "yield_forecast": 47.9,
+          "price_forecast": 11.44,
+          "soil_compatibility": 90.0,
+          "risk_score": 57.7,
+          "risk_level": "Medium",
+          "soil_explanation": "The Silt Loam soil with moderate slope and unknown drainage presents some challenges due to low organic matter and water holding capacity. Proper irrigation and soil fertility management will be important to support Soybean production.",
+          "cost_per_acre": 436.78,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The 3-year weather baseline near Cincinnati, Ohio indicates average precipitation of 2.63 mm/day with temperatures ranging from 15.1C to 26.5C, featuring moderate temperature variability and limited extreme heat and freeze days.",
+      "market_outlook": "Market prices for Rice and Soybeans are trending slightly upward with a 4% increase expected in 2024 and 2025. Input costs are influenced by fluctuating crude oil prices and producer price index changes, while export competitiveness and financing costs remain stable. Overall, a moderate risk environment with balanced profit potential is anticipated.",
+      "created_at": "2026-03-17T22:16:28.103603+00:00",
+      "status": "completed"
+    },
+    "808ab59d-efe3-48fb-986d-85431a44cd53": {
+      "id": "808ab59d-efe3-48fb-986d-85431a44cd53",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans",
+          "Rice"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Rice",
+          "expected_profit": 9307286.36,
+          "profit_p10": 4541955.74,
+          "profit_p50": 9307286.36,
+          "profit_p90": 14072616.98,
+          "yield_forecast": 7519.57,
+          "price_forecast": 12.48,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil pH and organic matter content are reported as zero, which may indicate missing data or poor soil health. The available water capacity is also zero, suggesting irrigation is necessary for optimal growth, which aligns with the farm's irrigation capability.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 15044.84,
+          "profit_p10": 7341.88,
+          "profit_p50": 15044.84,
+          "profit_p90": 22747.8,
+          "yield_forecast": 47.86,
+          "price_forecast": 11.44,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to Rice, the soil for Soybeans is Silt Loam with unknown drainage and a 5.5% slope. The lack of reported pH and organic matter values suggests potential data gaps or soil limitations. The zero available water capacity highlights the importance of irrigation to support Soybean cultivation on this farm.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather summary from 3 nearby NOAA stations indicates an average precipitation of 13.16 mm/day with no recorded temperature data. There are no extreme heat or freeze days, and the overall weather risk index is low at 0.95.",
+      "market_outlook": "Market prices for Rice and Soybeans are stable with a slight positive price trend of 4% expected through 2025. Input costs may be influenced by fluctuating crude oil prices and producer price index changes, while export competitiveness is improving due to a stronger U.S. dollar. Interest rates have slightly decreased, potentially lowering financing costs, but unemployment has risen slightly, which could impact labor availability and demand.",
+      "created_at": "2026-03-17T23:45:49.681885+00:00",
+      "status": "completed"
+    },
+    "b9eb4f90-4492-417a-a587-e673733f4980": {
+      "id": "b9eb4f90-4492-417a-a587-e673733f4980",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Soybeans",
+          "Rice"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 17640.7,
+          "profit_p10": 8608.66,
+          "profit_p50": 17640.7,
+          "profit_p90": 26672.74,
+          "yield_forecast": 55.75,
+          "price_forecast": 11.44,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with a slope of 5.5%. However, key soil parameters such as pH, organic matter, and available water capacity are reported as zero or unknown, which may indicate incomplete data or poor soil conditions. Soybeans generally prefer well-drained soils with moderate organic matter, so soil testing and amendments may be necessary to optimize yield.",
+          "cost_per_acre": 436.78,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Rice",
+          "expected_profit": 8998.9,
+          "profit_p10": 4391.46,
+          "profit_p50": 8998.9,
+          "profit_p90": 13606.34,
+          "yield_forecast": 7520.0,
+          "price_forecast": 12.48,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice typically requires soils with good water retention and drainage. The current soil profile shows unknown drainage and zero available water capacity, which could be problematic. Given the presence of irrigation, water management will be critical. Soil amendments and monitoring are recommended to ensure suitable conditions for rice cultivation.",
+          "cost_per_acre": 848.51,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather near Cincinnati, Ohio shows an average precipitation of 13.16 mm/day with no recorded temperature data. There are no extreme heat or freeze days recently, indicating stable weather conditions for crop growth.",
+      "market_outlook": "Market prices for Soybeans and Rice are trending slightly upward with a 4% increase expected in 2024 and 2025. Input costs are influenced by high producer price index and fluctuating crude oil prices, while export competitiveness is improving due to a stronger dollar. Interest rates have slightly decreased, easing financing costs. Overall, market conditions suggest moderate profitability with some risk due to input cost volatility.",
+      "created_at": "2026-03-18T17:35:59.015046+00:00",
+      "status": "completed"
+    },
+    "6e498731-8f8d-49ef-aa38-e233b6b6d650": {
+      "id": "6e498731-8f8d-49ef-aa38-e233b6b6d650",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 17640.7,
+          "profit_p10": 8608.66,
+          "profit_p50": 17640.7,
+          "profit_p90": 26672.74,
+          "yield_forecast": 53.6,
+          "price_forecast": 11.44,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Soybeans are moderately compatible with the silt loam soil, but the lack of organic matter and water holding capacity could impact yield potential despite a high soil compatibility score.",
+          "cost_per_acre": 436.78,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Rice",
+          "expected_profit": 16707.25,
+          "profit_p10": 8153.14,
+          "profit_p50": 16707.25,
+          "profit_p90": 25261.36,
+          "yield_forecast": 7519.57,
+          "price_forecast": 12.48,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Rice shows good soil compatibility with silt loam, but the unknown drainage and zero organic matter may affect water management and nutrient availability, important for rice cultivation.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "fallback_last_year_observed",
+          "forecast_confidence": 0.0,
+          "cost_source": "api_or_default"
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -6407.07,
+          "profit_p10": -3126.65,
+          "profit_p50": -6407.07,
+          "profit_p90": -9687.49,
+          "yield_forecast": 959.29,
+          "price_forecast": 0.832,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Cotton's negative profit outlook may be influenced by the soil's low organic matter and unknown drainage, which can affect root development and water retention in silt loam soils.",
+          "cost_per_acre": 862.2,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23019.32,
+          "profit_p10": -11233.43,
+          "profit_p50": -23019.32,
+          "profit_p90": -34805.21,
+          "yield_forecast": 156.67,
+          "price_forecast": 3.64,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The silt loam soil with a 5.5% slope and unknown drainage presents challenges due to zero reported organic matter and water holding capacity, which may limit nutrient and moisture availability, contributing to the negative profit forecast for corn.",
+          "cost_per_acre": 800.47,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
+        }
+      ],
+      "weather_summary": "The weather near Cincinnati, Ohio shows an average precipitation of 13.16 mm/day from three nearby NOAA stations, with no recorded extreme heat or freeze days recently. Temperature data is unavailable.",
+      "market_outlook": "Crop prices for 2024 and 2025 show a slight upward trend of about 4% for Corn, Cotton, Rice, and Soybeans. Input costs are influenced by rising producer prices and crude oil prices, while export competitiveness is slightly improving due to a weaker dollar. Interest rates have slightly decreased, potentially lowering financing costs. Labor market conditions remain stable with a 4.4% unemployment rate.",
+      "created_at": "2026-03-18T17:44:35.612813+00:00",
+      "status": "completed"
+    },
+    "4d13b9f6-fa7d-4189-b2a0-b21b169840b3": {
+      "id": "4d13b9f6-fa7d-4189-b2a0-b21b169840b3",
+      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+      "farm_profile": {
+        "location": {
+          "lat": 39.1014537,
+          "lng": -84.5124602,
+          "address": "cincinnati, Ohio",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Soybeans",
+          "Rice",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "balanced"
+      },
+      "results": [
+        {
+          "crop_name": "Soybeans",
+          "expected_profit": 22927.0,
+          "profit_p10": 14186.13,
+          "profit_p50": 22927.0,
+          "profit_p90": 31667.87,
+          "yield_forecast": 54.75,
+          "yield_unit": "BU / ACRE",
+          "calc_yield_for_profit": 54.75,
+          "calc_yield_unit": "bu/acre",
+          "price_forecast": 11.44,
+          "price_unit": "$/bu",
+          "revenue_per_acre": 626.34,
+          "profit_per_acre": 229.27,
+          "soil_compatibility": 90.0,
+          "risk_score": 56.2,
+          "risk_level": "Medium",
+          "soil_explanation": "Silt Loam texture supports good root development and nutrient availability. Unknown drainage and zero organic matter reported suggest monitoring soil health and possibly amending organic content for optimal growth.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
+        },
+        {
+          "crop_name": "Rice",
+          "expected_profit": 16707.25,
+          "profit_p10": 10337.65,
+          "profit_p50": 16707.25,
+          "profit_p90": 23076.86,
+          "yield_forecast": 7519.57,
+          "yield_unit": "LB / ACRE",
+          "calc_yield_for_profit": 75.1957,
+          "calc_yield_unit": "cwt/acre",
+          "price_forecast": 12.48,
+          "price_unit": "$/cwt",
+          "revenue_per_acre": 938.44,
+          "profit_per_acre": 167.07,
+          "soil_compatibility": 90.0,
+          "risk_score": 56.2,
+          "risk_level": "Medium",
+          "soil_explanation": "Rice typically requires well-drained to flooded soils; the unknown drainage class and zero organic matter in this Silt Loam soil indicate the need for careful water management and soil amendments to support rice cultivation.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": 15009.78,
+          "profit_p10": 9287.33,
+          "profit_p50": 15009.78,
+          "profit_p90": 20732.23,
+          "yield_forecast": 1009.44,
+          "yield_unit": "LB / ACRE",
+          "calc_yield_for_profit": 1009.4444,
+          "calc_yield_unit": "lb/acre",
+          "price_forecast": 0.832,
+          "price_unit": "$/lb",
+          "revenue_per_acre": 839.86,
+          "profit_per_acre": 150.1,
+          "soil_compatibility": 90.0,
+          "risk_score": 56.2,
+          "risk_level": "Medium",
+          "soil_explanation": "Cotton can tolerate a range of soil conditions; however, the unknown drainage and lack of organic matter in this Silt Loam soil suggest that irrigation and soil fertility management will be critical to achieve good yields.",
+          "cost_per_acre": 689.76,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
+        },
+        {
+          "crop_name": "Corn",
+          "expected_profit": -12106.0,
+          "profit_p10": -7490.61,
+          "profit_p50": -12106.0,
+          "profit_p90": -16721.39,
+          "yield_forecast": 150.0,
+          "yield_unit": "bu/acre",
+          "calc_yield_for_profit": 150.0,
+          "calc_yield_unit": "bu/acre",
+          "price_forecast": 3.64,
+          "price_unit": "$/bu",
+          "revenue_per_acre": 546.0,
+          "profit_per_acre": -121.06,
+          "soil_compatibility": 90.0,
+          "risk_score": 56.2,
+          "risk_level": "Medium",
+          "soil_explanation": "Silt Loam soil with unknown drainage and moderate slope (5.5%) may limit water retention; irrigation is beneficial. The soil's pH and organic matter data are unavailable, which may require soil testing for nutrient management.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "fallback_default_yield_incompatible_api_unit",
+          "forecast_confidence": 0.2,
+          "cost_source": "api_or_default"
+        }
+      ],
+      "weather_summary": "The 3-year weather baseline near Cincinnati, Ohio indicates average precipitation of 2.63 mm/day with temperatures ranging from 15.1C to 26.5C, featuring moderate temperature variability and limited extreme heat and freeze days, suitable for diverse crop growth.",
+      "market_outlook": "Market prices for Soybeans, Rice, Cotton, and Corn show a positive price trend of approximately 4% for 2024-2025. Input costs are influenced by a high Producer Price Index and moderate crude oil prices, while export competitiveness remains stable. Interest rates are slightly declining, and unemployment is modestly rising, suggesting a cautiously optimistic market environment for crop sales and financing.",
+      "created_at": "2026-03-19T00:21:25.911652+00:00",
+      "status": "completed"
     }
   }
 }

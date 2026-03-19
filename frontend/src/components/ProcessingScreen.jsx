@@ -58,8 +58,8 @@ const PROCESSING_STEPS = [
     title: 'Market Forecasting',
     icon: DollarSign,
     thoughts: [
-      'Connecting to USDA AMS market feeds...',
-      'Fetching current commodity prices...',
+      'Building commodity price baselines...',
+      'Applying crop-specific market priors...',
       'Analyzing futures market trends... [OK]',
       'Processing export demand indicators...',
       'Evaluating supply chain factors...',

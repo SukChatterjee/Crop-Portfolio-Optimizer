@@ -15,9 +15,9 @@ import {
 const dataSourceBadges = [
   { name: 'USDA NASS', desc: 'Yield Data' },
   { name: 'NOAA', desc: 'Climate History' },
-  { name: 'USDA AMS', desc: 'Market Prices' },
   { name: 'NRCS', desc: 'Soil Data' },
   { name: 'ERS', desc: 'Cost Analysis' },
+  { name: 'Market Models', desc: 'Price Baselines' },
 ];
 
 const features = [

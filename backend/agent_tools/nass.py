@@ -27,6 +27,18 @@ from .cache import cached_json, load_parquet, parquet_cache_path, raw_cache_path
 NASS_URL = "https://quickstats.nass.usda.gov/api/api_GET/"
 NASS_PARAM_VALUES_URL = "https://quickstats.nass.usda.gov/api/get_param_values/"
 DEFAULT_SECTORS = ["CROPS", "HORTICULTURE", "VEGETABLES", "FRUIT & TREE NUTS", "FIELD CROPS"]
+EXPECTED_YIELD_UNIT_BASIS = {
+    "corn": "bu",
+    "wheat": "bu",
+    "soybeans": "bu",
+    "rice": "lb",
+    "cotton": "lb",
+    "tomatoes": "cwt",
+    "potatoes": "cwt",
+    "onions": "cwt",
+    "apples": "cwt",
+    "lettuce": "cwt",
+}
 
 
 def _normalize_crop_candidates(crop: str) -> List[str]:
@@ -73,6 +85,46 @@ def _seeded_float(seed: str, low: float, high: float) -> float:
     h = int(hashlib.sha256(seed.encode("utf-8")).hexdigest()[:12], 16)
     ratio = (h % 10_000) / 10_000
     return low + (high - low) * ratio
+
+
+def _extract_unit(item: Dict) -> str:
+    for key in ("unit_desc", "Value Unit", "value_unit"):
+        value = str(item.get(key, "")).strip()
+        if value:
+            return value
+    short_desc = str(item.get("short_desc", "")).strip()
+    if "," in short_desc:
+        parts = [p.strip() for p in short_desc.split(",") if p.strip()]
+        if len(parts) >= 2:
+            return parts[-1]
+    return ""
+
+
+def _unit_basis(unit: str) -> str:
+    text = str(unit or "").strip().lower().replace(" ", "")
+    if not text:
+        return ""
+    if "bu" in text or "bushel" in text:
+        return "bu"
+    if "cwt" in text:
+        return "cwt"
+    if "lb" in text or "pound" in text:
+        return "lb"
+    if "ton" in text:
+        return "ton"
+    return ""
+
+
+def _expected_yield_basis(crop: str) -> str:
+    return EXPECTED_YIELD_UNIT_BASIS.get(str(crop or "").strip().lower(), "")
+
+
+def _yield_unit_matches_crop(crop: str, unit: str) -> bool:
+    expected = _expected_yield_basis(crop)
+    actual = _unit_basis(unit)
+    if not expected or not actual:
+        return True
+    return expected == actual
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=6))
@@ -143,8 +195,14 @@ def _fallback_rows(crop: str, years: List[int]) -> List[Dict]:
                 "year": int(year),
                 "crop": crop,
                 "yield": round(yld, 2),
+                "yield_unit": "",
+                "yield_desc": "",
                 "production": round(prod, 2),
+                "production_unit": "",
+                "production_desc": "",
                 "area": round(area, 2),
+                "area_unit": "",
+                "area_desc": "",
             }
         )
     return rows
@@ -297,6 +355,19 @@ def discover_nass_params(
                         force_refresh=False,
                     )
                     if isinstance(payload, dict) and payload.get("data"):
+                        if stat == "YIELD":
+                            data = payload.get("data", [])
+                            sample_unit = ""
+                            for item in data:
+                                sample_unit = _extract_unit(item)
+                                if sample_unit:
+                                    break
+                            if sample_unit and not _yield_unit_matches_crop(crop, sample_unit):
+                                print(
+                                    f"[agent][tool] nass-discovery crop={crop} source=skip reason=yield_unit_mismatch unit={sample_unit} params={base_params}",
+                                    flush=True,
+                                )
+                                continue
                         matched = {
                             "commodity_desc": base_params.get("commodity_desc", ""),
                             "group_desc": base_params.get("group_desc", ""),
@@ -381,6 +452,18 @@ def _fetch_crop_stats(
                 except Exception:
                     continue
                 data = payload.get("data", []) if isinstance(payload, dict) else []
+                if stat_name == "YIELD" and data:
+                    sample_unit = ""
+                    for item in data:
+                        sample_unit = _extract_unit(item)
+                        if sample_unit:
+                            break
+                    if sample_unit and not _yield_unit_matches_crop(crop, sample_unit):
+                        print(
+                            f"[agent][tool] nass-fetch crop={crop} source=skip reason=yield_unit_mismatch unit={sample_unit} params={base_params}",
+                            flush=True,
+                        )
+                        continue
                 if data:
                     got_any = True
                 for item in data:
@@ -396,6 +479,8 @@ def _fetch_crop_stats(
                             "crop": crop,
                             "metric": stats[stat_name],
                             "value": _parse_value(item.get("Value", "")),
+                            "unit": _extract_unit(item),
+                            "desc": str(item.get("short_desc", "")).strip(),
                         }
                     )
                 if got_any:
@@ -408,14 +493,45 @@ def _fetch_crop_stats(
             return pd.DataFrame(_fallback_rows(crop, years))
 
         grouped = metric_df.groupby(["year", "crop", "metric"], as_index=False)["value"].mean()
+        unit_rows = (
+            metric_df.loc[metric_df["unit"].astype(str).str.strip() != "", ["year", "crop", "metric", "unit"]]
+            .drop_duplicates(subset=["year", "crop", "metric"], keep="last")
+        )
+        desc_rows = (
+            metric_df.loc[metric_df["desc"].astype(str).str.strip() != "", ["year", "crop", "metric", "desc"]]
+            .drop_duplicates(subset=["year", "crop", "metric"], keep="last")
+        )
         wide = grouped.pivot(index=["year", "crop"], columns="metric", values="value").reset_index()
+        if not unit_rows.empty:
+            unit_wide = unit_rows.pivot(index=["year", "crop"], columns="metric", values="unit").reset_index()
+            unit_wide = unit_wide.rename(
+                columns={
+                    "yield": "yield_unit",
+                    "production": "production_unit",
+                    "area": "area_unit",
+                }
+            )
+            wide = wide.merge(unit_wide, on=["year", "crop"], how="left")
+        if not desc_rows.empty:
+            desc_wide = desc_rows.pivot(index=["year", "crop"], columns="metric", values="desc").reset_index()
+            desc_wide = desc_wide.rename(
+                columns={
+                    "yield": "yield_desc",
+                    "production": "production_desc",
+                    "area": "area_desc",
+                }
+            )
+            wide = wide.merge(desc_wide, on=["year", "crop"], how="left")
         for col in ["yield", "production", "area"]:
             if col not in wide.columns:
                 wide[col] = float("nan")
+        for col in ["yield_unit", "production_unit", "area_unit", "yield_desc", "production_desc", "area_desc"]:
+            if col not in wide.columns:
+                wide[col] = ""
         wide = wide.ffill().bfill()
         for col in ["yield", "production", "area"]:
             wide[col] = wide[col].fillna(pd.Series([r[col] for r in _fallback_rows(crop, list(wide["year"]))]))
-        return wide[["year", "crop", "yield", "production", "area"]]
+        return wide[["year", "crop", "yield", "yield_unit", "yield_desc", "production", "production_unit", "production_desc", "area", "area_unit", "area_desc"]]
     except Exception:
         # Never break the crop pipeline due to one provider parse issue.
         return pd.DataFrame(_fallback_rows(crop, years))

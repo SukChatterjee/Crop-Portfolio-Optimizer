@@ -37,6 +37,8 @@ const CHART_COLORS = {
   soil: '#d97706',
 };
 
+const formatUnit = (unit, fallback) => unit || fallback;
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -44,9 +46,27 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="font-medium text-slate-900">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} style={{ color: entry.color }} className="text-sm">
-            {entry.name}: ${entry.value?.toLocaleString()}
+            {entry.name}: ${entry.value?.toLocaleString()} total profit
           </p>
         ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+const YieldTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const row = payload[0]?.payload || {};
+    return (
+      <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-slate-200">
+        <p className="font-medium text-slate-900">{label}</p>
+        <p className="text-sm text-sky-700">
+          Yield: {payload[0]?.value?.toLocaleString()} {formatUnit(row.yieldUnit, 'units/acre')}
+        </p>
+        <p className="text-sm text-emerald-700">
+          Price: ${((row.rawPrice ?? 0)).toLocaleString()} {formatUnit(row.priceUnit, '$/unit')}
+        </p>
       </div>
     );
   }
@@ -163,8 +183,11 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
 
   const yieldComparisonData = safeResults.map(crop => ({
     name: crop.crop_name,
-    yield: crop.yield_forecast,
+    yield: crop.calc_yield_for_profit ?? crop.yield_forecast,
+    yieldUnit: crop.calc_yield_unit || crop.yield_unit || 'units/acre',
     price: crop.price_forecast * 100, // Scale for visibility
+    rawPrice: crop.price_forecast,
+    priceUnit: crop.price_unit || '$/unit',
   }));
 
   return (
@@ -233,9 +256,9 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
               <span className="text-sm font-medium text-slate-600">Yield Forecast</span>
             </div>
             <p className="font-display text-2xl font-bold text-emerald-950">
-              <CountUp end={topCrop.yield_forecast} duration={2} separator="," decimals={1} />
+              <CountUp end={topCrop.calc_yield_for_profit ?? topCrop.yield_forecast} duration={2} separator="," decimals={1} />
             </p>
-            <p className="text-sm text-slate-500">bu/acre projected</p>
+            <p className="text-sm text-slate-500">{formatUnit(topCrop.calc_yield_unit || topCrop.yield_unit, 'units/acre')} projected</p>
           </CardContent>
         </Card>
 
@@ -319,8 +342,8 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                       <AreaChart data={yieldComparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="yield" name="Yield (bu/acre)" stroke={CHART_COLORS.yield} fill={CHART_COLORS.yield} fillOpacity={0.3} />
+                        <Tooltip content={<YieldTooltip />} />
+                        <Area type="monotone" dataKey="yield" name="Yield (crop-specific units)" stroke={CHART_COLORS.yield} fill={CHART_COLORS.yield} fillOpacity={0.3} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -361,16 +384,46 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Yield Forecast</h4>
-                        <p className="font-display text-xl font-bold text-emerald-950">{selectedCrop.yield_forecast.toLocaleString()} bu/acre</p>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          {selectedCrop.yield_forecast.toLocaleString()} {formatUnit(selectedCrop.yield_unit, 'units/acre')}
+                        </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Price Forecast</h4>
-                        <p className="font-display text-xl font-bold text-emerald-950">${selectedCrop.price_forecast.toFixed(2)}/bu</p>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${selectedCrop.price_forecast.toFixed(2)} {formatUnit(selectedCrop.price_unit, '$/unit')}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Calculation Yield</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          {(selectedCrop.calc_yield_for_profit ?? selectedCrop.yield_forecast).toLocaleString()} {formatUnit(selectedCrop.calc_yield_unit || selectedCrop.yield_unit, 'units/acre')}
+                        </p>
+                        <p className="text-xs text-slate-500">Used directly in revenue and profit math</p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Cost per Acre</h4>
                         <p className="font-display text-xl font-bold text-emerald-950">${(selectedCrop.cost_per_acre ?? 0).toLocaleString()}</p>
                         <p className="text-xs text-slate-500">Source: {selectedCrop.cost_source || 'api_or_default'}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Revenue per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${(selectedCrop.revenue_per_acre ?? 0).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {(selectedCrop.calc_yield_for_profit ?? selectedCrop.yield_forecast).toLocaleString()} {formatUnit(selectedCrop.calc_yield_unit || selectedCrop.yield_unit, 'units/acre')} x
+                          {' '}${selectedCrop.price_forecast.toFixed(2)} {formatUnit(selectedCrop.price_unit, '$/unit')}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Profit per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${(selectedCrop.profit_per_acre ?? 0).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Revenue per acre minus cost per acre
+                        </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Forecast Source</h4>

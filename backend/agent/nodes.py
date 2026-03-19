@@ -7,10 +7,9 @@ from typing import Any, Dict, List
 from openai import OpenAI
 import pandas as pd
 
-from agent.planners.ams_planner import plan_ams_for_crop
-from agent_tools.ams import get_prices_for_crop_with_plan
-from agent_tools.compute import compute_forecasts
+from agent_tools.compute import DEFAULT_PRICE_BY_CROP, DEFAULT_UNITS_BY_CROP, compute_forecasts, normalize_and_predict_inputs
 from agent_tools.costs import fetch_cost_per_acre
+from agent_tools.fred import fetch_fred_series
 from agent_tools.nass import discover_nass_params, fetch_ohio_crop_stats
 from agent_tools.noaa import fetch_weather_features
 from agent_tools.soil import fetch_soil_features
@@ -126,216 +125,62 @@ def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, An
     return out
 
 
-def _build_price_df_from_ams(selected_crops: List[str], ams_prices: Dict[str, Any]) -> pd.DataFrame:
-    target_by_crop = {
-        "corn": "usd_per_bu",
-        "wheat": "usd_per_bu",
-        "soybeans": "usd_per_bu",
-        "rice": "usd_per_cwt",
-        "cotton": "usd_per_lb",
-        "tomatoes": "usd_per_cwt",
-        "potatoes": "usd_per_cwt",
-        "onions": "usd_per_cwt",
-        "lettuce": "usd_per_cwt",
-        "apples": "usd_per_cwt",
-    }
-    reference_price_by_crop = {
-        "corn": 3.5,
-        "wheat": 3.5,
-        "soybeans": 10.0,
-        "rice": 12.0,
-        "cotton": 0.8,
-        "tomatoes": 3.5,
-        "potatoes": 8.0,
-        "onions": 8.0,
-        "lettuce": 18.0,
-        "apples": 25.0,
-    }
-
-    def _unit_key(unit: str) -> str:
-        u = str(unit or "").strip().lower()
-        if not u:
-            return "missing"
-        if any(tok in u for tok in ["index", "%", "percent", "rating", "score"]):
-            return "non_price"
-        is_cents = any(tok in u for tok in ["cent", "cents", "¢"])
-        if "bu" in u or "bushel" in u:
-            return "cents_per_bu" if is_cents else "usd_per_bu"
-        if "cwt" in u:
-            return "cents_per_cwt" if is_cents else "usd_per_cwt"
-        # Keep /lb before generic 'lb' token.
-        if "/lb" in u or " per lb" in u or " pound" in u or "lb" in u:
-            return "cents_per_lb" if is_cents else "usd_per_lb"
-        if "ton" in u:
-            return "cents_per_ton" if is_cents else "usd_per_ton"
-        if "box" in u:
-            return "cents_per_box" if is_cents else "usd_per_box"
-        if any(tok in u for tok in ["$", "usd", "dollar"]):
-            return "usd_unknown_basis"
-        return "unknown"
-
-    def _convert_to_target(raw_price: float, from_key: str, target_key: str) -> Any:
-        p = float(raw_price)
-        factors = {
-            ("usd_per_bu", "usd_per_bu"): 1.0,
-            ("cents_per_bu", "usd_per_bu"): 0.01,
-            ("usd_per_lb", "usd_per_lb"): 1.0,
-            ("cents_per_lb", "usd_per_lb"): 0.01,
-            ("usd_per_cwt", "usd_per_cwt"): 1.0,
-            ("cents_per_cwt", "usd_per_cwt"): 0.01,
-            ("usd_per_ton", "usd_per_ton"): 1.0,
-            ("cents_per_ton", "usd_per_ton"): 0.01,
-            ("usd_per_box", "usd_per_box"): 1.0,
-            ("cents_per_box", "usd_per_box"): 0.01,
-            # Cross-basis conversions where physically valid.
-            ("usd_per_cwt", "usd_per_lb"): 0.01,
-            ("cents_per_cwt", "usd_per_lb"): 0.0001,
-            ("usd_per_lb", "usd_per_cwt"): 100.0,
-            ("cents_per_lb", "usd_per_cwt"): 1.0,
-        }
-        factor = factors.get((from_key, target_key))
-        if factor is None:
-            return None
-        return p * factor
-
-    def _crop_price_bounds(crop_name: str, target_key: str) -> Tuple[float, float]:
-        c = str(crop_name or "").strip().lower()
-        # Conservative bounds in normalized target units to prevent obvious unit mistakes.
-        if target_key == "usd_per_bu":
-            return (1.0, 25.0) if c in {"corn", "wheat", "soybeans"} else (0.5, 50.0)
-        if target_key == "usd_per_lb":
-            return (0.2, 3.5)
-        if target_key == "usd_per_cwt":
-            if c in {"tomatoes", "potatoes", "onions", "lettuce"}:
-                return (1.0, 120.0)
-            if c in {"rice"}:
-                return (5.0, 80.0)
-            if c in {"apples"}:
-                return (5.0, 200.0)
-            return (0.5, 200.0)
-        return (0.05, 100.0)
-
-    def _try_infer_normalized_price(raw_price: float, target_key: str, crop_name: str) -> Any:
-        """
-        For AMS rows with missing/unknown unit, try plausible interpretations
-        and choose the value most plausible for the crop.
-        """
-        p = float(raw_price)
-        candidates: List[str] = []
-        if target_key:
-            candidates.append(target_key)
-            if target_key.startswith("usd_"):
-                candidates.append(target_key.replace("usd_", "cents_", 1))
-            elif target_key.startswith("cents_"):
-                candidates.append(target_key.replace("cents_", "usd_", 1))
-        # Preserve order and remove duplicates.
-        seen = set()
-        ordered = []
-        for c in candidates:
-            if c and c not in seen:
-                ordered.append(c)
-                seen.add(c)
-        ckey = str(crop_name or "").strip().lower()
-        ref = float(reference_price_by_crop.get(ckey, 3.5))
-        lo, hi = _crop_price_bounds(ckey, target_key)
-        viable: List[Tuple[float, float]] = []  # (distance_to_ref, normalized)
-        for source_key in ordered:
-            normalized = _convert_to_target(p, source_key, target_key)
-            if normalized is None:
-                continue
-            val = float(normalized)
-            if not (lo <= val <= hi):
-                continue
-            viable.append((abs(val - ref), val))
-        if not viable:
-            return None
-        viable.sort(key=lambda x: x[0])
-        return float(viable[0][1])
+def _build_market_price_df(selected_crops: List[str], nass_df: pd.DataFrame) -> pd.DataFrame:
+    years: List[int] = []
+    if nass_df is not None and not nass_df.empty and "year" in nass_df.columns:
+        try:
+            years = sorted({int(y) for y in pd.to_numeric(nass_df["year"], errors="coerce").dropna().tolist()})
+        except Exception:
+            years = []
+    if not years:
+        current_year = pd.Timestamp.utcnow().year
+        years = [current_year - 2, current_year - 1, current_year]
 
     rows = []
+    year_offsets = {-2: 0.96, -1: 1.0, 0: 1.04}
     for crop in selected_crops:
-        payload = ams_prices.get(crop) if isinstance(ams_prices, dict) else None
-        series = payload.get("series") if isinstance(payload, dict) else None
-        target_key = target_by_crop.get(str(crop).strip().lower())
-        if not isinstance(series, list):
-            continue
-        grouped: Dict[int, List[float]] = {}
-        unit_counts: Dict[str, int] = {}
-        kept_rows = 0
-        dropped_rows = 0
-        inferred_rows = 0
-        for row in series:
-            if not isinstance(row, dict):
-                continue
-            row_unit = str(row.get("unit") or "").strip().lower()
-            date_s = str(row.get("date", "")).strip()
-            if len(date_s) < 4 or not date_s[:4].isdigit():
-                dropped_rows += 1
-                continue
-            year = int(date_s[:4])
-            try:
-                price = float(row.get("price_avg"))
-            except (TypeError, ValueError):
-                dropped_rows += 1
-                continue
-            src_key = _unit_key(row_unit)
-            unit_counts[src_key] = int(unit_counts.get(src_key, 0)) + 1
-            effective_target = target_key or src_key.replace("cents_", "usd_")
-            if src_key == "non_price":
-                # Do not drop: pass through numeric value for downstream model handling.
-                normalized = float(price)
-                inferred_rows += 1
-            elif src_key in {"unknown", "missing", "usd_unknown_basis"}:
-                normalized = _try_infer_normalized_price(price, effective_target, crop)
-                if normalized is not None:
-                    inferred_rows += 1
-                else:
-                    # Best-effort retention: keep raw numeric value when unit inference fails.
-                    normalized = float(price)
-                    inferred_rows += 1
-            else:
-                normalized = _convert_to_target(price, src_key, effective_target)
-                if normalized is None:
-                    # Best-effort retention: keep raw numeric value if conversion map is missing.
-                    normalized = float(price)
-                    inferred_rows += 1
-            price = float(normalized)
-            lo, hi = _crop_price_bounds(crop, effective_target)
-            # Do not drop out-of-range rows; clamp to crop-specific bounds.
-            if price < lo:
-                price = float(lo)
-                inferred_rows += 1
-            elif price > hi:
-                price = float(hi)
-                inferred_rows += 1
-            grouped.setdefault(year, []).append(price)
-            kept_rows += 1
-        for year, prices in grouped.items():
-            if not prices:
-                continue
-            s = pd.Series(prices, dtype=float)
-            if len(s) >= 4:
-                q1, q3 = s.quantile(0.25), s.quantile(0.75)
-                iqr = float(q3 - q1)
-                lo = float(q1 - 3.0 * iqr)
-                hi = float(q3 + 3.0 * iqr)
-                s = s[(s >= lo) & (s <= hi)]
-            if s.empty:
-                continue
-            rows.append({"year": int(year), "crop": crop, "avg_price": round(float(s.mean()), 4)})
-        total = kept_rows + dropped_rows
-        valid_ratio = (kept_rows / total) if total > 0 else 0.0
-        if kept_rows == 0:
-            print(
-                f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept=0 dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts} status=no_rows_after_normalization",
-                flush=True,
+        crop_key = str(crop).strip().lower()
+        baseline = float(DEFAULT_PRICE_BY_CROP.get(crop_key, 3.5))
+        for year in years:
+            offset = year - years[-1]
+            multiplier = year_offsets.get(offset, 1.0)
+            rows.append(
+                {
+                    "year": int(year),
+                    "crop": crop,
+                    "avg_price": round(baseline * multiplier, 4),
+                    "price_unit": str(DEFAULT_UNITS_BY_CROP.get(crop_key, {}).get("price_unit", "$/unit")),
+                    "source": "default_baseline",
+                }
             )
-            continue
         print(
-            f"[agent][tool] ams-preprocess crop={crop} target={target_key or 'auto'} kept={kept_rows} dropped={dropped_rows} inferred={inferred_rows} valid_ratio={valid_ratio:.2f} unit_counts={unit_counts}",
+            f"[agent][tool] market-baseline crop={crop} source=default rows={len(years)} baseline={baseline}",
             flush=True,
         )
     return pd.DataFrame(rows)
+
+
+def _df_to_records(df: pd.DataFrame, columns: List[str]) -> List[Dict[str, Any]]:
+    if df is None or df.empty:
+        return []
+    safe = df.copy()
+    for column in columns:
+        if column not in safe.columns:
+            safe[column] = None
+    return safe[columns].to_dict(orient="records")
+
+
+def _records_to_df(records: Any, columns: List[str]) -> pd.DataFrame:
+    if not isinstance(records, list) or not records:
+        return pd.DataFrame(columns=columns)
+    rows = [row for row in records if isinstance(row, dict)]
+    if not rows:
+        return pd.DataFrame(columns=columns)
+    df = pd.DataFrame(rows)
+    for column in columns:
+        if column not in df.columns:
+            df[column] = None
+    return df[columns]
 
 
 def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
@@ -425,6 +270,78 @@ def _llm_plan_costs_params(selected_crops: List[str], farm_profile: Dict[str, An
     return {"query_candidates": cleaned}
 
 
+def _llm_plan_fred_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        print("[agent][tool] fred-planner source=skipped reason=missing_openai_api_key", flush=True)
+        return {"query_candidates": []}
+
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
+    catalog = [
+        {"series_id": "CPIAUCSL", "title": "Consumer Price Index for All Urban Consumers: All Items", "why": "broad inflation"},
+        {"series_id": "PPIACO", "title": "Producer Price Index by Commodity: All Commodities", "why": "producer price pressure"},
+        {"series_id": "DCOILWTICO", "title": "Crude Oil Prices: West Texas Intermediate", "why": "fuel and input cost pressure"},
+        {"series_id": "DGS10", "title": "Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity", "why": "interest-rate climate"},
+        {"series_id": "FEDFUNDS", "title": "Effective Federal Funds Rate", "why": "short-rate climate"},
+        {"series_id": "UNRATE", "title": "Unemployment Rate", "why": "macro demand and labor backdrop"},
+        {"series_id": "DTWEXBGS", "title": "Trade Weighted U.S. Dollar Index: Broad, Goods", "why": "export competitiveness"},
+        {"series_id": "M2SL", "title": "M2 Money Stock", "why": "broad liquidity backdrop"},
+    ]
+    prompt = (
+        "You are an API query planner for the St. Louis Fed FRED API.\n"
+        "Return strict JSON only with schema:\n"
+        "{\"lookback_years\":5,\"query_candidates\":[{\"series_id\":\"...\",\"title\":\"...\",\"purpose\":\"...\",\"units\":\"lin|chg|ch1|pch|pc1|pca|cch|cca|log\",\"frequency\":\"m|q|a|\",\"aggregation_method\":\"avg|sum|eop\",\"observation_start\":\"YYYY-MM-DD\"}]}\n"
+        "Rules:\n"
+        "- Choose 3 to 6 series from the provided catalog only.\n"
+        "- Favor macro indicators useful for crop pricing, demand, export conditions, financing, and farm input costs.\n"
+        "- observation_start should reflect a sensible lookback window for trend analysis.\n"
+        "- Keep frequency empty when the native cadence should be used.\n"
+        "- No markdown."
+    )
+    payload = {
+        "selected_crops": selected_crops,
+        "farm_profile": {
+            "goal": farm_profile.get("goal"),
+            "risk_preference": farm_profile.get("risk_preference"),
+            "state": ((farm_profile.get("location") or {}).get("state")),
+        },
+        "catalog": catalog,
+    }
+    parsed = _openai_generate_json(
+        api_key,
+        model,
+        f"{prompt}\n\nInput:\n{json.dumps(payload)}",
+        purpose="fred_param_planner",
+    )
+    candidates = parsed.get("query_candidates") if isinstance(parsed, dict) else []
+    if not isinstance(candidates, list):
+        candidates = []
+    allowed = {item["series_id"] for item in catalog}
+    cleaned = []
+    for item in candidates:
+        if not isinstance(item, dict):
+            continue
+        series_id = str(item.get("series_id") or "").strip().upper()
+        if not series_id or series_id not in allowed:
+            continue
+        cleaned.append(
+            {
+                "series_id": series_id,
+                "title": str(item.get("title") or "").strip(),
+                "purpose": str(item.get("purpose") or "").strip(),
+                "units": str(item.get("units") or "lin").strip() or "lin",
+                "frequency": str(item.get("frequency") or "").strip(),
+                "aggregation_method": str(item.get("aggregation_method") or "avg").strip() or "avg",
+                "observation_start": str(item.get("observation_start") or "").strip(),
+            }
+        )
+    print(f"[agent][tool] fred-planner candidates={len(cleaned)}", flush=True)
+    return {
+        "lookback_years": int(parsed.get("lookback_years") or 5) if isinstance(parsed, dict) else 5,
+        "query_candidates": cleaned,
+    }
+
+
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
     farm = dict(state.get("farm_profile") or {})
     errors = list(state.get("errors") or [])
@@ -459,14 +376,13 @@ def validate_inputs(state: AgentState) -> Dict[str, Any]:
     return {"farm_profile": farm, "errors": errors}
 
 
-def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
+def fetch_source_data(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
         return {}
 
     farm = dict(state.get("farm_profile") or {})
     api_plan = dict(state.get("api_plan") or {})
-    ams_prices = dict(state.get("ams_prices") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     location = dict(farm.get("location") or {})
     lat = float(location.get("lat", 39.8283))
@@ -493,8 +409,14 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
                 force_live_calls,
                 api_plan.get("nass", {}),
             )
+            future_fred = ex.submit(
+                fetch_fred_series,
+                api_plan.get("fred", {}),
+                force_live_calls,
+            )
             nass_df = future_nass.result()
-        price_df = _build_price_df_from_ams(selected_crops, ams_prices)
+            fred_data = future_fred.result()
+        price_df = _build_market_price_df(selected_crops, nass_df)
 
         weather = fetch_weather_features(
             lat, lng, last_n_years=3, max_stations=3, force_refresh=force_live_calls
@@ -502,13 +424,17 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
         soil = fetch_soil_features(
             lat, lng, soil_type=str(farm.get("soil_type", "")), force_refresh=force_live_calls
         )
-        crop_results = compute_forecasts(
-            farm_profile=farm,
-            nass_df=nass_df,
-            price_df=price_df,
-            costs_per_acre=costs,
-            weather=weather,
-        )
+        analysis_inputs = {
+            "nass_rows": _df_to_records(
+                nass_df,
+                ["year", "crop", "yield", "yield_unit", "yield_desc", "production", "production_unit", "production_desc", "area", "area_unit", "area_desc"],
+            ),
+            "price_rows": _df_to_records(price_df, ["year", "crop", "avg_price", "price_unit", "source"]),
+            "costs": costs,
+            "weather": weather,
+            "soil": soil,
+            "fred": fred_data,
+        }
         datasets_summary = {
             "weather": {
                 "summary": weather.get("summary", ""),
@@ -523,12 +449,12 @@ def fetch_and_compute(state: AgentState) -> Dict[str, Any]:
             "nass_rows": int(len(nass_df)) if nass_df is not None else 0,
             "price_rows": int(len(price_df)) if price_df is not None else 0,
             "costs": costs,
+            "fred": fred_data,
             "api_plan": api_plan,
-            "ams_prices": ams_prices,
         }
-        return {"crop_results": crop_results, "datasets_summary": datasets_summary}
+        return {"analysis_inputs": analysis_inputs, "datasets_summary": datasets_summary}
     except Exception as exc:
-        errors.append(f"fetch_and_compute failed: {exc}")
+        errors.append(f"fetch_source_data failed: {exc}")
         return {"errors": errors}
 
 
@@ -540,7 +466,7 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     farm = dict(state.get("farm_profile") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
     llm_seed_plan = _llm_plan_params(selected_crops, farm)
-    api_plan: Dict[str, Any] = {"nass": {}, "costs": {}}
+    api_plan: Dict[str, Any] = {"nass": {}, "costs": {}, "fred": {}}
     try:
         api_plan["nass"] = discover_nass_params(
             selected_crops,
@@ -555,71 +481,73 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
         api_plan["costs"] = _llm_plan_costs_params(selected_crops, farm)
     except Exception as exc:
         print(f"[agent][tool] costs-planner source=error error={exc}", flush=True)
+    try:
+        api_plan["fred"] = _llm_plan_fred_params(selected_crops, farm)
+    except Exception as exc:
+        print(f"[agent][tool] fred-planner source=error error={exc}", flush=True)
 
     return {"api_plan": api_plan}
 
 
-def plan_ams_params(state: AgentState) -> Dict[str, Any]:
+def agent2_predict(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
         return {}
+
     farm = dict(state.get("farm_profile") or {})
-    selected_crops = _ensure_list(farm.get("selected_crops"))
-    state_name = "OHIO"
-    lookback_days = 1095
+    analysis_inputs = dict(state.get("analysis_inputs") or {})
+    nass_df = _records_to_df(
+        analysis_inputs.get("nass_rows"),
+        ["year", "crop", "yield", "yield_unit", "yield_desc", "production", "production_unit", "production_desc", "area", "area_unit", "area_desc"],
+    )
+    price_df = _records_to_df(analysis_inputs.get("price_rows"), ["year", "crop", "avg_price", "price_unit", "source"])
+    costs = dict(analysis_inputs.get("costs") or {})
+    weather = dict(analysis_inputs.get("weather") or {})
+    fred_data = dict(analysis_inputs.get("fred") or {})
 
-    out: Dict[str, Any] = {}
-    for crop in selected_crops:
-        plan = plan_ams_for_crop(crop_name=crop, state_name=state_name, lookback_days=lookback_days)
-        out[crop] = plan
-        status = (plan.get("plan") or {}).get("status")
-        if status == "no_data":
-            print(
-                f"[agent][tool] ams-planner crop={crop} source=no_data reason={((plan.get('plan') or {}).get('reason',''))}",
-                flush=True,
-            )
-        else:
-            cq = ((plan.get("plan") or {}).get("catalog_query") or {})
-            filters = cq.get("filters") if isinstance(cq.get("filters"), dict) else {}
-            contains_any = filters.get("contains_any") if isinstance(filters.get("contains_any"), list) else []
-            print(
-                f"[agent][tool] ams-planner crop={crop} contains_any={contains_any[:6]} max_candidates={cq.get('max_candidates', 30)}",
-                flush=True,
-            )
-    return {"ams_plans": out}
+    predictions, err = normalize_and_predict_inputs(
+        farm_profile=farm,
+        nass_df=nass_df,
+        price_df=price_df,
+        costs_per_acre=costs,
+        weather=weather,
+        fred_data=fred_data,
+    )
+    if err:
+        print(f"[agent][tool] agent2 source=fallback reason={err}", flush=True)
+        return {"agent2_predictions": {}}
+
+    print(f"[agent][tool] agent2 source=ok crops={list((predictions or {}).keys())}", flush=True)
+    return {"agent2_predictions": predictions or {}}
 
 
-def fetch_ams_prices(state: AgentState) -> Dict[str, Any]:
+def compute_results(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
         return {}
-    farm = dict(state.get("farm_profile") or {})
-    selected_crops = _ensure_list(farm.get("selected_crops"))
-    plans = dict(state.get("ams_plans") or {})
-    state_name = "OHIO"
-    lookback_days = 1095
-    out: Dict[str, Any] = {}
 
-    for crop in selected_crops:
-        plan = plans.get(crop, {})
-        result = get_prices_for_crop_with_plan(
-            crop_name=crop,
-            state_name=state_name,
-            lookback_days=lookback_days,
-            planner_json=plan,
-        )
-        out[crop] = result
-        if result.get("status") == "ok":
-            print(
-                f"[agent][tool] ams crop={crop} source=ok slug_id={result.get('chosen_slug_id')} rows={len(result.get('series') or [])}",
-                flush=True,
-            )
-        else:
-            print(
-                f"[agent][tool] ams crop={crop} source=no_data reason={result.get('reason', 'unknown')}",
-                flush=True,
-            )
-    return {"ams_prices": out}
+    farm = dict(state.get("farm_profile") or {})
+    analysis_inputs = dict(state.get("analysis_inputs") or {})
+    nass_df = _records_to_df(
+        analysis_inputs.get("nass_rows"),
+        ["year", "crop", "yield", "yield_unit", "yield_desc", "production", "production_unit", "production_desc", "area", "area_unit", "area_desc"],
+    )
+    price_df = _records_to_df(analysis_inputs.get("price_rows"), ["year", "crop", "avg_price", "price_unit", "source"])
+    costs = dict(analysis_inputs.get("costs") or {})
+    weather = dict(analysis_inputs.get("weather") or {})
+    agent2_predictions = dict(state.get("agent2_predictions") or {})
+    fred_data = dict(analysis_inputs.get("fred") or {})
+
+    crop_results = compute_forecasts(
+        farm_profile=farm,
+        nass_df=nass_df,
+        price_df=price_df,
+        costs_per_acre=costs,
+        weather=weather,
+        fred_data=fred_data,
+        agent2_predictions=agent2_predictions,
+    )
+    return {"crop_results": crop_results}
 
 
 def llm_enrich(state: AgentState) -> Dict[str, Any]:
@@ -629,6 +557,7 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
     weather_stats = dict(ds.get("weather") or {})
     soil_stats = dict(ds.get("soil") or {})
     market_stats = dict(ds.get("market") or {})
+    fred_stats = dict((ds.get("fred") or {}).get("summary") or {})
 
     if errors or not crop_results:
         return {
@@ -677,6 +606,7 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
         "weather_stats": weather_stats,
         "soil_stats": soil_stats,
         "market_stats": market_stats,
+        "fred_stats": fred_stats,
     }
 
     system_msg = (

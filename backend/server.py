@@ -192,7 +192,13 @@ class CropResult(BaseModel):
     profit_p50: float
     profit_p90: float
     yield_forecast: float
+    yield_unit: str = "units/acre"
+    calc_yield_for_profit: float = 0.0
+    calc_yield_unit: str = "units/acre"
     price_forecast: float
+    price_unit: str = "$/unit"
+    revenue_per_acre: float = 0.0
+    profit_per_acre: float = 0.0
     soil_compatibility: float
     risk_score: float
     risk_level: str
@@ -373,7 +379,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 # def generate_market_outlook() -> str:
 #     outlooks = [
-#         "USDA AMS data shows strengthening commodity prices driven by global demand. Export markets remain robust.",
+#         "Commodity price baselines show strengthening market conditions driven by global demand. Export markets remain robust.",
 #         "Market analysis indicates stable pricing with slight upward pressure from reduced planted acres nationwide.",
 #         "Futures markets suggest volatility ahead. Diversification recommended to hedge against price swings.",
 #         "Strong domestic demand combined with favorable export conditions support premium pricing opportunities.",
