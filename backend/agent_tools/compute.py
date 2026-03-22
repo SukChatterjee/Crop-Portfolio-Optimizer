@@ -52,6 +52,17 @@ BUSHEL_WEIGHT_LB_BY_CROP = {
     "soybeans": 60.0,
     "wheat": 60.0,
 }
+SOIL_PREFS_BY_CROP = {
+    "corn": {"ph": (5.8, 7.2), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "clay loam"}, "awc": (0.16, 0.32), "slope_max": 6.0},
+    "soybeans": {"ph": (6.0, 7.2), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "clay loam"}, "awc": (0.14, 0.30), "slope_max": 8.0},
+    "wheat": {"ph": (6.0, 7.4), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "clay loam"}, "awc": (0.14, 0.30), "slope_max": 10.0},
+    "rice": {"ph": (5.5, 7.0), "drainage": {"poorly drained", "somewhat poorly drained", "moderately well drained"}, "texture": {"clay", "clay loam", "silt loam"}, "awc": (0.18, 0.40), "slope_max": 3.0},
+    "cotton": {"ph": (5.8, 7.5), "drainage": {"well drained", "moderately well drained"}, "texture": {"sandy", "loam", "sandy loam"}, "awc": (0.10, 0.24), "slope_max": 8.0},
+    "potatoes": {"ph": (5.0, 6.5), "drainage": {"well drained"}, "texture": {"sandy", "sandy loam", "loam"}, "awc": (0.08, 0.22), "slope_max": 6.0},
+    "onions": {"ph": (6.0, 7.0), "drainage": {"well drained"}, "texture": {"sandy", "silt", "loam"}, "awc": (0.08, 0.22), "slope_max": 5.0},
+    "lettuce": {"ph": (6.0, 7.0), "drainage": {"well drained"}, "texture": {"sandy", "loam", "silt"}, "awc": (0.10, 0.24), "slope_max": 5.0},
+    "apples": {"ph": (6.0, 7.0), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "sandy loam"}, "awc": (0.12, 0.26), "slope_max": 15.0},
+}
 
 
 def _safe_series_stats(series: pd.Series, default: float) -> Dict[str, float]:
@@ -716,34 +727,86 @@ def normalize_and_predict_inputs(
     )
 
 
-def _soil_compatibility(soil_type: str, crop: str) -> float:
-    st = (soil_type or "").lower()
-    crop_key = crop.lower()
-    base = 0.70
-
-    if "loam" in st:
-        base = 0.90
-    elif "silt" in st:
-        base = 0.84
-    elif "clay" in st:
-        base = 0.78
-    elif "sand" in st:
-        base = 0.74
-
-    if crop_key in {"rice"} and "clay" in st:
-        base += 0.08
-    if crop_key in {"potatoes", "onions", "lettuce"} and "sandy" in st:
-        base += 0.06
-    if crop_key in {"apples"} and "loam" in st:
-        base += 0.05
-
-    return max(0.55, min(0.98, base))
+def _score_range(value: float, low: float, high: float, tolerance: float) -> float:
+    if low <= value <= high:
+        return 1.0
+    if value < low:
+        return max(0.0, 1.0 - (low - value) / max(tolerance, 0.001))
+    return max(0.0, 1.0 - (value - high) / max(tolerance, 0.001))
 
 
-def _soil_explanation(soil_type: str, crop: str, score: float) -> str:
+def _texture_matches(texture: str, preferred: set[str]) -> float:
+    text = str(texture or "").lower()
+    if not text:
+        return 0.6
+    for item in preferred:
+        if item in text:
+            return 1.0
+    if "loam" in text and any("loam" in item for item in preferred):
+        return 0.9
+    return 0.55
+
+
+def _drainage_matches(drainage: str, preferred: set[str]) -> float:
+    text = str(drainage or "").lower()
+    if not text or text == "unknown":
+        return 0.6
+    if text in preferred:
+        return 1.0
+    if "well drained" in text and any("well drained" in item for item in preferred):
+        return 0.9
+    return 0.45
+
+
+def _soil_compatibility(soil_type: str, crop: str, soil_features: Optional[Dict[str, object]] = None) -> float:
+    crop_key = _canonical_crop_key(crop)
+    prefs = SOIL_PREFS_BY_CROP.get(crop_key)
+    st = str(soil_type or "").lower()
+    if not prefs:
+        base = 0.70
+        if "loam" in st:
+            base = 0.86
+        elif "silt" in st:
+            base = 0.8
+        elif "clay" in st:
+            base = 0.74
+        elif "sand" in st:
+            base = 0.7
+        return max(0.55, min(0.95, base))
+
+    features = soil_features or {}
+    ph = _coerce_float(features.get("avg_ph"), 0.0)
+    om = _coerce_float(features.get("avg_organic_matter"), 0.0)
+    awc = _coerce_float(features.get("avg_awc"), 0.0)
+    slope = _coerce_float(features.get("avg_slope_pct"), 0.0)
+    drainage = str(features.get("drainage_class") or "")
+    texture = str(features.get("texture_class") or soil_type or "")
+
+    ph_score = 0.65 if ph <= 0 else _score_range(ph, prefs["ph"][0], prefs["ph"][1], 1.2)
+    awc_score = 0.65 if awc <= 0 else _score_range(awc, prefs["awc"][0], prefs["awc"][1], 0.08)
+    slope_score = 1.0 if slope <= prefs["slope_max"] else max(0.2, 1.0 - (slope - prefs["slope_max"]) / 12.0)
+    drainage_score = _drainage_matches(drainage, prefs["drainage"])
+    texture_score = _texture_matches(texture, prefs["texture"])
+    om_score = 0.6 if om <= 0 else min(1.0, 0.65 + min(om, 5.0) / 10.0)
+
+    score = (
+        0.24 * ph_score
+        + 0.2 * drainage_score
+        + 0.2 * texture_score
+        + 0.16 * awc_score
+        + 0.12 * slope_score
+        + 0.08 * om_score
+    )
+    return max(0.35, min(0.98, score))
+
+
+def _soil_explanation(soil_type: str, crop: str, score: float, soil_features: Optional[Dict[str, object]] = None) -> str:
+    features = soil_features or {}
     return (
-        f"Soil compatibility estimated from soil_type='{soil_type}'. "
-        f"{crop} suitability score is {score * 100:.1f}%."
+        f"Soil compatibility for {crop} estimated from texture='{features.get('texture_class') or soil_type}', "
+        f"drainage='{features.get('drainage_class') or 'Unknown'}', pH {features.get('avg_ph', 'N/A')}, "
+        f"organic matter {features.get('avg_organic_matter', 'N/A')}%, slope {features.get('avg_slope_pct', 'N/A')}%, "
+        f"and AWC {features.get('avg_awc', 'N/A')}. Suitability score is {score * 100:.1f}%."
     )
 
 
@@ -781,6 +844,7 @@ def compute_forecasts(
     price_df: pd.DataFrame,
     costs_per_acre: Dict[str, float],
     weather: Dict,
+    soil: Optional[Dict] = None,
     fred_data: Optional[Dict] = None,
     agent2_predictions: Optional[Dict[str, Dict[str, float]]] = None,
 ) -> List[Dict]:
@@ -807,6 +871,7 @@ def compute_forecasts(
     acres = float(farm_profile.get("acres", 0.0))
     has_irrigation = bool(farm_profile.get("has_irrigation", False))
     soil_type = farm_profile.get("soil_type", "")
+    soil_features = soil.get("features", {}) if isinstance(soil, dict) else {}
     risk_pref = farm_profile.get("risk_preference", "moderate")
 
     weather_features = weather.get("features", {}) if isinstance(weather, dict) else {}
@@ -831,7 +896,7 @@ def compute_forecasts(
         yield_trend = (yield_stats["last"] - yield_stats["first"]) / max(abs(yield_stats["first"]), 1.0)
         price_trend = (price_stats["last"] - price_stats["first"]) / max(abs(price_stats["first"]), 0.1)
 
-        soil_comp = _soil_compatibility(soil_type, crop)
+        soil_comp = _soil_compatibility(soil_type, crop, soil_features)
         irrigation_mult = 1.0
         if crop.lower() in HIGH_WATER_CROPS:
             irrigation_mult = 1.10 if has_irrigation else 0.90
@@ -947,15 +1012,26 @@ def compute_forecasts(
         profit_p50 = expected_profit
         profit_p10 = expected_profit * (1.0 - 1.28 * uncertainty)
         profit_p90 = expected_profit * (1.0 + 1.28 * uncertainty)
+        margin_denominator = max(abs(revenue_per_acre), abs(cost_per_acre), 1.0)
+        margin_stress = min(1.0, max(0.0, (-profit_per_acre) / margin_denominator))
+        source_stress = {
+            "converted_api_yield_incompatible_unit": 0.25,
+            "fallback_default_yield_incompatible_api_unit": 0.45,
+            "deterministic_observed_yield_default_price": 0.18,
+            "deterministic_observed_inputs": 0.08,
+        }.get(forecast_source, 0.2)
+        irrigation_stress = 0.2 if crop.lower() in HIGH_WATER_CROPS and not has_irrigation else 0.0
 
-        risk_score = max(
-            5.0,
-            min(
-                99.0,
-                (uncertainty * 150.0 + weather_risk * 35.0 + (1.0 - soil_comp) * 30.0) * risk_pref_mult,
-            ),
+        risk_components = (
+            0.30 * uncertainty
+            + 0.22 * weather_risk
+            + 0.18 * (1.0 - soil_comp)
+            + 0.18 * margin_stress
+            + 0.07 * source_stress
+            + 0.05 * irrigation_stress
         )
-        risk_level = "Low" if risk_score < 35 else "Medium" if risk_score < 65 else "High"
+        risk_score = max(5.0, min(99.0, risk_components * 100.0 * risk_pref_mult))
+        risk_level = "Low" if risk_score < 40 else "Medium" if risk_score < 70 else "High"
 
         results.append(
             {
@@ -975,7 +1051,7 @@ def compute_forecasts(
                 "soil_compatibility": round(float(soil_comp * 100.0), 1),
                 "risk_score": round(float(risk_score), 1),
                 "risk_level": risk_level,
-                "soil_explanation": _soil_explanation(soil_type, crop, soil_comp),
+                "soil_explanation": _soil_explanation(soil_type, crop, soil_comp, soil_features),
                 "forecast_source": forecast_source,
                 "forecast_confidence": round(float(forecast_confidence), 2),
                 "cost_per_acre": round(float(cost_per_acre), 2),

@@ -503,6 +503,7 @@ def agent2_predict(state: AgentState) -> Dict[str, Any]:
     price_df = _records_to_df(analysis_inputs.get("price_rows"), ["year", "crop", "avg_price", "price_unit", "source"])
     costs = dict(analysis_inputs.get("costs") or {})
     weather = dict(analysis_inputs.get("weather") or {})
+    soil = dict(analysis_inputs.get("soil") or {})
     fred_data = dict(analysis_inputs.get("fred") or {})
 
     predictions, err = normalize_and_predict_inputs(
@@ -535,6 +536,7 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
     price_df = _records_to_df(analysis_inputs.get("price_rows"), ["year", "crop", "avg_price", "price_unit", "source"])
     costs = dict(analysis_inputs.get("costs") or {})
     weather = dict(analysis_inputs.get("weather") or {})
+    soil = dict(analysis_inputs.get("soil") or {})
     agent2_predictions = dict(state.get("agent2_predictions") or {})
     fred_data = dict(analysis_inputs.get("fred") or {})
 
@@ -544,6 +546,7 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
         price_df=price_df,
         costs_per_acre=costs,
         weather=weather,
+        soil=soil,
         fred_data=fred_data,
         agent2_predictions=agent2_predictions,
     )

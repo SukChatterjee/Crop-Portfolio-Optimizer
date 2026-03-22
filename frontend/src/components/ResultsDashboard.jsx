@@ -120,10 +120,7 @@ const CropCard = ({ crop, rank, isSelected, onClick }) => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-500">Soil Compatibility</span>
-            <div className="flex items-center gap-2">
-              <Progress value={crop.soil_compatibility} className="w-16 h-1.5" />
-              <span className="text-sm font-medium text-slate-700">{crop.soil_compatibility}%</span>
-            </div>
+            <span className="text-sm font-medium text-slate-700">{crop.soil_compatibility}%</span>
           </div>
         </div>
       </CardContent>
