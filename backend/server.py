@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
@@ -8,7 +9,7 @@ import logging
 from pathlib import Path
 import json
 from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
@@ -17,6 +18,7 @@ import random
 import time
 from pymongo.errors import PyMongoError
 from agent.graph import build_graph
+from analysis_progress import complete_analysis_job, create_analysis_job, fail_analysis_job, get_analysis_job
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -217,6 +219,81 @@ class AnalysisResponse(BaseModel):
     market_outlook: str
     created_at: str
     status: str
+
+
+class AnalysisJobResponse(BaseModel):
+    job_id: str
+    status: str
+    stage_id: str
+    stage_title: str
+    progress_pct: int
+    message: str
+    logs: List[Dict[str, Any]] = []
+    error: Optional[str] = None
+    result: Optional[AnalysisResponse] = None
+    created_at: str
+    updated_at: str
+
+
+async def _run_analysis_job(job_id: str, data: AnalysisCreate, current_user: dict):
+    start_ts = datetime.now(timezone.utc)
+    timer_start = time.perf_counter()
+    logger.info(
+        "analysis.create started user_id=%s job_id=%s start_ts=%s",
+        current_user["id"],
+        job_id,
+        start_ts.isoformat(),
+    )
+    try:
+        analysis_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        graph = build_graph()
+        agent_out = await asyncio.to_thread(
+            graph.invoke,
+            {"farm_profile": data.farm_profile.model_dump(), "progress_job_id": job_id},
+        )
+
+        results = [CropResult(**r) for r in agent_out.get("crop_results", [])]
+        weather_summary = str(agent_out.get("weather_summary", ""))
+        market_outlook = str(agent_out.get("market_outlook", ""))
+
+        analysis_doc = {
+            "id": analysis_id,
+            "user_id": current_user["id"],
+            "farm_profile": data.farm_profile.model_dump(),
+            "results": [r.model_dump() for r in results],
+            "weather_summary": weather_summary,
+            "market_outlook": market_outlook,
+            "created_at": created_at,
+            "status": "completed"
+        }
+        await db_insert_analysis(analysis_doc)
+
+        response_payload = AnalysisResponse(
+            id=analysis_id,
+            user_id=current_user["id"],
+            farm_profile=data.farm_profile,
+            results=results,
+            weather_summary=weather_summary,
+            market_outlook=market_outlook,
+            created_at=created_at,
+            status="completed"
+        )
+        complete_analysis_job(job_id, response_payload.model_dump())
+
+        end_ts = datetime.now(timezone.utc)
+        duration_sec = time.perf_counter() - timer_start
+        logger.info(
+            "analysis.create completed user_id=%s job_id=%s end_ts=%s crops_analyzed=%d duration_sec=%.3f",
+            current_user["id"],
+            job_id,
+            end_ts.isoformat(),
+            len(results),
+            duration_sec,
+        )
+    except Exception as exc:
+        fail_analysis_job(job_id, f"Analysis failed: {exc}")
+        logger.exception("analysis.create failed user_id=%s job_id=%s error=%s", current_user["id"], job_id, exc)
 
 # ============ Auth Helpers ============
 
@@ -456,57 +533,32 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 # Analysis Routes
 @api_router.post("/analysis/create", response_model=AnalysisResponse)
 async def create_analysis(data: AnalysisCreate, current_user: dict = Depends(get_current_user)):
-    start_ts = datetime.now(timezone.utc)
-    timer_start = time.perf_counter()
-    logger.info(
-        "analysis.create started user_id=%s start_ts=%s",
-        current_user["id"],
-        start_ts.isoformat(),
-    )
+    job_id = str(uuid.uuid4())
+    create_analysis_job(job_id, current_user["id"], data.farm_profile.model_dump())
+    await _run_analysis_job(job_id, data, current_user)
+    job = get_analysis_job(job_id)
+    if not job or not job.get("result"):
+        raise HTTPException(status_code=500, detail=job.get("error") if job else "Analysis failed")
+    return AnalysisResponse(**job["result"])
 
-    analysis_id = str(uuid.uuid4())
-    created_at = datetime.now(timezone.utc).isoformat()
 
-    graph = build_graph()
-    agent_out = graph.invoke({"farm_profile": data.farm_profile.model_dump()})
+@api_router.post("/analysis/start", response_model=AnalysisJobResponse)
+async def start_analysis(data: AnalysisCreate, current_user: dict = Depends(get_current_user)):
+    job_id = str(uuid.uuid4())
+    create_analysis_job(job_id, current_user["id"], data.farm_profile.model_dump())
+    asyncio.create_task(_run_analysis_job(job_id, data, current_user))
+    job = get_analysis_job(job_id)
+    return AnalysisJobResponse(**job)
 
-    results = [CropResult(**r) for r in agent_out.get("crop_results", [])]
-    weather_summary = str(agent_out.get("weather_summary", ""))
-    market_outlook = str(agent_out.get("market_outlook", ""))
-    
-    analysis_doc = {
-        "id": analysis_id,
-        "user_id": current_user["id"],
-        "farm_profile": data.farm_profile.model_dump(),
-        "results": [r.model_dump() for r in results],
-        "weather_summary": weather_summary,
-        "market_outlook": market_outlook,
-        "created_at": created_at,
-        "status": "completed"
-    }
-    
-    await db_insert_analysis(analysis_doc)
 
-    end_ts = datetime.now(timezone.utc)
-    duration_sec = time.perf_counter() - timer_start
-    logger.info(
-        "analysis.create completed user_id=%s end_ts=%s crops_analyzed=%d duration_sec=%.3f",
-        current_user["id"],
-        end_ts.isoformat(),
-        len(results),
-        duration_sec,
-    )
-    
-    return AnalysisResponse(
-        id=analysis_id,
-        user_id=current_user["id"],
-        farm_profile=data.farm_profile,
-        results=results,
-        weather_summary=weather_summary,
-        market_outlook=market_outlook,
-        created_at=created_at,
-        status="completed"
-    )
+@api_router.get("/analysis/jobs/{job_id}", response_model=AnalysisJobResponse)
+async def get_analysis_job_status(job_id: str, current_user: dict = Depends(get_current_user)):
+    job = get_analysis_job(job_id)
+    if not job or job.get("user_id") != current_user["id"]:
+        raise HTTPException(status_code=404, detail="Analysis job not found")
+    if job.get("result"):
+        job["result"] = AnalysisResponse(**job["result"])
+    return AnalysisJobResponse(**job)
 
 @api_router.get("/analysis/{analysis_id}", response_model=AnalysisResponse)
 async def get_analysis(analysis_id: str, current_user: dict = Depends(get_current_user)):

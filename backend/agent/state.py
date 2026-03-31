@@ -5,6 +5,7 @@ from typing import Any, Dict, List, TypedDict
 
 class AgentState(TypedDict, total=False):
     farm_profile: Dict[str, Any]
+    progress_job_id: str
     api_plan: Dict[str, Any]
     analysis_inputs: Dict[str, Any]
     agent2_predictions: Dict[str, Any]

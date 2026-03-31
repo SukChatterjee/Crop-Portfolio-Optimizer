@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 from openai import OpenAI
 import pandas as pd
 
+from analysis_progress import append_analysis_log, complete_analysis_stage, set_analysis_stage
 from agent_tools.compute import DEFAULT_PRICE_BY_CROP, DEFAULT_UNITS_BY_CROP, compute_forecasts, normalize_and_predict_inputs
 from agent_tools.costs import fetch_cost_per_acre
 from agent_tools.fred import fetch_fred_series
@@ -19,6 +20,42 @@ from .state import AgentState
 
 VALID_RISK = {"conservative", "moderate", "aggressive"}
 VALID_GOAL = {"maximize_profit", "balanced", "minimize_risk"}
+
+
+def _truncate_json(data: Any, max_chars: int = 4000) -> str:
+    try:
+        text = json.dumps(data, default=str)
+    except Exception:
+        text = str(data)
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "...<truncated>"
+
+
+def _log_agent_io(agent_name: str, stage: str, payload: Any) -> None:
+    print(f"[agent][io] agent={agent_name} stage={stage} payload={_truncate_json(payload)}", flush=True)
+
+
+def _progress_job_id(state: AgentState) -> str:
+    return str(state.get("progress_job_id") or "").strip()
+
+
+def _set_stage(state: AgentState, stage_id: str, message: str) -> None:
+    job_id = _progress_job_id(state)
+    if job_id:
+        set_analysis_stage(job_id, stage_id, message)
+
+
+def _complete_stage(state: AgentState, stage_id: str, message: str) -> None:
+    job_id = _progress_job_id(state)
+    if job_id:
+        complete_analysis_stage(job_id, stage_id, message)
+
+
+def _append_stage_log(state: AgentState, step: str, text: str, is_ok: bool = False) -> None:
+    job_id = _progress_job_id(state)
+    if job_id:
+        append_analysis_log(job_id, step, text, is_ok)
 
 
 def _ensure_list(value: Any) -> List[str]:
@@ -343,6 +380,7 @@ def _llm_plan_fred_params(selected_crops: List[str], farm_profile: Dict[str, Any
 
 
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
+    _append_stage_log(state, "Backend Sync", "Validating farm profile inputs...")
     farm = dict(state.get("farm_profile") or {})
     errors = list(state.get("errors") or [])
 
@@ -381,6 +419,7 @@ def fetch_source_data(state: AgentState) -> Dict[str, Any]:
     if errors:
         return {}
 
+    _set_stage(state, "data_ingestion", "Fetching source datasets and farm inputs...")
     farm = dict(state.get("farm_profile") or {})
     api_plan = dict(state.get("api_plan") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
@@ -391,6 +430,7 @@ def fetch_source_data(state: AgentState) -> Dict[str, Any]:
 
     try:
         print(f"[agent][run] force_live_api_calls={force_live_calls}", flush=True)
+        _append_stage_log(state, "Data Ingestion", "Loading production cost estimates...")
         # Fetch costs first so downstream compute/LLM always receives the latest
         # cost-per-acre context before other data collection and forecasting.
         costs = fetch_cost_per_acre(
@@ -399,6 +439,7 @@ def fetch_source_data(state: AgentState) -> Dict[str, Any]:
             api_plan=(api_plan.get("costs", {}) if isinstance(api_plan, dict) else {}),
         )
         print(f"[agent][tool] costs-prefetch crops={len(selected_crops)}", flush=True)
+        _append_stage_log(state, "Data Ingestion", "Fetching NASS yield and production history...")
 
         max_workers = max(2, int(os.environ.get("AGENT_PROVIDER_MAX_WORKERS", "2")))
         with ThreadPoolExecutor(max_workers=max_workers) as ex:
@@ -416,14 +457,18 @@ def fetch_source_data(state: AgentState) -> Dict[str, Any]:
             )
             nass_df = future_nass.result()
             fred_data = future_fred.result()
+        _append_stage_log(state, "Data Ingestion", "Collecting soil profile and macro indicators...")
         price_df = _build_market_price_df(selected_crops, nass_df)
-
-        weather = fetch_weather_features(
-            lat, lng, last_n_years=3, max_stations=3, force_refresh=force_live_calls
-        )
         soil = fetch_soil_features(
             lat, lng, soil_type=str(farm.get("soil_type", "")), force_refresh=force_live_calls
         )
+        _complete_stage(state, "data_ingestion", "Data ingestion complete.")
+
+        _set_stage(state, "weather_analysis", "Fetching NOAA climate and weather features...")
+        weather = fetch_weather_features(
+            lat, lng, last_n_years=3, max_stations=3, force_refresh=force_live_calls
+        )
+        _complete_stage(state, "weather_analysis", "Weather analysis complete.")
         analysis_inputs = {
             "nass_rows": _df_to_records(
                 nass_df,
@@ -463,8 +508,22 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     if errors:
         return {}
 
+    _set_stage(state, "data_ingestion", "Planning the best API calls for the selected crops...")
     farm = dict(state.get("farm_profile") or {})
     selected_crops = _ensure_list(farm.get("selected_crops"))
+    _log_agent_io(
+        "agent1_param_planner",
+        "input",
+        {
+            "selected_crops": selected_crops,
+            "farm_profile": {
+                "location": farm.get("location"),
+                "soil_type": farm.get("soil_type"),
+                "risk_preference": farm.get("risk_preference"),
+                "goal": farm.get("goal"),
+            },
+        },
+    )
     llm_seed_plan = _llm_plan_params(selected_crops, farm)
     api_plan: Dict[str, Any] = {"nass": {}, "costs": {}, "fred": {}}
     try:
@@ -486,6 +545,8 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     except Exception as exc:
         print(f"[agent][tool] fred-planner source=error error={exc}", flush=True)
 
+    _append_stage_log(state, "Data Ingestion", "API query planning complete.", True)
+    _log_agent_io("agent1_param_planner", "output", api_plan)
     return {"api_plan": api_plan}
 
 
@@ -494,6 +555,7 @@ def agent2_predict(state: AgentState) -> Dict[str, Any]:
     if errors:
         return {}
 
+    _set_stage(state, "yield_modeling", "Normalizing fetched inputs and modeling crop yields...")
     farm = dict(state.get("farm_profile") or {})
     analysis_inputs = dict(state.get("analysis_inputs") or {})
     nass_df = _records_to_df(
@@ -505,6 +567,26 @@ def agent2_predict(state: AgentState) -> Dict[str, Any]:
     weather = dict(analysis_inputs.get("weather") or {})
     soil = dict(analysis_inputs.get("soil") or {})
     fred_data = dict(analysis_inputs.get("fred") or {})
+    _log_agent_io(
+        "agent2_advisory_predictor",
+        "input",
+        {
+            "farm_profile": {
+                "selected_crops": farm.get("selected_crops"),
+                "acres": farm.get("acres"),
+                "soil_type": farm.get("soil_type"),
+                "has_irrigation": farm.get("has_irrigation"),
+                "risk_preference": farm.get("risk_preference"),
+                "goal": farm.get("goal"),
+            },
+            "nass_rows": int(len(nass_df)),
+            "price_rows": int(len(price_df)),
+            "cost_crops": list(costs.keys()),
+            "weather_summary": weather.get("summary"),
+            "soil_summary": soil.get("summary"),
+            "fred_summary": fred_data.get("summary"),
+        },
+    )
 
     predictions, err = normalize_and_predict_inputs(
         farm_profile=farm,
@@ -519,6 +601,8 @@ def agent2_predict(state: AgentState) -> Dict[str, Any]:
         return {"agent2_predictions": {}}
 
     print(f"[agent][tool] agent2 source=ok crops={list((predictions or {}).keys())}", flush=True)
+    _complete_stage(state, "yield_modeling", "Yield modeling complete.")
+    _log_agent_io("agent2_advisory_predictor", "output", predictions or {})
     return {"agent2_predictions": predictions or {}}
 
 
@@ -527,6 +611,7 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
     if errors:
         return {}
 
+    _set_stage(state, "market_forecast", "Forecasting crop prices and building revenue inputs...")
     farm = dict(state.get("farm_profile") or {})
     analysis_inputs = dict(state.get("analysis_inputs") or {})
     nass_df = _records_to_df(
@@ -539,6 +624,19 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
     soil = dict(analysis_inputs.get("soil") or {})
     agent2_predictions = dict(state.get("agent2_predictions") or {})
     fred_data = dict(analysis_inputs.get("fred") or {})
+    _log_agent_io(
+        "deterministic_compute",
+        "input",
+        {
+            "selected_crops": farm.get("selected_crops"),
+            "nass_rows": int(len(nass_df)),
+            "price_rows": int(len(price_df)),
+            "cost_crops": list(costs.keys()),
+            "agent2_prediction_crops": list(agent2_predictions.keys()),
+            "weather_features": weather.get("features"),
+            "soil_features": soil.get("features"),
+        },
+    )
 
     crop_results = compute_forecasts(
         farm_profile=farm,
@@ -549,6 +647,29 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
         soil=soil,
         fred_data=fred_data,
         agent2_predictions=agent2_predictions,
+    )
+    _complete_stage(state, "market_forecast", "Market forecasting complete.")
+    _set_stage(state, "profit_simulation", "Running profit and risk simulations...")
+    _log_agent_io(
+        "deterministic_compute",
+        "output",
+        {
+            "crop_count": len(crop_results),
+            "crops": [
+                {
+                    "crop_name": r.get("crop_name"),
+                    "forecast_source": r.get("forecast_source"),
+                    "yield_forecast": r.get("yield_forecast"),
+                    "yield_unit": r.get("yield_unit"),
+                    "price_forecast": r.get("price_forecast"),
+                    "price_unit": r.get("price_unit"),
+                    "expected_profit": r.get("expected_profit"),
+                    "risk_score": r.get("risk_score"),
+                    "risk_level": r.get("risk_level"),
+                }
+                for r in crop_results
+            ],
+        },
     )
     return {"crop_results": crop_results}
 
@@ -611,6 +732,7 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
         "market_stats": market_stats,
         "fred_stats": fred_stats,
     }
+    _log_agent_io("agent3_enrichment", "input", prompt_payload)
 
     system_msg = (
         "You are an agricultural analyst. Return strict JSON only with this schema: "
@@ -645,6 +767,16 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
             r["soil_explanation"] = soil_map[crop_name]
         updated.append(r)
 
+    _log_agent_io(
+        "agent3_enrichment",
+        "output",
+        {
+            "weather_summary": weather_summary,
+            "market_outlook": market_outlook,
+            "soil_explanations": soil_map,
+        },
+    )
+    _complete_stage(state, "profit_simulation", "Profit simulation complete.")
     return {
         "crop_results": updated,
         "weather_summary": weather_summary,

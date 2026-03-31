@@ -435,10 +435,9 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                         <Layers className="w-4 h-4" />
                         Soil Compatibility
                       </h4>
-                      <div className="flex items-center gap-3 mb-2">
-                        <Progress value={selectedCrop.soil_compatibility} className="flex-1 h-2" />
-                        <span className="font-display font-bold text-emerald-950">{selectedCrop.soil_compatibility}%</span>
-                      </div>
+                      <p className="font-display font-bold text-emerald-950 mb-2">
+                        {selectedCrop.soil_compatibility}%
+                      </p>
                       <p className="text-sm text-slate-500 leading-relaxed">{selectedCrop.soil_explanation}</p>
                     </div>
 

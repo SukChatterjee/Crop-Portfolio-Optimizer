@@ -52,6 +52,20 @@ BUSHEL_WEIGHT_LB_BY_CROP = {
     "soybeans": 60.0,
     "wheat": 60.0,
 }
+
+
+def _truncate_json(data: object, max_chars: int = 4000) -> str:
+    try:
+        text = json.dumps(data, default=str)
+    except Exception:
+        text = str(data)
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "...<truncated>"
+
+
+def _log_agent2_io(stage: str, payload: object) -> None:
+    print(f"[agent][io] agent=agent2_advisory_predictor stage={stage} payload={_truncate_json(payload)}", flush=True)
 SOIL_PREFS_BY_CROP = {
     "corn": {"ph": (5.8, 7.2), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "clay loam"}, "awc": (0.16, 0.32), "slope_max": 6.0},
     "soybeans": {"ph": (6.0, 7.2), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "clay loam"}, "awc": (0.14, 0.30), "slope_max": 8.0},
@@ -539,6 +553,7 @@ def _llm_predict_current_year(
         weather=weather,
         fred_data=fred_data,
     )
+    _log_agent2_io("llm_input", prompt_payload)
     selected_crops = [str(c).strip() for c in (farm_profile.get("selected_crops") or []) if str(c).strip()]
     price_baseline = _price_baseline_by_crop(selected_crops, price_df)
     yield_baseline = _yield_baseline_by_crop(selected_crops, nass_df)
@@ -587,6 +602,7 @@ def _llm_predict_current_year(
         )
         text = response.choices[0].message.content or ""
         parsed = _parse_json_payload(text)
+        _log_agent2_io("llm_raw_output", {"raw_text": text})
     except Exception as exc:
         print(f"[agent][tool] llm-forecast source=error error={exc}", flush=True)
         return None, f"LLM call failed: {exc}"
@@ -706,6 +722,7 @@ def _llm_predict_current_year(
             f"[agent][tool] llm-forecast crop={crop_key} approved={pred['approved']} soft_approved={pred.get('soft_approved', False)} price_imputed={pred.get('price_imputed', False)} yield_imputed={pred.get('yield_imputed', False)} yield={pred['yield_forecast']:.4f} calc_yield={pred['calc_yield_for_profit']:.4f} price={pred['price_forecast']:.4f} cost={pred['cost_per_acre']:.4f} factor={pred['cost_adjustment_factor']:.3f} issues={pred['issues']}",
             flush=True,
         )
+    _log_agent2_io("llm_parsed_output", out)
     return out, None
 
 

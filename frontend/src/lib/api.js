@@ -10,13 +10,13 @@ const getAuthHeaders = () => {
 
 export const api = {
   // Analysis endpoints
-  createAnalysis: async (farmProfile) => {
+  buildAnalysisPayload: (farmProfile) => {
     const selectedCrops = farmProfile?.selected_crops || [];
     const legacyCropUniverse = ['Corn', 'Wheat', 'Soybeans', 'Rice', 'Cotton', 'Alfalfa', 'Sorghum', 'Sunflower'];
     const selectedSet = new Set(selectedCrops.map(c => String(c).toLowerCase()));
     const legacyCropConstraints = legacyCropUniverse.filter(c => !selectedSet.has(c.toLowerCase()));
 
-    const payload = {
+    return {
       farm_profile: {
         location: {
           lat: farmProfile?.location?.lat,
@@ -36,12 +36,32 @@ export const api = {
         goal: farmProfile?.goal,
       },
     };
+  },
 
+  createAnalysis: async (farmProfile) => {
+    const payload = api.buildAnalysisPayload(farmProfile);
     const response = await axios.post(
       `${API}/analysis/create`,
       payload,
       { headers: getAuthHeaders() }
     );
+    return response.data;
+  },
+
+  startAnalysis: async (farmProfile) => {
+    const payload = api.buildAnalysisPayload(farmProfile);
+    const response = await axios.post(
+      `${API}/analysis/start`,
+      payload,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  getAnalysisJob: async (jobId) => {
+    const response = await axios.get(`${API}/analysis/jobs/${jobId}`, {
+      headers: getAuthHeaders()
+    });
     return response.data;
   },
 

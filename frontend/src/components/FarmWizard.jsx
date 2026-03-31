@@ -72,15 +72,37 @@ const CROPS = [
 const isDefaultCrop = (cropName) =>
   CROPS.some((crop) => crop.toLowerCase() === String(cropName || '').toLowerCase());
 
+const extractLocationParts = (address = {}) => {
+  const countyCandidate = address.county || address.state_district || address.region || '';
+  const stateCandidate = address.state || address.province || '';
+  return {
+    county: countyCandidate,
+    state: stateCandidate,
+  };
+};
+
 // Map click handler component
-const LocationMarker = ({ position, setPosition }) => {
+const LocationMarker = ({ position, onSelect }) => {
   useMapEvents({
     click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng]);
+      onSelect(e.latlng.lat, e.latlng.lng);
     },
   });
 
-  return position ? <Marker position={position} icon={customIcon} /> : null;
+  return position ? (
+    <Marker
+      position={position}
+      icon={customIcon}
+      draggable
+      eventHandlers={{
+        dragend: (event) => {
+          const marker = event.target;
+          const next = marker.getLatLng();
+          onSelect(next.lat, next.lng);
+        },
+      }}
+    />
+  ) : null;
 };
 
 export const FarmWizard = ({ onComplete, onCancel }) => {
@@ -99,6 +121,7 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
   const [locationQuery, setLocationQuery] = useState('');
   const [locationSearchError, setLocationSearchError] = useState('');
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isResolvingMapLocation, setIsResolvingMapLocation] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -114,6 +137,60 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
     }
   }, [markerPosition]);
 
+  const applyResolvedLocation = (lat, lng, details = {}) => {
+    setMarkerPosition([lat, lng]);
+    setFormData(prev => ({
+      ...prev,
+      location: {
+        ...prev.location,
+        lat,
+        lng,
+        address: details.address ?? prev.location.address,
+        county: details.county ?? prev.location.county,
+        state: details.state ?? prev.location.state,
+      }
+    }));
+    if (details.address) {
+      setLocationQuery(details.address);
+    }
+  };
+
+  const resolveLocationFromCoordinates = async (lat, lng) => {
+    setIsResolvingMapLocation(true);
+    setLocationSearchError('');
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to resolve clicked location.');
+      }
+
+      const result = await response.json();
+      const parts = extractLocationParts(result?.address || {});
+      applyResolvedLocation(lat, lng, {
+        address: result?.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+        county: parts.county,
+        state: parts.state,
+      });
+    } catch (error) {
+      applyResolvedLocation(lat, lng, {
+        address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+      });
+      setLocationSearchError('Pinned map location, but could not resolve the address details.');
+    } finally {
+      setIsResolvingMapLocation(false);
+    }
+  };
+
+  const handleMapSelect = (lat, lng) => {
+    resolveLocationFromCoordinates(lat, lng);
+  };
+
   const handleLocationSearch = async () => {
     const query = locationQuery.trim();
     if (!query) {
@@ -123,9 +200,17 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
 
     setIsSearchingLocation(true);
     setLocationSearchError('');
+    setFormData(prev => ({
+      ...prev,
+      location: {
+        ...prev.location,
+        county: '',
+        state: '',
+      }
+    }));
 
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(query)}&limit=1`;
       // Browsers typically block overriding User-Agent; send standard headers.
       const response = await fetch(url, {
         method: 'GET',
@@ -146,21 +231,17 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
 
       const lat = parseFloat(results[0].lat);
       const lng = parseFloat(results[0].lon);
+      const parts = extractLocationParts(results[0].address || {});
       if (Number.isNaN(lat) || Number.isNaN(lng)) {
         setLocationSearchError('Invalid coordinates returned for that location.');
         return;
       }
 
-      setMarkerPosition([lat, lng]);
-      setFormData(prev => ({
-        ...prev,
-        location: {
-          ...prev.location,
-          address: query,
-          lat,
-          lng,
-        },
-      }));
+      applyResolvedLocation(lat, lng, {
+        address: results[0].display_name || query,
+        county: parts.county,
+        state: parts.state,
+      });
 
       if (mapRef.current && typeof mapRef.current.flyTo === 'function') {
         mapRef.current.flyTo([lat, lng], 12);
@@ -313,7 +394,7 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
                   Select Your Farm Location
                 </h3>
                 <p className="text-sm text-slate-500 mb-4">
-                  Click on the map to pinpoint your farm's location
+                  Search for a place, click directly on the map, or drag the marker to pinpoint your farm
                 </p>
               </div>
 
@@ -357,29 +438,46 @@ export const FarmWizard = ({ onComplete, onCancel }) => {
                     attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                     url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                   />
-                  <LocationMarker position={markerPosition} setPosition={setMarkerPosition} />
+                  <LocationMarker position={markerPosition} onSelect={handleMapSelect} />
                 </MapContainer>
               </div>
 
               {markerPosition && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-slate-600">Latitude</Label>
-                    <Input 
-                      value={markerPosition[0].toFixed(6)} 
-                      readOnly 
-                      className="bg-slate-50"
-                      data-testid="location-lat-input"
-                    />
+                <div className="space-y-4">
+                  <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                    {isResolvingMapLocation
+                      ? 'Resolving selected map location...'
+                      : `Selected location: ${formData.location.address || `${markerPosition[0].toFixed(5)}, ${markerPosition[1].toFixed(5)}`}`}
                   </div>
-                  <div>
-                    <Label className="text-slate-600">Longitude</Label>
-                    <Input 
-                      value={markerPosition[1].toFixed(6)} 
-                      readOnly 
-                      className="bg-slate-50"
-                      data-testid="location-lng-input"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-slate-600">Latitude</Label>
+                      <Input 
+                        value={markerPosition[0].toFixed(6)} 
+                        readOnly 
+                        className="bg-slate-50"
+                        data-testid="location-lat-input"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-slate-600">Longitude</Label>
+                      <Input 
+                        value={markerPosition[1].toFixed(6)} 
+                        readOnly 
+                        className="bg-slate-50"
+                        data-testid="location-lng-input"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-slate-600">County</Label>
+                      <Input value={formData.location.county || 'Not resolved yet'} readOnly className="bg-slate-50" />
+                    </div>
+                    <div>
+                      <Label className="text-slate-600">State</Label>
+                      <Input value={formData.location.state || 'Not resolved yet'} readOnly className="bg-slate-50" />
+                    </div>
                   </div>
                 </div>
               )}
