@@ -3,6 +3,8 @@
 # IDE and editors
 .idea/
 .vscode/
+.emergent/
+.gitconfig
 
 # Dependencies
 node_modules/
@@ -41,6 +43,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 dump.rdb
+test_result.md
 
 # System files
 .DS_Store
