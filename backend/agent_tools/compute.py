@@ -53,7 +53,7 @@ BUSHEL_WEIGHT_LB_BY_CROP = {
     "wheat": 60.0,
 }
 
-
+# Used by `_log_agent2_io` to keep backend payload logs readable.
 def _truncate_json(data: object, max_chars: int = 4000) -> str:
     try:
         text = json.dumps(data, default=str)
@@ -63,7 +63,7 @@ def _truncate_json(data: object, max_chars: int = 4000) -> str:
         return text
     return text[:max_chars] + "...<truncated>"
 
-
+# Used inside the Agent 2 advisory forecast pipeline for structured I/O logs.
 def _log_agent2_io(stage: str, payload: object) -> None:
     print(f"[agent][io] agent=agent2_advisory_predictor stage={stage} payload={_truncate_json(payload)}", flush=True)
 SOIL_PREFS_BY_CROP = {
@@ -78,7 +78,7 @@ SOIL_PREFS_BY_CROP = {
     "apples": {"ph": (6.0, 7.0), "drainage": {"well drained", "moderately well drained"}, "texture": {"loam", "silt", "sandy loam"}, "awc": (0.12, 0.26), "slope_max": 15.0},
 }
 
-
+# Used by `compute_forecasts` to build deterministic last/first/mean fallbacks.
 def _safe_series_stats(series: pd.Series, default: float) -> Dict[str, float]:
     clean = pd.to_numeric(series, errors="coerce").dropna()
     if clean.empty:
@@ -89,7 +89,7 @@ def _safe_series_stats(series: pd.Series, default: float) -> Dict[str, float]:
         "mean": float(clean.mean()),
     }
 
-
+# Used by `_llm_predict_current_year` to parse strict or embedded JSON from the LLM.
 def _parse_json_payload(text: str) -> Optional[object]:
     payload = (text or "").strip()
     if not payload:
@@ -114,7 +114,7 @@ def _parse_json_payload(text: str) -> Optional[object]:
             return None
     return None
 
-
+# Used across Agent 2 parsing and deterministic compute for loose numeric coercion.
 def _coerce_float(value: object, default: float) -> float:
     try:
         return float(value)
@@ -132,18 +132,11 @@ def _coerce_float(value: object, default: float) -> float:
     except (TypeError, ValueError):
         return default
 
-
-def _coerce_int(value: object, default: int) -> int:
-    try:
-        return int(float(value))
-    except (TypeError, ValueError):
-        return default
-
-
+# Used throughout forecasting and compute to normalize crop-name keys.
 def _canonical_crop_key(value: object) -> str:
     return str(value or "").strip().lower()
 
-
+# Used by `_llm_predict_current_year` to assemble the Agent 2 prompt payload.
 def _build_llm_payload(
     farm_profile: Dict,
     nass_df: pd.DataFrame,
@@ -209,7 +202,7 @@ def _build_llm_payload(
         ]
     return payload
 
-
+# Used by `_llm_predict_current_year` to fill missing price predictions safely.
 def _price_baseline_by_crop(selected_crops: List[str], price_df: pd.DataFrame) -> Dict[str, Optional[float]]:
     out: Dict[str, float] = {}
     for crop in selected_crops:
@@ -226,7 +219,7 @@ def _price_baseline_by_crop(selected_crops: List[str], price_df: pd.DataFrame) -
             out[key] = max(0.05, float(series.iloc[-1]))
     return out
 
-
+# Used by `_llm_predict_current_year` to fill missing yield predictions safely.
 def _yield_baseline_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) -> Dict[str, Optional[float]]:
     out: Dict[str, Optional[float]] = {}
     for crop in selected_crops:
@@ -243,7 +236,7 @@ def _yield_baseline_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) ->
             out[key] = max(0.01, float(series.iloc[-1]))
     return out
 
-
+# Used by Agent 2 parsing and final compute to recover the latest API yield units per crop.
 def _api_yield_unit_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) -> Dict[str, str]:
     out: Dict[str, str] = {}
     if nass_df is None or nass_df.empty or "yield_unit" not in nass_df.columns:
@@ -264,7 +257,7 @@ def _api_yield_unit_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) ->
             out[key] = units[-1]
     return out
 
-
+# Used by `compute_forecasts` when deciding whether an incompatible API yield can be converted safely.
 def _api_yield_desc_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) -> Dict[str, str]:
     out: Dict[str, str] = {}
     if nass_df is None or nass_df.empty or "yield_desc" not in nass_df.columns:
@@ -285,7 +278,7 @@ def _api_yield_desc_by_crop(selected_crops: List[str], nass_df: pd.DataFrame) ->
             out[key] = descs[-1]
     return out
 
-
+# Used by `compute_forecasts` to recover price-unit and source metadata for each crop.
 def _price_meta_by_crop(selected_crops: List[str], price_df: pd.DataFrame) -> Dict[str, Dict[str, str]]:
     out: Dict[str, Dict[str, str]] = {}
     if price_df is None or price_df.empty:
@@ -304,7 +297,7 @@ def _price_meta_by_crop(selected_crops: List[str], price_df: pd.DataFrame) -> Di
         }
     return out
 
-
+# Used by unit-normalization helpers to get the repo's default units for a crop.
 def _default_units_for_crop(crop_name: str) -> Dict[str, str]:
     crop_key = _canonical_crop_key(crop_name)
     defaults = DEFAULT_UNITS_BY_CROP.get(crop_key, {})
@@ -317,7 +310,7 @@ def _default_units_for_crop(crop_name: str) -> Dict[str, str]:
         "calc_yield_unit": calc_yield_unit,
     }
 
-
+# Used by unit-conversion helpers to normalize unit strings into comparable basis tokens.
 def _basis_from_unit(unit: str) -> str:
     text = str(unit or "").strip().lower().replace(" ", "")
     if not text:
@@ -334,7 +327,7 @@ def _basis_from_unit(unit: str) -> str:
         return "box"
     return ""
 
-
+# Used by normalization helpers to convert basis tokens back into yield-unit labels.
 def _unit_label_from_basis(basis: str) -> str:
     mapping = {
         "bu": "bu/acre",
@@ -345,16 +338,16 @@ def _unit_label_from_basis(basis: str) -> str:
     }
     return mapping.get(str(basis or "").strip().lower(), "")
 
-
+# Used by `_default_units_for_crop` to infer the calc-yield unit from the price basis.
 def _calc_yield_unit_from_price_unit(price_unit: str) -> str:
     return _unit_label_from_basis(_basis_from_unit(price_unit))
 
-
+# Used by API unit compatibility checks to know the expected native yield basis for a crop.
 def _expected_yield_basis_for_crop(crop_name: str) -> str:
     defaults = _default_units_for_crop(crop_name)
     return _basis_from_unit(defaults.get("yield_unit", ""))
 
-
+# Used by Agent 2 parsing and final compute to reject mismatched API yield units.
 def _api_yield_unit_is_compatible(crop_name: str, api_yield_unit: str) -> bool:
     actual = _basis_from_unit(api_yield_unit)
     expected = _expected_yield_basis_for_crop(crop_name)
@@ -362,7 +355,7 @@ def _api_yield_unit_is_compatible(crop_name: str, api_yield_unit: str) -> bool:
         return True
     return actual == expected
 
-
+# Used by safe API-yield conversion when a crop has a known pounds-per-bushel weight.
 def _convert_mass_to_bushels(crop_name: str, value: float, from_basis: str) -> Optional[float]:
     crop_key = _canonical_crop_key(crop_name)
     pounds_per_bushel = BUSHEL_WEIGHT_LB_BY_CROP.get(crop_key)
@@ -373,7 +366,7 @@ def _convert_mass_to_bushels(crop_name: str, value: float, from_basis: str) -> O
         return None
     return float(pounds) / pounds_per_bushel
 
-
+# Used by `_convert_incompatible_api_yield_if_safe` to avoid unsafe bushel conversions.
 def _is_grain_descriptor(desc: str) -> bool:
     text = str(desc or "").strip().lower()
     if not text:
@@ -384,7 +377,7 @@ def _is_grain_descriptor(desc: str) -> bool:
     good_cues = ("grain", "dry", "all classes")
     return any(cue in text for cue in good_cues)
 
-
+# Used by `compute_forecasts` to convert otherwise incompatible API yield units when enough metadata exists.
 def _convert_incompatible_api_yield_if_safe(
     crop_name: str,
     raw_yield: float,
@@ -416,7 +409,7 @@ def _convert_incompatible_api_yield_if_safe(
         "calc_yield_unit": _unit_label_from_basis(target_basis) or _default_units_for_crop(crop_key)["calc_yield_unit"],
     }
 
-
+# Used by normalization and safe API-yield conversion to move between lb/cwt/ton bases.
 def _convert_between_bases(value: float, from_basis: str, to_basis: str) -> Optional[float]:
     if not from_basis or not to_basis:
         return None
@@ -435,7 +428,7 @@ def _convert_between_bases(value: float, from_basis: str, to_basis: str) -> Opti
         return None
     return float(value) * factor
 
-
+# Used by Agent 2 parsing and final compute to produce the yield value used in revenue math.
 def _normalize_yield_for_profit(
     crop_name: str,
     raw_yield: float,
@@ -517,7 +510,7 @@ def _normalize_yield_for_profit(
         "calc_yield_for_profit": float(chosen),
     }
 
-
+# Used by `normalize_and_predict_inputs` to run the Agent 2 advisory forecast LLM.
 def _llm_predict_current_year(
     farm_profile: Dict,
     nass_df: pd.DataFrame,
@@ -725,7 +718,7 @@ def _llm_predict_current_year(
     _log_agent2_io("llm_parsed_output", out)
     return out, None
 
-
+# Public Agent 2 entrypoint used by `agent2_predict` in `backend/agent/nodes.py`.
 def normalize_and_predict_inputs(
     farm_profile: Dict,
     nass_df: pd.DataFrame,
@@ -743,7 +736,7 @@ def normalize_and_predict_inputs(
         fred_data=fred_data,
     )
 
-
+# Used by `_soil_compatibility` to score numeric soil features against crop preferences.
 def _score_range(value: float, low: float, high: float, tolerance: float) -> float:
     if low <= value <= high:
         return 1.0
@@ -751,7 +744,7 @@ def _score_range(value: float, low: float, high: float, tolerance: float) -> flo
         return max(0.0, 1.0 - (low - value) / max(tolerance, 0.001))
     return max(0.0, 1.0 - (value - high) / max(tolerance, 0.001))
 
-
+# Used by `_soil_compatibility` to score texture fit.
 def _texture_matches(texture: str, preferred: set[str]) -> float:
     text = str(texture or "").lower()
     if not text:
@@ -763,7 +756,7 @@ def _texture_matches(texture: str, preferred: set[str]) -> float:
         return 0.9
     return 0.55
 
-
+# Used by `_soil_compatibility` to score drainage-class fit.
 def _drainage_matches(drainage: str, preferred: set[str]) -> float:
     text = str(drainage or "").lower()
     if not text or text == "unknown":
@@ -774,7 +767,7 @@ def _drainage_matches(drainage: str, preferred: set[str]) -> float:
         return 0.9
     return 0.45
 
-
+# Used by `compute_forecasts` to calculate crop-specific soil compatibility.
 def _soil_compatibility(soil_type: str, crop: str, soil_features: Optional[Dict[str, object]] = None) -> float:
     crop_key = _canonical_crop_key(crop)
     prefs = SOIL_PREFS_BY_CROP.get(crop_key)
@@ -816,7 +809,7 @@ def _soil_compatibility(soil_type: str, crop: str, soil_features: Optional[Dict[
     )
     return max(0.35, min(0.98, score))
 
-
+# Used by `compute_forecasts` to produce the final soil explanation string for each crop.
 def _soil_explanation(soil_type: str, crop: str, score: float, soil_features: Optional[Dict[str, object]] = None) -> str:
     features = soil_features or {}
     return (
@@ -826,35 +819,7 @@ def _soil_explanation(soil_type: str, crop: str, score: float, soil_features: Op
         f"and AWC {features.get('avg_awc', 'N/A')}. Suitability score is {score * 100:.1f}%."
     )
 
-
-def _prediction_is_plausible(
-    pred_yield: float,
-    pred_price: float,
-    pred_factor: float,
-    yield_stats: Dict[str, float],
-    price_stats: Dict[str, float],
-) -> Tuple[bool, List[str]]:
-    issues: List[str] = []
-
-    # Absolute bounds.
-    if pred_yield <= 0 or pred_yield > 50000:
-        issues.append("yield_out_of_abs_range")
-    if pred_price < 0.05 or pred_price > 100:
-        issues.append("price_out_of_abs_range")
-    if pred_factor < 0.7 or pred_factor > 1.4:
-        issues.append("cost_factor_out_of_range")
-
-    # Relative-to-history bounds.
-    y_last = max(1.0, float(yield_stats.get("last", 1.0)))
-    p_mean = max(0.05, float(price_stats.get("mean", 0.05)))
-    if pred_yield < 0.4 * y_last or pred_yield > 2.5 * y_last:
-        issues.append("yield_out_of_hist_range")
-    if pred_price < 0.4 * p_mean or pred_price > 2.5 * p_mean:
-        issues.append("price_out_of_hist_range")
-
-    return (len(issues) == 0), issues
-
-
+# Final deterministic compute engine used by `compute_results` in `backend/agent/nodes.py`.
 def compute_forecasts(
     farm_profile: Dict,
     nass_df: pd.DataFrame,

@@ -19,15 +19,15 @@ _STAGE_MAP = {stage["id"]: stage for stage in ANALYSIS_STAGES}
 _JOBS: Dict[str, Dict[str, Any]] = {}
 _LOCK = Lock()
 
-
+# Used across this module to timestamp in-memory job state updates.
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
-
+# Used by stage helpers to resolve stage metadata and progress values.
 def _stage_info(stage_id: str) -> Dict[str, Any]:
     return dict(_STAGE_MAP.get(stage_id, {"id": stage_id, "title": stage_id.replace("_", " ").title(), "running_progress": 0, "completed_progress": 0}))
 
-
+# Used by `/api/analysis/create` and `/api/analysis/start` to create a pollable job record.
 def create_analysis_job(job_id: str, user_id: str, farm_profile: Dict[str, Any]) -> Dict[str, Any]:
     job = {
         "job_id": job_id,
@@ -55,7 +55,7 @@ def create_analysis_job(job_id: str, user_id: str, farm_profile: Dict[str, Any])
         _JOBS[job_id] = job
     return deepcopy(job)
 
-
+# Used by analysis nodes and finalizers to append UI-visible backend log lines.
 def append_analysis_log(job_id: str, step: str, text: str, is_ok: bool = False) -> None:
     with _LOCK:
         job = _JOBS.get(job_id)
@@ -66,7 +66,7 @@ def append_analysis_log(job_id: str, step: str, text: str, is_ok: bool = False) 
         job["logs"] = logs[-40:]
         job["updated_at"] = _utc_now()
 
-
+# Used by graph-stage helpers when a backend stage begins running.
 def set_analysis_stage(job_id: str, stage_id: str, message: Optional[str] = None) -> None:
     stage = _stage_info(stage_id)
     with _LOCK:
@@ -83,7 +83,7 @@ def set_analysis_stage(job_id: str, stage_id: str, message: Optional[str] = None
     if message:
         append_analysis_log(job_id, stage["title"], message, False)
 
-
+# Used by graph-stage helpers when a backend stage completes.
 def complete_analysis_stage(job_id: str, stage_id: str, message: Optional[str] = None) -> None:
     stage = _stage_info(stage_id)
     with _LOCK:
@@ -100,7 +100,7 @@ def complete_analysis_stage(job_id: str, stage_id: str, message: Optional[str] =
     if message:
         append_analysis_log(job_id, stage["title"], message, True)
 
-
+# Used by `_run_analysis_job` in `server.py` to store successful job results.
 def complete_analysis_job(job_id: str, result: Dict[str, Any]) -> None:
     with _LOCK:
         job = _JOBS.get(job_id)
@@ -116,7 +116,7 @@ def complete_analysis_job(job_id: str, result: Dict[str, Any]) -> None:
         job["updated_at"] = _utc_now()
     append_analysis_log(job_id, "Backend Sync", "Analysis complete.", True)
 
-
+# Used by `_run_analysis_job` in `server.py` to store terminal failure state.
 def fail_analysis_job(job_id: str, error: str) -> None:
     with _LOCK:
         job = _JOBS.get(job_id)
@@ -130,7 +130,7 @@ def fail_analysis_job(job_id: str, error: str) -> None:
         job["updated_at"] = _utc_now()
     append_analysis_log(job_id, "Backend Sync", error, False)
 
-
+# Used by analysis job endpoints to return a safe copy of current job state.
 def get_analysis_job(job_id: str) -> Optional[Dict[str, Any]]:
     with _LOCK:
         job = _JOBS.get(job_id)

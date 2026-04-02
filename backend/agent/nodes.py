@@ -21,7 +21,7 @@ from .state import AgentState
 VALID_RISK = {"conservative", "moderate", "aggressive"}
 VALID_GOAL = {"maximize_profit", "balanced", "minimize_risk"}
 
-
+# Used by `_log_agent_io` to keep large payload logs readable.
 def _truncate_json(data: Any, max_chars: int = 4000) -> str:
     try:
         text = json.dumps(data, default=str)
@@ -31,39 +31,39 @@ def _truncate_json(data: Any, max_chars: int = 4000) -> str:
         return text
     return text[:max_chars] + "...<truncated>"
 
-
+# Used by Agents 1-3 and deterministic compute for structured backend logging.
 def _log_agent_io(agent_name: str, stage: str, payload: Any) -> None:
     print(f"[agent][io] agent={agent_name} stage={stage} payload={_truncate_json(payload)}", flush=True)
 
-
+# Used by stage/log helpers to read the active progress job id from graph state.
 def _progress_job_id(state: AgentState) -> str:
     return str(state.get("progress_job_id") or "").strip()
 
-
+# Used across graph nodes to mark a backend stage as running.
 def _set_stage(state: AgentState, stage_id: str, message: str) -> None:
     job_id = _progress_job_id(state)
     if job_id:
         set_analysis_stage(job_id, stage_id, message)
 
-
+# Used across graph nodes to mark a backend stage as completed.
 def _complete_stage(state: AgentState, stage_id: str, message: str) -> None:
     job_id = _progress_job_id(state)
     if job_id:
         complete_analysis_stage(job_id, stage_id, message)
 
-
+# Used across graph nodes to append log lines to the active progress job.
 def _append_stage_log(state: AgentState, step: str, text: str, is_ok: bool = False) -> None:
     job_id = _progress_job_id(state)
     if job_id:
         append_analysis_log(job_id, step, text, is_ok)
 
-
+# Used by validation and planning nodes to normalize crop lists from input state.
 def _ensure_list(value: Any) -> List[str]:
     if isinstance(value, list):
         return [str(v).strip() for v in value if str(v).strip()]
     return []
 
-
+# Used by `llm_enrich` and `finalize` when Agent 3 output is unavailable.
 def _default_weather_summary(weather_stats: Dict[str, Any]) -> str:
     if weather_stats.get("summary"):
         return str(weather_stats["summary"])
@@ -74,7 +74,7 @@ def _default_weather_summary(weather_stats: Dict[str, Any]) -> str:
         f"{features.get('avg_tmin_c', 'N/A')}C to {features.get('avg_tmax_c', 'N/A')}C."
     )
 
-
+# Used by `llm_enrich` and `finalize` when Agent 3 output is unavailable.
 def _default_market_outlook(market_stats: Dict[str, Any]) -> str:
     crops = market_stats.get("crops", [])
     if not crops:
@@ -85,7 +85,7 @@ def _default_market_outlook(market_stats: Dict[str, Any]) -> str:
         f"{best.get('crop')} currently shows the strongest observed average price."
     )
 
-
+# Used by `_openai_generate_json` to parse OpenAI responses safely.
 def _extract_json_object(text: str) -> Dict[str, Any]:
     payload = (text or "").strip()
     if not payload:
@@ -104,7 +104,7 @@ def _extract_json_object(text: str) -> Dict[str, Any]:
             return {}
     return {}
 
-
+# Shared JSON-only OpenAI wrapper used by Agent 1 planners and Agent 3 enrichment.
 def _openai_generate_json(api_key: str, model: str, prompt: str, purpose: str) -> Dict[str, Any]:
     chosen = (model or "").strip()
     if not chosen:
@@ -127,7 +127,7 @@ def _openai_generate_json(api_key: str, model: str, prompt: str, purpose: str) -
         print(f"[agent][tool] openai source=error purpose={purpose} model={chosen} error={exc}", flush=True)
         return {}
 
-
+# Used by `fetch_source_data` to summarize price rows for dashboard/enrichment state.
 def _build_market_stats(price_df) -> Dict[str, Any]:
     if price_df is None or price_df.empty:
         return {"crops": [], "series_points": 0}
@@ -147,7 +147,7 @@ def _build_market_stats(price_df) -> Dict[str, Any]:
         )
     return {"crops": rows, "series_points": int(len(price_df))}
 
-
+# Used by `_llm_plan_params` to align LLM crop keys with selected crop names.
 def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, Any]:
     if not isinstance(plan, dict):
         return {}
@@ -161,7 +161,7 @@ def _normalize_plan_keys(plan: Dict[str, Any], crops: List[str]) -> Dict[str, An
         out[canonical] = v
     return out
 
-
+# Used by `fetch_source_data` to generate baseline price rows until a live price feed is available.
 def _build_market_price_df(selected_crops: List[str], nass_df: pd.DataFrame) -> pd.DataFrame:
     years: List[int] = []
     if nass_df is not None and not nass_df.empty and "year" in nass_df.columns:
@@ -196,7 +196,7 @@ def _build_market_price_df(selected_crops: List[str], nass_df: pd.DataFrame) -> 
         )
     return pd.DataFrame(rows)
 
-
+# Used by `fetch_source_data` to serialize dataframes into graph-state-safe records.
 def _df_to_records(df: pd.DataFrame, columns: List[str]) -> List[Dict[str, Any]]:
     if df is None or df.empty:
         return []
@@ -206,7 +206,7 @@ def _df_to_records(df: pd.DataFrame, columns: List[str]) -> List[Dict[str, Any]]
             safe[column] = None
     return safe[columns].to_dict(orient="records")
 
-
+# Used by Agent 2 and deterministic compute nodes to rebuild dataframes from graph state.
 def _records_to_df(records: Any, columns: List[str]) -> pd.DataFrame:
     if not isinstance(records, list) or not records:
         return pd.DataFrame(columns=columns)
@@ -219,7 +219,7 @@ def _records_to_df(records: Any, columns: List[str]) -> pd.DataFrame:
             df[column] = None
     return df[columns]
 
-
+# Agent 1 helper used by `plan_sources` to seed USDA NASS query planning.
 def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
@@ -264,7 +264,7 @@ def _llm_plan_params(selected_crops: List[str], farm_profile: Dict[str, Any]) ->
         print("[agent][tool] param-planner source=empty", flush=True)
     return {"nass": nass}
 
-
+# Agent 1 helper used by `plan_sources` to build production-cost query candidates.
 def _llm_plan_costs_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
@@ -306,7 +306,7 @@ def _llm_plan_costs_params(selected_crops: List[str], farm_profile: Dict[str, An
     print(f"[agent][tool] costs-planner candidates={len(cleaned)}", flush=True)
     return {"query_candidates": cleaned}
 
-
+# Agent 1 helper used by `plan_sources` to choose relevant FRED macro series.
 def _llm_plan_fred_params(selected_crops: List[str], farm_profile: Dict[str, Any]) -> Dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
@@ -378,7 +378,7 @@ def _llm_plan_fred_params(selected_crops: List[str], farm_profile: Dict[str, Any
         "query_candidates": cleaned,
     }
 
-
+# Graph node that validates and normalizes the incoming farm profile before agent work starts.
 def validate_inputs(state: AgentState) -> Dict[str, Any]:
     _append_stage_log(state, "Backend Sync", "Validating farm profile inputs...")
     farm = dict(state.get("farm_profile") or {})
@@ -413,7 +413,7 @@ def validate_inputs(state: AgentState) -> Dict[str, Any]:
 
     return {"farm_profile": farm, "errors": errors}
 
-
+# Graph node that fetches source datasets used by Agent 2 and the final compute engine.
 def fetch_source_data(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
@@ -502,7 +502,7 @@ def fetch_source_data(state: AgentState) -> Dict[str, Any]:
         errors.append(f"fetch_source_data failed: {exc}")
         return {"errors": errors}
 
-
+# Graph node for Agent 1 planning before live source fetches begin.
 def plan_sources(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
@@ -549,7 +549,7 @@ def plan_sources(state: AgentState) -> Dict[str, Any]:
     _log_agent_io("agent1_param_planner", "output", api_plan)
     return {"api_plan": api_plan}
 
-
+# Graph node for Agent 2 advisory normalization and prediction.
 def agent2_predict(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
@@ -605,7 +605,7 @@ def agent2_predict(state: AgentState) -> Dict[str, Any]:
     _log_agent_io("agent2_advisory_predictor", "output", predictions or {})
     return {"agent2_predictions": predictions or {}}
 
-
+# Graph node for the final deterministic compute engine.
 def compute_results(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     if errors:
@@ -673,7 +673,7 @@ def compute_results(state: AgentState) -> Dict[str, Any]:
     )
     return {"crop_results": crop_results}
 
-
+# Graph node for Agent 3 narrative enrichment of deterministic outputs.
 def llm_enrich(state: AgentState) -> Dict[str, Any]:
     errors = list(state.get("errors") or [])
     crop_results = list(state.get("crop_results") or [])
@@ -784,7 +784,7 @@ def llm_enrich(state: AgentState) -> Dict[str, Any]:
         "errors": errors,
     }
 
-
+# Terminal graph node that assembles the final API response payload.
 def finalize(state: AgentState) -> Dict[str, Any]:
     ds = dict(state.get("datasets_summary") or {})
     weather_stats = dict(ds.get("weather") or {})
