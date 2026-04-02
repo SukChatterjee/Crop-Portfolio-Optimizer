@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🌾 Crop Portfolio Optimizer
 ### AI-Driven Decision Intelligence for Smart Farming
 
@@ -346,7 +345,3 @@ Possible extensions include:
 
 
 
-=======
-# Here are your Instructions
-Hi
->>>>>>> origin/harsha_branch-v2
