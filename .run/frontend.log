@@ -1,7 +1,0 @@
-
-> frontend@0.1.0 start
-> craco start
-
-Could not find an open port at 0.0.0.0.
-Network error message: listen EPERM: operation not permitted 0.0.0.0
-
