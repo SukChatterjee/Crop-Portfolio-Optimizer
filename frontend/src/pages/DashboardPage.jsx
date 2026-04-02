@@ -25,6 +25,7 @@ export const DashboardPage = () => {
   const [processing, setProcessing] = useState(false);
   const [currentAnalysis, setCurrentAnalysis] = useState(null);
   const [farmProfile, setFarmProfile] = useState(null);
+  const [analysisJob, setAnalysisJob] = useState(null);
   const [recentAnalyses, setRecentAnalyses] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
@@ -51,18 +52,57 @@ export const DashboardPage = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!processing || !analysisJob?.job_id) {
+      return undefined;
+    }
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const nextJob = await api.getAnalysisJob(analysisJob.job_id);
+        if (cancelled) {
+          return;
+        }
+        setAnalysisJob(nextJob);
+        if (nextJob.status === 'completed' && nextJob.result) {
+          setCurrentAnalysis(nextJob.result);
+          setProcessing(false);
+          setAnalysisJob(null);
+          toast.success('Analysis complete!');
+          return;
+        }
+        if (nextJob.status === 'failed') {
+          setProcessing(false);
+          setAnalysisJob(null);
+          toast.error(nextJob.error || 'Analysis failed. Please try again.');
+          return;
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Analysis polling failed:', error);
+          setProcessing(false);
+          setAnalysisJob(null);
+          toast.error('Analysis failed. Please try again.');
+        }
+      }
+    };
+
+    poll();
+    const intervalId = setInterval(poll, 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [processing, analysisJob?.job_id]);
+
   const handleWizardComplete = async (profile) => {
     setFarmProfile(profile);
     setShowWizard(false);
     setProcessing(true);
-  };
-
-  const handleProcessingComplete = async () => {
     try {
-      const result = await api.createAnalysis(farmProfile);
-      setCurrentAnalysis(result);
-      setProcessing(false);
-      toast.success('Analysis complete!');
+      const job = await api.startAnalysis(profile);
+      setAnalysisJob(job);
     } catch (error) {
       console.error('Analysis failed:', error);
       toast.error('Analysis failed. Please try again.');
@@ -89,7 +129,7 @@ export const DashboardPage = () => {
 
   // Processing Screen
   if (processing) {
-    return <ProcessingScreen farmProfile={farmProfile} onComplete={handleProcessingComplete} />;
+    return <ProcessingScreen farmProfile={farmProfile} analysisJob={analysisJob} />;
   }
 
   // Results View

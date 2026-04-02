@@ -169,7 +169,7 @@ export const RegisterPage = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Full name"
                     className="pl-10"
                     required
                     data-testid="register-name-input"

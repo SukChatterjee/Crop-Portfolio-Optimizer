@@ -1,10 +1,435 @@
-INFO:     Started server process [92911]
+INFO:     Started server process [25485]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:55854 - "GET /api/ HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55880 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55880 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55880 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55880 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55880 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54335 - "GET /api/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54396 - "OPTIONS /api/auth/register HTTP/1.1" 200 OK
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/.venv/lib/python3.9/site-packages/jwt/api_jwt.py:153: InsecureKeyLengthWarning: The HMAC key is 30 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+INFO:     127.0.0.1:54398 - "POST /api/auth/register HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54398 - "OPTIONS /api/auth/me HTTP/1.1" 200 OK
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/.venv/lib/python3.9/site-packages/jwt/api_jwt.py:371: InsecureKeyLengthWarning: The HMAC key is 30 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+INFO:     127.0.0.1:54398 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54398 - "OPTIONS /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54404 - "OPTIONS /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54406 - "OPTIONS /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54398 - "GET /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54404 - "GET /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54408 - "GET /api/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54690 - "OPTIONS /api/analysis/create HTTP/1.1" 200 OK
+2026-02-24 19:54:20,859 - server - INFO - analysis.create started user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 start_ts=2026-02-25T00:54:20.858962+00:00
+[agent][run] force_live_api_calls=True
+[agent][api-call] namespace=nass key_hash=1db6e903baab
+[agent][api-call] namespace=nass key_hash=79b798d30d07
+[agent][api-call] namespace=nass key_hash=1297d9549ead
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/backend/agent_tools/nass.py:134: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  wide = wide.fillna(method="ffill").fillna(method="bfill")
+[agent][tool] nass crop=Corn source=api
+[agent][api-call] namespace=nass key_hash=1aba2d20c941
+[agent][api-call] namespace=nass key_hash=48ede8e35dc9
+[agent][api-call] namespace=nass key_hash=193a04f91f85
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/backend/agent_tools/nass.py:134: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  wide = wide.fillna(method="ffill").fillna(method="bfill")
+[agent][tool] nass crop=Wheat source=api
+[agent][api-call] namespace=noaa key_hash=a87c7cfff7b4
+[agent][api-call] namespace=noaa key_hash=7d73dade9fd3
+[agent][api-call] namespace=noaa key_hash=7b29c002da3b
+[agent][api-call] namespace=noaa key_hash=b39b84f75c1f
+[agent][api-call] namespace=noaa key_hash=898c7d5a98f7
+[agent][api-call] namespace=noaa key_hash=2afb6b360bd7
+[agent][api-call] namespace=noaa key_hash=7aa7ce20eb29
+[agent][api-call] namespace=noaa key_hash=a9079c207bd8
+[agent][api-call] namespace=noaa key_hash=9ccd2cb832ea
+[agent][api-call] namespace=noaa key_hash=23cb562e41c4
+[agent][api-call] namespace=noaa key_hash=f3fdb2238980
+[agent][api-call] namespace=noaa key_hash=c2778a32a2ae
+[agent][api-call] namespace=noaa key_hash=7ed4dab4acf2
+[agent][api-call] namespace=noaa key_hash=8f3ee991a63d
+[agent][api-call] namespace=noaa key_hash=dd0c11892409
+[agent][api-call] namespace=noaa key_hash=a38083c369e4
+[agent][api-call] namespace=noaa key_hash=ce77cc3ac001
+[agent][api-call] namespace=noaa key_hash=21964c9068e8
+[agent][api-call] namespace=noaa key_hash=a65ebae099a7
+[agent][api-call] namespace=noaa key_hash=269b90bd6fb8
+[agent][api-call] namespace=noaa key_hash=be23c3548c44
+[agent][api-call] namespace=noaa key_hash=bccd4e589eee
+[agent][api-call] namespace=noaa key_hash=4e38d35f16a4
+[agent][api-call] namespace=noaa key_hash=4901c04a2428
+[agent][api-call] namespace=noaa key_hash=a9a3541823df
+[agent][api-call] namespace=noaa key_hash=e43970287301
+[agent][api-call] namespace=noaa key_hash=459adbe379c8
+[agent][api-call] namespace=noaa key_hash=74c210d79cd6
+[agent][api-call] namespace=noaa key_hash=8618217291bb
+[agent][api-call] namespace=noaa key_hash=f2e4ed58edf4
+[agent][api-call] namespace=noaa key_hash=109cd993d678
+[agent][api-call] namespace=noaa key_hash=2eea319284dc
+[agent][api-call] namespace=noaa key_hash=1754d22b6d83
+[agent][api-call] namespace=noaa key_hash=3dcc34bd90fc
+[agent][api-call] namespace=noaa key_hash=231e69fa10f8
+[agent][api-call] namespace=noaa key_hash=3eaee549c2ee
+[agent][api-call] namespace=noaa key_hash=363cf8aebb83
+[agent][tool] noaa source=api stations=3
+[agent][api-call] namespace=soil key_hash=f5cfce8195fd
+[agent][api-call] namespace=soil key_hash=036e26fdb1dd
+[agent][api-call] namespace=soil key_hash=3a71c22065f1
+[agent][tool] soil source=api mukeys=1 class_fields=yes
+[agent][api-call] namespace=ams key_hash=ae6578efff69
+[agent][tool] ams crop=Corn source=mars_api
+[agent][api-call] namespace=ams key_hash=5eb0c9b186dd
+[agent][tool] ams crop=Wheat source=mars_api
+[agent][api-call] namespace=costs key_hash=6669f603e3ef
+[agent][api-call] namespace=costs key_hash=7e064ba53279
+[agent][api-call] namespace=costs key_hash=835c72e2f0fa
+[agent][api-call] namespace=costs key_hash=ee345b89d2a6
+[agent][api-call] namespace=costs key_hash=3d3e14c7e932
+[agent][api-call] namespace=costs key_hash=7b2de681f435
+[agent][api-call] namespace=costs key_hash=12edc5932c06
+[agent][api-call] namespace=costs key_hash=f32755526bb1
+[agent][api-call] namespace=costs key_hash=0c60940bfdd1
+[agent][api-call] namespace=costs key_hash=48212699dc85
+[agent][api-call] namespace=costs key_hash=1c9e95d7c042
+[agent][api-call] namespace=costs key_hash=30ffc41ec6e6
+[agent][api-call] namespace=costs key_hash=e208397be3fb
+[agent][api-call] namespace=costs key_hash=61b1dcd75eb2
+[agent][api-call] namespace=costs key_hash=8a95ca426189
+[agent][tool] costs source=api years=[2020, 2021, 2022] year_hits={2020: 2, 2021: 2, 2022: 2}
+2026-02-24 19:54:51,257 - server - INFO - analysis.create completed user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 end_ts=2026-02-25T00:54:51.257083+00:00 crops_analyzed=2 duration_sec=30.399
+INFO:     127.0.0.1:54690 - "POST /api/analysis/create HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55423 - "OPTIONS /api/analysis/create HTTP/1.1" 200 OK
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/.venv/lib/python3.9/site-packages/jwt/api_jwt.py:371: InsecureKeyLengthWarning: The HMAC key is 30 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-02-24 19:57:07,245 - server - INFO - analysis.create started user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 start_ts=2026-02-25T00:57:07.245449+00:00
+[agent][run] force_live_api_calls=True
+[agent][api-call] namespace=nass key_hash=1db6e903baab
+[agent][api-call] namespace=nass key_hash=79b798d30d07
+[agent][api-call] namespace=nass key_hash=1297d9549ead
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/backend/agent_tools/nass.py:134: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  wide = wide.fillna(method="ffill").fillna(method="bfill")
+[agent][tool] nass crop=Corn source=api
+[agent][api-call] namespace=nass key_hash=1aba2d20c941
+[agent][api-call] namespace=nass key_hash=48ede8e35dc9
+[agent][api-call] namespace=nass key_hash=193a04f91f85
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/backend/agent_tools/nass.py:134: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  wide = wide.fillna(method="ffill").fillna(method="bfill")
+[agent][tool] nass crop=Wheat source=api
+[agent][api-call] namespace=nass key_hash=a443827ccb27
+[agent][api-call] namespace=nass key_hash=5b9ed23de6c8
+[agent][api-call] namespace=nass key_hash=19e958d86c02
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/backend/agent_tools/nass.py:134: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  wide = wide.fillna(method="ffill").fillna(method="bfill")
+[agent][tool] nass crop=Soybeans source=api
+[agent][api-call] namespace=nass key_hash=c48b575b740c
+[agent][tool] nass crop=Rice source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=RICE&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Rice source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=b21d8cc95b14
+[agent][tool] nass crop=Cotton source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=COTTON&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Cotton source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=71412b7d612e
+[agent][tool] nass crop=Tomatoes source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=TOMATOES&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Tomatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=4236636f2603
+[agent][tool] nass crop=Potatoes source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=POTATOES&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Potatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=cab351d55f66
+[agent][tool] nass crop=Onions source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=ONIONS&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Onions source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=42226357a41f
+[agent][tool] nass crop=Lettuce source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=LETTUCE&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Lettuce source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=2ddddf2a5fde
+[agent][tool] nass crop=Apples source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=APPLES&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Apples source=fallback reason=api_unavailable
+[agent][api-call] namespace=noaa key_hash=a87c7cfff7b4
+[agent][api-call] namespace=noaa key_hash=7d73dade9fd3
+[agent][api-call] namespace=noaa key_hash=7b29c002da3b
+[agent][api-call] namespace=noaa key_hash=b39b84f75c1f
+[agent][api-call] namespace=noaa key_hash=898c7d5a98f7
+[agent][api-call] namespace=noaa key_hash=2afb6b360bd7
+[agent][api-call] namespace=noaa key_hash=7aa7ce20eb29
+[agent][api-call] namespace=noaa key_hash=a9079c207bd8
+[agent][api-call] namespace=noaa key_hash=9ccd2cb832ea
+[agent][api-call] namespace=noaa key_hash=23cb562e41c4
+[agent][api-call] namespace=noaa key_hash=f3fdb2238980
+[agent][api-call] namespace=noaa key_hash=c2778a32a2ae
+[agent][api-call] namespace=noaa key_hash=7ed4dab4acf2
+[agent][api-call] namespace=noaa key_hash=8f3ee991a63d
+[agent][api-call] namespace=noaa key_hash=dd0c11892409
+[agent][api-call] namespace=noaa key_hash=a38083c369e4
+[agent][api-call] namespace=noaa key_hash=ce77cc3ac001
+[agent][api-call] namespace=noaa key_hash=21964c9068e8
+[agent][api-call] namespace=noaa key_hash=a65ebae099a7
+[agent][api-call] namespace=noaa key_hash=269b90bd6fb8
+[agent][api-call] namespace=noaa key_hash=be23c3548c44
+[agent][api-call] namespace=noaa key_hash=bccd4e589eee
+[agent][api-call] namespace=noaa key_hash=4e38d35f16a4
+[agent][api-call] namespace=noaa key_hash=4901c04a2428
+[agent][api-call] namespace=noaa key_hash=a9a3541823df
+[agent][api-call] namespace=noaa key_hash=e43970287301
+[agent][api-call] namespace=noaa key_hash=459adbe379c8
+[agent][api-call] namespace=noaa key_hash=74c210d79cd6
+[agent][api-call] namespace=noaa key_hash=8618217291bb
+[agent][api-call] namespace=noaa key_hash=f2e4ed58edf4
+[agent][api-call] namespace=noaa key_hash=109cd993d678
+[agent][api-call] namespace=noaa key_hash=2eea319284dc
+[agent][api-call] namespace=noaa key_hash=1754d22b6d83
+[agent][api-call] namespace=noaa key_hash=3dcc34bd90fc
+[agent][api-call] namespace=noaa key_hash=231e69fa10f8
+[agent][api-call] namespace=noaa key_hash=3eaee549c2ee
+[agent][api-call] namespace=noaa key_hash=363cf8aebb83
+[agent][tool] noaa source=api stations=3
+[agent][api-call] namespace=soil key_hash=f5cfce8195fd
+[agent][api-call] namespace=soil key_hash=036e26fdb1dd
+[agent][api-call] namespace=soil key_hash=3a71c22065f1
+[agent][tool] soil source=api mukeys=1 class_fields=yes
+[agent][api-call] namespace=ams key_hash=ae6578efff69
+[agent][tool] ams crop=Corn source=mars_api
+[agent][api-call] namespace=ams key_hash=5eb0c9b186dd
+[agent][tool] ams crop=Wheat source=mars_api
+[agent][api-call] namespace=ams key_hash=ddd7ead6964f
+[agent][tool] ams crop=Soybeans source=mars_api
+[agent][api-call] namespace=ams key_hash=0ddcf1696635
+[agent][api-call] namespace=ams key_hash=ad400db1cad6
+[agent][api-call] namespace=ams key_hash=d196dfd761b1
+[agent][api-call] namespace=ams key_hash=4732615e4589
+[agent][api-call] namespace=ams key_hash=e5e32fcf38da
+[agent][api-call] namespace=ams key_hash=572f9b78d508
+[agent][api-call] namespace=ams key_hash=bfec956894bc
+[agent][api-call] namespace=ams key_hash=a2a8397768a5
+[agent][tool] ams crop=Rice source=mars_api_empty
+[agent][tool] ams crop=Rice source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=858b1871160b
+[agent][api-call] namespace=ams key_hash=89c84d524789
+[agent][api-call] namespace=ams key_hash=057debb5f89d
+[agent][api-call] namespace=ams key_hash=f703ecd1f2fc
+[agent][api-call] namespace=ams key_hash=d7015463cd98
+[agent][api-call] namespace=ams key_hash=901deb74f15a
+[agent][api-call] namespace=ams key_hash=f3f3f662732c
+[agent][api-call] namespace=ams key_hash=7a80ed59dfea
+[agent][tool] ams crop=Cotton source=mars_api_empty
+[agent][tool] ams crop=Cotton source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=83a4f3fd0cf6
+[agent][api-call] namespace=ams key_hash=58267029e2c1
+[agent][api-call] namespace=ams key_hash=f80d878a2ce1
+[agent][api-call] namespace=ams key_hash=6090acd2b9c1
+[agent][api-call] namespace=ams key_hash=7835c4aa265d
+[agent][api-call] namespace=ams key_hash=0783d2e32b00
+[agent][api-call] namespace=ams key_hash=4bf80477b699
+[agent][api-call] namespace=ams key_hash=bf617b46d228
+[agent][tool] ams crop=Tomatoes source=mars_api_empty
+[agent][tool] ams crop=Tomatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=88d54b188d9f
+[agent][api-call] namespace=ams key_hash=7a7beca22c52
+[agent][api-call] namespace=ams key_hash=4d61ab78b60b
+[agent][api-call] namespace=ams key_hash=0531343f3a7c
+[agent][api-call] namespace=ams key_hash=6e6f1529ca84
+[agent][api-call] namespace=ams key_hash=faf2194e2454
+[agent][api-call] namespace=ams key_hash=de6a3588aaa6
+[agent][api-call] namespace=ams key_hash=00eb4a7c1f86
+[agent][tool] ams crop=Potatoes source=mars_api_empty
+[agent][tool] ams crop=Potatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=f66cf84ea4f7
+[agent][api-call] namespace=ams key_hash=6bd2ba7dd451
+[agent][api-call] namespace=ams key_hash=794cf83b79fe
+[agent][api-call] namespace=ams key_hash=ead19fd6684f
+[agent][api-call] namespace=ams key_hash=8a887f6a571c
+[agent][api-call] namespace=ams key_hash=d1cb72a3d2dd
+[agent][api-call] namespace=ams key_hash=a09f1dda8bbf
+[agent][api-call] namespace=ams key_hash=ebaa377b8ded
+[agent][tool] ams crop=Onions source=mars_api_empty
+[agent][tool] ams crop=Onions source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=af61947c6e3e
+[agent][api-call] namespace=ams key_hash=e182c97e61ec
+[agent][api-call] namespace=ams key_hash=22b6e99a62e7
+[agent][api-call] namespace=ams key_hash=877bfd66a6b8
+[agent][api-call] namespace=ams key_hash=fbeb7e7346f9
+[agent][api-call] namespace=ams key_hash=8b04b61b25ed
+[agent][api-call] namespace=ams key_hash=29b7e01d523a
+[agent][api-call] namespace=ams key_hash=b07962d5f343
+[agent][tool] ams crop=Lettuce source=mars_api_empty
+[agent][tool] ams crop=Lettuce source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=03f950ad65df
+[agent][api-call] namespace=ams key_hash=fb064cec85a3
+[agent][api-call] namespace=ams key_hash=377fff7b2c1e
+[agent][api-call] namespace=ams key_hash=2a555038b9ff
+[agent][api-call] namespace=ams key_hash=86cc1338d8ca
+[agent][api-call] namespace=ams key_hash=0274456624f0
+[agent][api-call] namespace=ams key_hash=33dc616608c5
+[agent][api-call] namespace=ams key_hash=cc2a54cdb77a
+[agent][tool] ams crop=Apples source=mars_api_empty
+[agent][tool] ams crop=Apples source=fallback reason=api_unavailable
+[agent][api-call] namespace=costs key_hash=83117f9dcb22
+[agent][api-call] namespace=costs key_hash=7e064ba53279
+[agent][api-call] namespace=costs key_hash=835c72e2f0fa
+[agent][api-call] namespace=costs key_hash=ee345b89d2a6
+[agent][api-call] namespace=costs key_hash=3d3e14c7e932
+[agent][api-call] namespace=costs key_hash=6c127f4c8769
+[agent][api-call] namespace=costs key_hash=0cbf26088f7f
+[agent][api-call] namespace=costs key_hash=5d316c2e908c
+[agent][api-call] namespace=costs key_hash=a8e4c846401e
+[agent][api-call] namespace=costs key_hash=d86fb4db0a5c
+[agent][api-call] namespace=costs key_hash=5fc81eb909ad
+[agent][api-call] namespace=costs key_hash=465a6d3b899a
+[agent][api-call] namespace=costs key_hash=9a34859e635c
+[agent][api-call] namespace=costs key_hash=26b0e678d62a
+[agent][api-call] namespace=costs key_hash=78b7e479caf2
+[agent][api-call] namespace=costs key_hash=2eca35b0a14c
+[agent][api-call] namespace=costs key_hash=cce087305dea
+[agent][api-call] namespace=costs key_hash=610d027dac62
+[agent][api-call] namespace=costs key_hash=a23a1ccc6c27
+[agent][api-call] namespace=costs key_hash=64f0a788d580
+[agent][api-call] namespace=costs key_hash=da007ceccfb3
+[agent][api-call] namespace=costs key_hash=f14c8d0bba1b
+[agent][api-call] namespace=costs key_hash=12edc5932c06
+[agent][api-call] namespace=costs key_hash=f32755526bb1
+[agent][api-call] namespace=costs key_hash=0c60940bfdd1
+[agent][api-call] namespace=costs key_hash=48212699dc85
+[agent][api-call] namespace=costs key_hash=30a3e0d96ce7
+[agent][api-call] namespace=costs key_hash=6bebfbc28071
+[agent][api-call] namespace=costs key_hash=7fbe4b39248f
+[agent][api-call] namespace=costs key_hash=403d0fac527f
+[agent][api-call] namespace=costs key_hash=72b6c2a9987c
+[agent][api-call] namespace=costs key_hash=883911d80747
+[agent][api-call] namespace=costs key_hash=6aac87a2c3e4
+[agent][api-call] namespace=costs key_hash=91b27be94ad2
+[agent][api-call] namespace=costs key_hash=8186373d8f37
+[agent][api-call] namespace=costs key_hash=2fa99a54249e
+[agent][api-call] namespace=costs key_hash=a4eda6f52b7e
+[agent][api-call] namespace=costs key_hash=ef3f2e3543e7
+[agent][api-call] namespace=costs key_hash=4ad608e0691b
+[agent][api-call] namespace=costs key_hash=933863e717c9
+[agent][api-call] namespace=costs key_hash=b6504b6d0ee3
+[agent][api-call] namespace=costs key_hash=abdda99f6c89
+[agent][api-call] namespace=costs key_hash=e0bf06255f84
+[agent][api-call] namespace=costs key_hash=30ffc41ec6e6
+[agent][api-call] namespace=costs key_hash=e208397be3fb
+[agent][api-call] namespace=costs key_hash=61b1dcd75eb2
+[agent][api-call] namespace=costs key_hash=8a95ca426189
+[agent][api-call] namespace=costs key_hash=b245fb80e2e5
+[agent][api-call] namespace=costs key_hash=af8783057fb3
+[agent][api-call] namespace=costs key_hash=6f20e61ba96b
+[agent][api-call] namespace=costs key_hash=1b036475b4d7
+[agent][api-call] namespace=costs key_hash=e773fedea4c7
+[agent][api-call] namespace=costs key_hash=7c27b5565e36
+[agent][api-call] namespace=costs key_hash=c2c88928c2fa
+[agent][api-call] namespace=costs key_hash=9b5d22206684
+[agent][api-call] namespace=costs key_hash=b620efaa155e
+[agent][api-call] namespace=costs key_hash=91b4a071a01f
+[agent][api-call] namespace=costs key_hash=7df3345456a9
+[agent][api-call] namespace=costs key_hash=6dcf04f7080f
+[agent][api-call] namespace=costs key_hash=f1b17702ba37
+[agent][api-call] namespace=costs key_hash=9ae1a6224e43
+[agent][api-call] namespace=costs key_hash=b78a51d419a1
+[agent][api-call] namespace=costs key_hash=c8fe075fa3e4
+[agent][tool] costs source=api years=[2020, 2021, 2022] year_hits={2020: 5, 2021: 5, 2022: 5}
+2026-02-24 19:58:49,642 - server - INFO - analysis.create completed user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 end_ts=2026-02-25T00:58:49.642819+00:00 crops_analyzed=10 duration_sec=102.400
+INFO:     127.0.0.1:55423 - "POST /api/analysis/create HTTP/1.1" 200 OK
+/Users/harsh/Downloads/Crop-Portfolio-Optimizer/.venv/lib/python3.9/site-packages/jwt/api_jwt.py:371: InsecureKeyLengthWarning: The HMAC key is 30 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-02-24 20:01:33,938 - server - INFO - analysis.create started user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 start_ts=2026-02-25T01:01:33.938106+00:00
+[agent][run] force_live_api_calls=True
+[agent][api-call] namespace=nass key_hash=42226357a41f
+[agent][tool] nass crop=Lettuce source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=LETTUCE&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Lettuce source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=b21d8cc95b14
+[agent][tool] nass crop=Cotton source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=COTTON&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Cotton source=fallback reason=api_unavailable
+[agent][api-call] namespace=nass key_hash=4236636f2603
+[agent][tool] nass crop=Potatoes source=api error=400 Client Error: Bad Request for url: https://quickstats.nass.usda.gov/api/api_GET/?key=9596C11E-864D-3518-9619-6D63970559AD&format=JSON&state_name=OHIO&agg_level_desc=STATE&sector_desc=CROPS&commodity_desc=POTATOES&statisticcat_desc=YIELD&year__GE=2024&year__LE=2026
+[agent][tool] nass crop=Potatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=noaa key_hash=a87c7cfff7b4
+[agent][api-call] namespace=noaa key_hash=7d73dade9fd3
+[agent][api-call] namespace=noaa key_hash=7b29c002da3b
+[agent][api-call] namespace=noaa key_hash=b39b84f75c1f
+[agent][api-call] namespace=noaa key_hash=898c7d5a98f7
+[agent][api-call] namespace=noaa key_hash=2afb6b360bd7
+[agent][api-call] namespace=noaa key_hash=7aa7ce20eb29
+[agent][api-call] namespace=noaa key_hash=a9079c207bd8
+[agent][api-call] namespace=noaa key_hash=9ccd2cb832ea
+[agent][api-call] namespace=noaa key_hash=23cb562e41c4
+[agent][api-call] namespace=noaa key_hash=f3fdb2238980
+[agent][api-call] namespace=noaa key_hash=c2778a32a2ae
+[agent][api-call] namespace=noaa key_hash=7ed4dab4acf2
+[agent][api-call] namespace=noaa key_hash=8f3ee991a63d
+[agent][api-call] namespace=noaa key_hash=dd0c11892409
+[agent][api-call] namespace=noaa key_hash=a38083c369e4
+[agent][api-call] namespace=noaa key_hash=ce77cc3ac001
+[agent][api-call] namespace=noaa key_hash=21964c9068e8
+[agent][api-call] namespace=noaa key_hash=a65ebae099a7
+[agent][api-call] namespace=noaa key_hash=269b90bd6fb8
+[agent][api-call] namespace=noaa key_hash=be23c3548c44
+[agent][api-call] namespace=noaa key_hash=bccd4e589eee
+[agent][api-call] namespace=noaa key_hash=4e38d35f16a4
+[agent][api-call] namespace=noaa key_hash=4901c04a2428
+[agent][api-call] namespace=noaa key_hash=a9a3541823df
+[agent][api-call] namespace=noaa key_hash=e43970287301
+[agent][api-call] namespace=noaa key_hash=459adbe379c8
+[agent][api-call] namespace=noaa key_hash=74c210d79cd6
+[agent][api-call] namespace=noaa key_hash=8618217291bb
+[agent][api-call] namespace=noaa key_hash=f2e4ed58edf4
+[agent][api-call] namespace=noaa key_hash=109cd993d678
+[agent][api-call] namespace=noaa key_hash=2eea319284dc
+[agent][api-call] namespace=noaa key_hash=1754d22b6d83
+[agent][api-call] namespace=noaa key_hash=3dcc34bd90fc
+[agent][api-call] namespace=noaa key_hash=231e69fa10f8
+[agent][api-call] namespace=noaa key_hash=3eaee549c2ee
+[agent][api-call] namespace=noaa key_hash=363cf8aebb83
+[agent][tool] noaa source=api stations=3
+[agent][api-call] namespace=soil key_hash=f5cfce8195fd
+[agent][api-call] namespace=soil key_hash=036e26fdb1dd
+[agent][api-call] namespace=soil key_hash=3a71c22065f1
+[agent][tool] soil source=api mukeys=1 class_fields=yes
+[agent][api-call] namespace=ams key_hash=af61947c6e3e
+[agent][api-call] namespace=ams key_hash=e182c97e61ec
+[agent][api-call] namespace=ams key_hash=22b6e99a62e7
+[agent][api-call] namespace=ams key_hash=877bfd66a6b8
+[agent][api-call] namespace=ams key_hash=fbeb7e7346f9
+[agent][api-call] namespace=ams key_hash=8b04b61b25ed
+[agent][api-call] namespace=ams key_hash=29b7e01d523a
+[agent][api-call] namespace=ams key_hash=b07962d5f343
+[agent][tool] ams crop=Lettuce source=mars_api_empty
+[agent][tool] ams crop=Lettuce source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=858b1871160b
+[agent][api-call] namespace=ams key_hash=89c84d524789
+[agent][api-call] namespace=ams key_hash=057debb5f89d
+[agent][api-call] namespace=ams key_hash=f703ecd1f2fc
+[agent][api-call] namespace=ams key_hash=d7015463cd98
+[agent][api-call] namespace=ams key_hash=901deb74f15a
+[agent][api-call] namespace=ams key_hash=f3f3f662732c
+[agent][api-call] namespace=ams key_hash=7a80ed59dfea
+[agent][tool] ams crop=Cotton source=mars_api_empty
+[agent][tool] ams crop=Cotton source=fallback reason=api_unavailable
+[agent][api-call] namespace=ams key_hash=88d54b188d9f
+[agent][api-call] namespace=ams key_hash=7a7beca22c52
+[agent][api-call] namespace=ams key_hash=4d61ab78b60b
+[agent][api-call] namespace=ams key_hash=0531343f3a7c
+[agent][api-call] namespace=ams key_hash=6e6f1529ca84
+[agent][api-call] namespace=ams key_hash=faf2194e2454
+[agent][api-call] namespace=ams key_hash=de6a3588aaa6
+[agent][api-call] namespace=ams key_hash=00eb4a7c1f86
+[agent][tool] ams crop=Potatoes source=mars_api_empty
+[agent][tool] ams crop=Potatoes source=fallback reason=api_unavailable
+[agent][api-call] namespace=costs key_hash=25f98501f7d1
+[agent][api-call] namespace=costs key_hash=610d027dac62
+[agent][api-call] namespace=costs key_hash=a23a1ccc6c27
+[agent][api-call] namespace=costs key_hash=d86fb4db0a5c
+[agent][api-call] namespace=costs key_hash=5fc81eb909ad
+[agent][api-call] namespace=costs key_hash=26b0e678d62a
+[agent][api-call] namespace=costs key_hash=78b7e479caf2
+[agent][api-call] namespace=costs key_hash=91b212039714
+[agent][api-call] namespace=costs key_hash=4ad608e0691b
+[agent][api-call] namespace=costs key_hash=933863e717c9
+[agent][api-call] namespace=costs key_hash=72b6c2a9987c
+[agent][api-call] namespace=costs key_hash=883911d80747
+[agent][api-call] namespace=costs key_hash=8186373d8f37
+[agent][api-call] namespace=costs key_hash=2fa99a54249e
+[agent][api-call] namespace=costs key_hash=e805ff07e7b5
+[agent][api-call] namespace=costs key_hash=f1b17702ba37
+[agent][api-call] namespace=costs key_hash=9ae1a6224e43
+[agent][api-call] namespace=costs key_hash=e773fedea4c7
+[agent][api-call] namespace=costs key_hash=7c27b5565e36
+[agent][api-call] namespace=costs key_hash=b620efaa155e
+[agent][api-call] namespace=costs key_hash=91b4a071a01f
+[agent][tool] costs source=api years=[2020, 2021, 2022] year_hits={2020: 1, 2021: 1, 2022: 1}
+2026-02-24 20:02:45,583 - server - INFO - analysis.create completed user_id=d6fdd7ba-fed3-40da-bff9-5e45537345d8 end_ts=2026-02-25T01:02:45.583118+00:00 crops_analyzed=3 duration_sec=71.647
+INFO:     127.0.0.1:56273 - "POST /api/analysis/create HTTP/1.1" 200 OK

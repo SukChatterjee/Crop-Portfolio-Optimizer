@@ -8,7 +8,19 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import pandas as pd
 import requests
-from tenacity import retry, stop_after_attempt, wait_exponential
+try:
+    from tenacity import retry, stop_after_attempt, wait_exponential
+except ImportError:
+    def retry(*args, **kwargs):
+        def _decorator(func):
+            return func
+        return _decorator
+
+    def stop_after_attempt(*args, **kwargs):
+        return None
+
+    def wait_exponential(*args, **kwargs):
+        return None
 
 from .cache import cached_json, load_parquet, parquet_cache_path, save_parquet
 
@@ -27,6 +39,19 @@ DEFAULT_COSTS = {
 }
 
 
+def _is_plausible_cost(crop: str, value: float) -> bool:
+    if not pd.notna(value):
+        return False
+    v = float(value)
+    # Generic per-acre sanity bounds.
+    if v < 50 or v > 20000:
+        return False
+    base = float(DEFAULT_COSTS.get(str(crop).lower(), 1200.0))
+    lower = max(50.0, 0.35 * base)
+    upper = min(20000.0, 5.0 * base)
+    return lower <= v <= upper
+
+
 def _seeded_float(seed: str, low: float, high: float) -> float:
     h = int(hashlib.sha256(seed.encode("utf-8")).hexdigest()[:12], 16)
     ratio = (h % 10_000) / 10_000
@@ -41,6 +66,43 @@ def _to_float(value) -> float:
         return float(text)
     except (TypeError, ValueError):
         return float("nan")
+
+
+def _coerce_to_plausible_per_acre(crop: str, value: float, context_blob: str = "") -> Optional[float]:
+    """
+    Normalize heterogeneous API numeric values (per-acre, cents, per-farm totals)
+    into a plausible per-acre estimate for the crop.
+    """
+    if not pd.notna(value):
+        return None
+    raw = float(value)
+    if raw <= 0:
+        return None
+
+    blob = str(context_blob or "").lower()
+    candidates: List[float] = [raw]
+
+    # Common unit conversion hints.
+    if any(tok in blob for tok in ["cent", "cents", "¢"]):
+        candidates.append(raw / 100.0)
+
+    # Per-farm / operation totals need scaling to per-acre.
+    # Try a range of conservative acreage denominators.
+    if any(tok in blob for tok in ["per farm", "per operation", "per business", "farm business"]):
+        for d in (100, 250, 500, 750, 1000, 1500, 2000, 3000):
+            candidates.append(raw / float(d))
+    elif raw > 20000:
+        # No explicit unit but magnitude strongly suggests aggregate totals.
+        for d in (100, 250, 500, 750, 1000, 1500, 2000):
+            candidates.append(raw / float(d))
+
+    # Keep first plausible candidate closest to known crop baseline.
+    baseline = float(DEFAULT_COSTS.get(str(crop).lower(), 1200.0))
+    plausible = [c for c in candidates if _is_plausible_cost(crop, c)]
+    if not plausible:
+        return None
+    plausible.sort(key=lambda v: abs(v - baseline))
+    return round(float(plausible[0]), 2)
 
 
 def _with_year(url: str, year: int) -> str:
@@ -75,6 +137,27 @@ def _contains_any(text: str, needles: List[str]) -> bool:
     return any(n in t for n in needles)
 
 
+def _crop_terms(crop: str) -> List[str]:
+    c = crop.lower().strip()
+    if not c:
+        return []
+    terms = [c]
+    if c.endswith("s") and len(c) > 3:
+        terms.append(c[:-1])
+    if c.endswith("es") and len(c) > 3:
+        terms.append(c[:-2])
+    return list(dict.fromkeys(terms))
+
+
+def _ers_row_matches_crop(row: Dict[str, Any], crop: str) -> bool:
+    terms = _crop_terms(crop)
+    hay = " ".join(
+        str(row.get(k, "") or "")
+        for k in ("farmType", "category", "categoryValue", "category2", "category2Value", "variableName", "variableDesc")
+    ).lower()
+    return any(t in hay for t in terms)
+
+
 def _pick_cost_from_rows(rows: List[Dict[str, Any]], crop: str) -> Optional[float]:
     """Select best per-acre cost estimate from ARMS survey rows."""
     scored: List[tuple] = []
@@ -99,6 +182,9 @@ def _pick_cost_from_rows(rows: List[Dict[str, Any]], crop: str) -> Optional[floa
                 value = f
                 break
         if not pd.notna(value) or value <= 0:
+            continue
+        value = _coerce_to_plausible_per_acre(crop, float(value), blob)
+        if value is None:
             continue
         # Prefer rows explicitly about per-acre costs/expenses.
         score = 0
@@ -150,8 +236,56 @@ def _extract_cost_rows(payload: Dict, crops: List[str]) -> Dict[str, float]:
             c = crop.lower()
             n = crop_name.lower()
             if c in n or n in c:
-                out[crop] = float(value)
+                normalized = _coerce_to_plausible_per_acre(crop, float(value), " ".join(str(v) for v in row.values()))
+                if normalized is not None:
+                    out[crop] = float(normalized)
                 break
+
+    # ERS ARMS survey schema fallback:
+    # rows often carry crop in category/categoryValue and value in estimate.
+    if len(out) < len(crops):
+        divisor = float(os.environ.get("ERS_PER_FARM_TO_PER_ACRE_DIVISOR", "1000"))
+        for crop in crops:
+            if crop in out:
+                continue
+            best: Optional[tuple] = None  # (score, value)
+            for row in rows:
+                if not isinstance(row, dict) or not _ers_row_matches_crop(row, crop):
+                    continue
+                name = str(row.get("variableName", "")).lower()
+                desc = str(row.get("variableDesc", "")).lower()
+                unit = str(row.get("variableUnit", "")).lower()
+                blob = f"{name} {desc} {unit}"
+                if not _contains_any(blob, ["expense", "cost", "operating"]):
+                    continue
+                if _contains_any(blob, ["income", "revenue", "return"]):
+                    continue
+                raw = row.get("estimate")
+                value = _to_float(raw)
+                if not pd.notna(value) or value <= 0:
+                    continue
+                # Prefer total cost metrics.
+                score = 0
+                if "total cash expenses" in blob:
+                    score += 5
+                if "total expenses" in blob:
+                    score += 4
+                if "variable expenses" in blob:
+                    score += 3
+                if "fixed expenses" in blob:
+                    score += 2
+                if "per acre" in blob or "/acre" in blob:
+                    score += 4
+                if "dollars per farm" in blob:
+                    # Convert per-farm estimate into a conservative per-acre proxy.
+                    value = float(value) / max(divisor, 1.0)
+                coerced = _coerce_to_plausible_per_acre(crop, float(value), blob)
+                if coerced is None:
+                    continue
+                if best is None or score > best[0]:
+                    best = (score, float(coerced))
+            if best and best[1] > 0 and _is_plausible_cost(crop, best[1]):
+                out[crop] = round(best[1], 2)
     return out
 
 
@@ -199,7 +333,11 @@ def _request_json(url: str, params: Dict[str, str]) -> Dict:
     return response.json()
 
 
-def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) -> Dict[str, float]:
+def fetch_cost_per_acre(
+    selected_crops: List[str],
+    force_refresh: bool = False,
+    api_plan: Optional[Dict[str, Any]] = None,
+) -> Dict[str, float]:
     crops = [c.strip() for c in selected_crops if c and c.strip()]
     cache_key = {"crops": sorted(crops)}
     parquet_path = parquet_cache_path("costs", cache_key)
@@ -222,20 +360,40 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
             by_crop_series: Dict[str, List[float]] = {crop: [] for crop in crops}
             year_hits: Dict[int, int] = {y: 0 for y in years}
             query = _parse_query(api_url)
+            planned_candidates = []
+            if isinstance(api_plan, dict):
+                raw = api_plan.get("query_candidates")
+                if isinstance(raw, list):
+                    planned_candidates = [c for c in raw if isinstance(c, dict)]
+
             for year in years:
-                year_url = _with_year(api_url, year)
-                # Primary request with user's URL.
-                payload = cached_json(
-                    namespace="costs",
-                    key={"url": year_url, "crops": sorted(crops), "year": year, "kind": "primary"},
-                    fetcher=lambda u=year_url: _request_json(u, {}),
-                    ttl_hours=24,
-                    force_refresh=force_refresh,
-                )
-                year_costs = _extract_cost_rows(payload, crops)
+                base_year_url = _with_year(api_url, year)
+                candidate_urls = [base_year_url]
+                for candidate in planned_candidates:
+                    candidate_urls.append(_with_params(base_year_url, candidate))
+                # preserve order + unique
+                seen = set()
+                year_urls = []
+                for u in candidate_urls:
+                    if u not in seen:
+                        year_urls.append(u)
+                        seen.add(u)
+
+                year_costs: Dict[str, float] = {}
+                for idx, year_url in enumerate(year_urls):
+                    payload = cached_json(
+                        namespace="costs",
+                        key={"url": year_url, "crops": sorted(crops), "year": year, "kind": f"primary_{idx}"},
+                        fetcher=lambda u=year_url: _request_json(u, {}),
+                        ttl_hours=24,
+                        force_refresh=force_refresh,
+                    )
+                    extracted = _extract_cost_rows(payload, crops)
+                    for crop, value in extracted.items():
+                        year_costs[crop] = value
 
                 # If primary payload is metadata-only (common for /arms/report), fallback to surveydata per crop.
-                if not year_costs and "/api.ers.usda.gov/" in year_url and "/arms/" in year_url:
+                if not year_costs and "/api.ers.usda.gov/" in base_year_url and "/arms/" in base_year_url:
                     for crop in crops:
                         try:
                             survey_payload = _fetch_ers_survey_for_crop(api_url, crop, year, force_refresh=force_refresh)
@@ -248,9 +406,9 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
                             continue
 
                 # Final fallback: if this is ERS URL and report missing, inject report term from env/query.
-                if not year_costs and "/api.ers.usda.gov/" in year_url and "/arms/surveydata" in year_url:
+                if not year_costs and "/api.ers.usda.gov/" in base_year_url and "/arms/surveydata" in base_year_url:
                     report_name = os.environ.get("ERS_ARMS_REPORT", query.get("report", "income statement")).strip()
-                    repaired_url = _with_params(year_url, {"report": report_name})
+                    repaired_url = _with_params(base_year_url, {"report": report_name})
                     repaired_payload = cached_json(
                         namespace="costs",
                         key={"url": repaired_url, "crops": sorted(crops), "year": year, "kind": "repaired"},
@@ -267,7 +425,9 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
             for crop in crops:
                 vals = by_crop_series.get(crop, [])
                 if vals:
-                    costs[crop] = round(float(sum(vals) / len(vals)), 2)
+                    avg = round(float(sum(vals) / len(vals)), 2)
+                    if _is_plausible_cost(crop, avg):
+                        costs[crop] = avg
 
             if costs:
                 print(f"[agent][tool] costs source=api years={years} year_hits={year_hits}", flush=True)
@@ -279,13 +439,24 @@ def fetch_cost_per_acre(selected_crops: List[str], force_refresh: bool = False) 
     else:
         print("[agent][tool] costs source=fallback reason=missing_api_url", flush=True)
 
-    for crop in crops:
-        if crop not in costs:
-            known = DEFAULT_COSTS.get(crop.lower())
-            if known is not None:
-                costs[crop] = known
-            else:
-                costs[crop] = round(_seeded_float(f"cost:{crop}", 550.0, 2200.0), 2)
+    # Keep app usable by default even when API extraction is sparse.
+    # Set COSTS_ALLOW_DEFAULT_FALLBACK=0 to enforce strict API-only mode.
+    allow_defaults = os.environ.get("COSTS_ALLOW_DEFAULT_FALLBACK", "1") == "1"
+    if allow_defaults:
+        for crop in crops:
+            if crop not in costs:
+                known = DEFAULT_COSTS.get(crop.lower())
+                if known is not None:
+                    costs[crop] = known
+                else:
+                    costs[crop] = round(_seeded_float(f"cost:{crop}", 550.0, 2200.0), 2)
+            elif not _is_plausible_cost(crop, costs[crop]):
+                known = DEFAULT_COSTS.get(crop.lower())
+                costs[crop] = known if known is not None else round(_seeded_float(f"cost:{crop}", 550.0, 2200.0), 2)
+    else:
+        missing = [c for c in crops if c not in costs]
+        if missing:
+            print(f"[agent][tool] costs source=missing_api_values crops={missing}", flush=True)
 
     save_parquet(
         parquet_path,

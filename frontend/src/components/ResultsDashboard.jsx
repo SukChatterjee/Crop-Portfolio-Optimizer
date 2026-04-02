@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CountUp from 'react-countup';
 import { 
   BarChart, 
@@ -37,6 +37,8 @@ const CHART_COLORS = {
   soil: '#d97706',
 };
 
+const formatUnit = (unit, fallback) => unit || fallback;
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -44,9 +46,27 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="font-medium text-slate-900">{label}</p>
         {payload.map((entry, index) => (
           <p key={index} style={{ color: entry.color }} className="text-sm">
-            {entry.name}: ${entry.value?.toLocaleString()}
+            {entry.name}: ${entry.value?.toLocaleString()} total profit
           </p>
         ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+const YieldTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const row = payload[0]?.payload || {};
+    return (
+      <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-slate-200">
+        <p className="font-medium text-slate-900">{label}</p>
+        <p className="text-sm text-sky-700">
+          Yield: {payload[0]?.value?.toLocaleString()} {formatUnit(row.yieldUnit, 'units/acre')}
+        </p>
+        <p className="text-sm text-emerald-700">
+          Price: ${((row.rawPrice ?? 0)).toLocaleString()} {formatUnit(row.priceUnit, '$/unit')}
+        </p>
       </div>
     );
   }
@@ -100,10 +120,7 @@ const CropCard = ({ crop, rank, isSelected, onClick }) => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-500">Soil Compatibility</span>
-            <div className="flex items-center gap-2">
-              <Progress value={crop.soil_compatibility} className="w-16 h-1.5" />
-              <span className="text-sm font-medium text-slate-700">{crop.soil_compatibility}%</span>
-            </div>
+            <span className="text-sm font-medium text-slate-700">{crop.soil_compatibility}%</span>
           </div>
         </div>
       </CardContent>
@@ -112,9 +129,23 @@ const CropCard = ({ crop, rank, isSelected, onClick }) => {
 };
 
 export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
-  const [selectedCrop, setSelectedCrop] = useState(analysis?.results?.[0] || null);
+  const safeResults = useMemo(() => {
+    if (!Array.isArray(analysis?.results)) return [];
+    return analysis.results.filter((r) => r && typeof r === 'object' && r.crop_name);
+  }, [analysis]);
+  const [selectedCrop, setSelectedCrop] = useState(safeResults[0] || null);
 
-  if (!analysis || !analysis.results) {
+  useEffect(() => {
+    if (!safeResults.length) {
+      setSelectedCrop(null);
+      return;
+    }
+    if (!selectedCrop || !safeResults.some((r) => r.crop_name === selectedCrop.crop_name)) {
+      setSelectedCrop(safeResults[0]);
+    }
+  }, [safeResults, selectedCrop]);
+
+  if (!analysis) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <p className="text-slate-500">No analysis data available</p>
@@ -122,18 +153,38 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
     );
   }
 
-  const topCrop = analysis.results[0];
-  const profitDistributionData = analysis.results.map(crop => ({
+  if (!safeResults.length) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-center min-h-[260px]">
+          <p className="text-slate-500">No analyzable crop results were returned for this run.</p>
+        </div>
+        {Array.isArray(analysis?.errors) && analysis.errors.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50">
+            <CardContent className="p-4">
+              <p className="text-sm text-amber-800">Issues: {analysis.errors.join(' | ')}</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  const topCrop = safeResults[0];
+  const profitDistributionData = safeResults.map(crop => ({
     name: crop.crop_name,
     p10: crop.profit_p10,
     p50: crop.profit_p50,
     p90: crop.profit_p90,
   }));
 
-  const yieldComparisonData = analysis.results.map(crop => ({
+  const yieldComparisonData = safeResults.map(crop => ({
     name: crop.crop_name,
-    yield: crop.yield_forecast,
+    yield: crop.calc_yield_for_profit ?? crop.yield_forecast,
+    yieldUnit: crop.calc_yield_unit || crop.yield_unit || 'units/acre',
     price: crop.price_forecast * 100, // Scale for visibility
+    rawPrice: crop.price_forecast,
+    priceUnit: crop.price_unit || '$/unit',
   }));
 
   return (
@@ -202,9 +253,9 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
               <span className="text-sm font-medium text-slate-600">Yield Forecast</span>
             </div>
             <p className="font-display text-2xl font-bold text-emerald-950">
-              <CountUp end={topCrop.yield_forecast} duration={2} separator="," decimals={1} />
+              <CountUp end={topCrop.calc_yield_for_profit ?? topCrop.yield_forecast} duration={2} separator="," decimals={1} />
             </p>
-            <p className="text-sm text-slate-500">bu/acre projected</p>
+            <p className="text-sm text-slate-500">{formatUnit(topCrop.calc_yield_unit || topCrop.yield_unit, 'units/acre')} projected</p>
           </CardContent>
         </Card>
 
@@ -234,7 +285,7 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
             Crop Rankings
           </h2>
           <div className="space-y-3">
-            {analysis.results.map((crop, index) => (
+            {safeResults.map((crop, index) => (
               <CropCard
                 key={crop.crop_name}
                 crop={crop}
@@ -288,8 +339,8 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                       <AreaChart data={yieldComparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="yield" name="Yield (bu/acre)" stroke={CHART_COLORS.yield} fill={CHART_COLORS.yield} fillOpacity={0.3} />
+                        <Tooltip content={<YieldTooltip />} />
+                        <Area type="monotone" dataKey="yield" name="Yield (crop-specific units)" stroke={CHART_COLORS.yield} fill={CHART_COLORS.yield} fillOpacity={0.3} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -330,11 +381,51 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Yield Forecast</h4>
-                        <p className="font-display text-xl font-bold text-emerald-950">{selectedCrop.yield_forecast.toLocaleString()} bu/acre</p>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          {selectedCrop.yield_forecast.toLocaleString()} {formatUnit(selectedCrop.yield_unit, 'units/acre')}
+                        </p>
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-slate-600 mb-2">Price Forecast</h4>
-                        <p className="font-display text-xl font-bold text-emerald-950">${selectedCrop.price_forecast.toFixed(2)}/bu</p>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${selectedCrop.price_forecast.toFixed(2)} {formatUnit(selectedCrop.price_unit, '$/unit')}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Calculation Yield</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          {(selectedCrop.calc_yield_for_profit ?? selectedCrop.yield_forecast).toLocaleString()} {formatUnit(selectedCrop.calc_yield_unit || selectedCrop.yield_unit, 'units/acre')}
+                        </p>
+                        <p className="text-xs text-slate-500">Used directly in revenue and profit math</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Cost per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">${(selectedCrop.cost_per_acre ?? 0).toLocaleString()}</p>
+                        <p className="text-xs text-slate-500">Source: {selectedCrop.cost_source || 'api_or_default'}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Revenue per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${(selectedCrop.revenue_per_acre ?? 0).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {(selectedCrop.calc_yield_for_profit ?? selectedCrop.yield_forecast).toLocaleString()} {formatUnit(selectedCrop.calc_yield_unit || selectedCrop.yield_unit, 'units/acre')} x
+                          {' '}${selectedCrop.price_forecast.toFixed(2)} {formatUnit(selectedCrop.price_unit, '$/unit')}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Profit per Acre</h4>
+                        <p className="font-display text-xl font-bold text-emerald-950">
+                          ${(selectedCrop.profit_per_acre ?? 0).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Revenue per acre minus cost per acre
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-600 mb-2">Forecast Source</h4>
+                        <p className="font-display text-sm font-bold text-emerald-950">{selectedCrop.forecast_source || 'deterministic_fallback'}</p>
+                        <p className="text-xs text-slate-500">Confidence: {((selectedCrop.forecast_confidence ?? 0) * 100).toFixed(0)}%</p>
                       </div>
                     </div>
 
@@ -344,10 +435,9 @@ export const ResultsDashboard = ({ analysis, onNewAnalysis }) => {
                         <Layers className="w-4 h-4" />
                         Soil Compatibility
                       </h4>
-                      <div className="flex items-center gap-3 mb-2">
-                        <Progress value={selectedCrop.soil_compatibility} className="flex-1 h-2" />
-                        <span className="font-display font-bold text-emerald-950">{selectedCrop.soil_compatibility}%</span>
-                      </div>
+                      <p className="font-display font-bold text-emerald-950 mb-2">
+                        {selectedCrop.soil_compatibility}%
+                      </p>
                       <p className="text-sm text-slate-500 leading-relaxed">{selectedCrop.soil_explanation}</p>
                     </div>
 

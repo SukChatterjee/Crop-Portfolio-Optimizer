@@ -89,4 +89,4 @@ frontend/node_modules/.cache/default-development/2.pack
 !backend/.env
 !frontend/.env
 
-.tools/
+.tools/backend/.env

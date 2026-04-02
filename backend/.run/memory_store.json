@@ -1,750 +1,24 @@
 {
-  "users": {
-    "kankipli@mail.uc.edu": {
-      "id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "email": "kankipli@mail.uc.edu",
-      "name": "Lahari Kankipati",
-      "password": "$2b$12$SKB3N5dV39N7aAVBS8L4lun2VxP9Fhk.TQlO68mDQrxfVFlujJRkS",
-      "created_at": "2026-02-22T21:54:53.614224+00:00"
-    }
-  },
+  "users": {},
   "analyses": {
-    "7e7c0e96-8640-4941-b451-647684f59b53": {
-      "id": "7e7c0e96-8640-4941-b451-647684f59b53",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+    "sample-analysis-1": {
+      "id": "sample-analysis-1",
+      "user_id": "demo-user",
       "farm_profile": {
         "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
           "county": "",
           "state": ""
         },
         "acres": 100.0,
         "has_irrigation": true,
-        "soil_type": "Loam",
+        "soil_type": "Silt Loam",
         "selected_crops": [
           "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 49992.43,
-          "profit_p10": 29453.56,
-          "profit_p50": 49992.43,
-          "profit_p90": 70531.29,
-          "yield_forecast": 172.57,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 59.7,
-          "risk_level": "Medium",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 35801.39,
-          "profit_p10": 18450.82,
-          "profit_p50": 35801.39,
-          "profit_p90": 53151.95,
-          "yield_forecast": 91.82,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 68.3,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-22T21:55:40.980884+00:00",
-      "status": "completed"
-    },
-    "cac036ae-9ef9-40ef-95ca-c2fc4eaac532": {
-      "id": "cac036ae-9ef9-40ef-95ca-c2fc4eaac532",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Wheat",
-          "Corn"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 49992.43,
-          "profit_p10": 29453.56,
-          "profit_p50": 49992.43,
-          "profit_p90": 70531.29,
-          "yield_forecast": 172.57,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 59.7,
-          "risk_level": "Medium",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 35801.39,
-          "profit_p10": 18450.82,
-          "profit_p50": 35801.39,
-          "profit_p90": 53151.95,
-          "yield_forecast": 91.82,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 68.3,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-22T21:59:42.540336+00:00",
-      "status": "completed"
-    },
-    "387c9a41-a63a-4d72-ac10-0f28bc639977": {
-      "id": "387c9a41-a63a-4d72-ac10-0f28bc639977",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 49992.43,
-          "profit_p10": 29453.56,
-          "profit_p50": 49992.43,
-          "profit_p90": 70531.29,
-          "yield_forecast": 172.57,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 59.7,
-          "risk_level": "Medium",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 35801.39,
-          "profit_p10": 18450.82,
-          "profit_p50": 35801.39,
-          "profit_p90": 53151.95,
-          "yield_forecast": 91.82,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 68.3,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-22T22:13:31.239184+00:00",
-      "status": "completed"
-    },
-    "740523f8-a6a3-45b9-93cd-42b736541a3b": {
-      "id": "740523f8-a6a3-45b9-93cd-42b736541a3b",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 49992.43,
-          "profit_p10": 29453.56,
-          "profit_p50": 49992.43,
-          "profit_p90": 70531.29,
-          "yield_forecast": 172.57,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 59.7,
-          "risk_level": "Medium",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 35801.39,
-          "profit_p10": 18450.82,
-          "profit_p50": 35801.39,
-          "profit_p90": 53151.95,
-          "yield_forecast": 91.82,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 68.3,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-22T22:38:18.403595+00:00",
-      "status": "completed"
-    },
-    "5a200661-8b9f-4bb4-99e1-17f90d993012": {
-      "id": "5a200661-8b9f-4bb4-99e1-17f90d993012",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 49992.43,
-          "profit_p10": 29453.56,
-          "profit_p50": 49992.43,
-          "profit_p90": 70531.29,
-          "yield_forecast": 172.57,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 59.7,
-          "risk_level": "Medium",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 35801.39,
-          "profit_p10": 18450.82,
-          "profit_p50": 35801.39,
-          "profit_p90": 53151.95,
-          "yield_forecast": 91.82,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 68.3,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "3-year weather baseline near (39.101, -84.512) suggests avg precipitation 2.63 mm/day and average temperatures 15.1C to 26.5C.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:22:51.085242+00:00",
-      "status": "completed"
-    },
-    "c56ac67d-eecf-42b0-bf27-d8bf1db8541f": {
-      "id": "c56ac67d-eecf-42b0-bf27-d8bf1db8541f",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 31105.58,
-          "profit_p10": 15179.52,
-          "profit_p50": 31105.58,
-          "profit_p90": 47031.63,
-          "yield_forecast": 147.11,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 22845.22,
-          "profit_p10": 11148.47,
-          "profit_p50": 22845.22,
-          "profit_p90": 34541.97,
-          "yield_forecast": 78.27,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:27:40.428999+00:00",
-      "status": "completed"
-    },
-    "8b7a6829-9e7e-41a4-8474-c15b5d9e54b3": {
-      "id": "8b7a6829-9e7e-41a4-8474-c15b5d9e54b3",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 31105.58,
-          "profit_p10": 15179.52,
-          "profit_p50": 31105.58,
-          "profit_p90": 47031.63,
-          "yield_forecast": 147.11,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 22845.22,
-          "profit_p10": 11148.47,
-          "profit_p50": 22845.22,
-          "profit_p90": 34541.97,
-          "yield_forecast": 78.27,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:31:34.295464+00:00",
-      "status": "completed"
-    },
-    "b13e1964-c729-47e7-b38d-5ca335f2b515": {
-      "id": "b13e1964-c729-47e7-b38d-5ca335f2b515",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Sandy Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 31105.58,
-          "profit_p10": 15179.52,
-          "profit_p50": 31105.58,
-          "profit_p90": 47031.63,
-          "yield_forecast": 147.11,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 22845.22,
-          "profit_p10": 11148.47,
-          "profit_p50": 22845.22,
-          "profit_p90": 34541.97,
-          "yield_forecast": 78.27,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:45:37.168796+00:00",
-      "status": "completed"
-    },
-    "1369fb24-5d5c-4ebe-8451-ea4cf505ad21": {
-      "id": "1369fb24-5d5c-4ebe-8451-ea4cf505ad21",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Sandy Loam",
-        "selected_crops": [
-          "Wheat",
-          "Corn"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Corn",
-          "expected_profit": 31105.58,
-          "profit_p10": 15179.52,
-          "profit_p50": 31105.58,
-          "profit_p90": 47031.63,
-          "yield_forecast": 147.11,
-          "price_forecast": 7.4168,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 22845.22,
-          "profit_p10": 11148.47,
-          "profit_p50": 22845.22,
-          "profit_p90": 34541.97,
-          "yield_forecast": 78.27,
-          "price_forecast": 9.5624,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:48:29.465110+00:00",
-      "status": "completed"
-    },
-    "f68a3975-167f-4afd-b987-feaaf163d840": {
-      "id": "f68a3975-167f-4afd-b987-feaaf163d840",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Sandy Loam",
-        "selected_crops": [
-          "Wheat",
-          "Corn"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T00:58:37.189471+00:00",
-      "status": "completed"
-    },
-    "30f38b21-61dd-4286-b4a6-8117168b4855": {
-      "id": "30f38b21-61dd-4286-b4a6-8117168b4855",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T02:39:28.206601+00:00",
-      "status": "completed"
-    },
-    "b93bf927-7899-4f0c-8e21-c0a6141469c7": {
-      "id": "b93bf927-7899-4f0c-8e21-c0a6141469c7",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Sandy Clay",
-        "selected_crops": [
-          "Corn",
-          "Wheat"
-        ],
-        "risk_preference": "moderate",
-        "goal": "minimize_risk"
-      },
-      "results": [
-        {
-          "crop_name": "Wheat",
-          "expected_profit": -957.25,
-          "profit_p10": -467.14,
-          "profit_p50": -957.25,
-          "profit_p90": -1447.37,
-          "yield_forecast": 75.75,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 78.0,
-          "risk_score": 99.0,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Clay'. Wheat suitability score is 78.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -20123.64,
-          "profit_p10": -9820.33,
-          "profit_p50": -20123.64,
-          "profit_p90": -30426.94,
-          "yield_forecast": 142.38,
-          "price_forecast": 4.065,
-          "soil_compatibility": 78.0,
-          "risk_score": 99.0,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Clay'. Corn suitability score is 78.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Wheat currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T02:53:13.215694+00:00",
-      "status": "completed"
-    },
-    "883ae10d-ed8a-44c9-ac5b-5d1ed7ba5894": {
-      "id": "883ae10d-ed8a-44c9-ac5b-5d1ed7ba5894",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Clay",
-        "selected_crops": [
-          "Corn",
-          "Wheat",
-          "Soybeans"
-        ],
-        "risk_preference": "moderate",
-        "goal": "balanced"
-      },
-      "results": [
-        {
-          "crop_name": "Wheat",
-          "expected_profit": -957.25,
-          "profit_p10": -467.14,
-          "profit_p50": -957.25,
-          "profit_p90": -1447.37,
-          "yield_forecast": 75.75,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 78.0,
-          "risk_score": 99.0,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay'. Wheat suitability score is 78.0%."
-        },
-        {
-          "crop_name": "Soybeans",
-          "expected_profit": -1849.41,
-          "profit_p10": -902.51,
-          "profit_p50": -1849.41,
-          "profit_p90": -2796.3,
-          "yield_forecast": 49.42,
-          "price_forecast": 10.553,
-          "soil_compatibility": 78.0,
-          "risk_score": 99.0,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay'. Soybeans suitability score is 78.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -20123.64,
-          "profit_p10": -9820.33,
-          "profit_p50": -20123.64,
-          "profit_p90": -30426.94,
-          "yield_forecast": 142.38,
-          "price_forecast": 4.065,
-          "soil_compatibility": 78.0,
-          "risk_score": 99.0,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay'. Corn suitability score is 78.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T03:01:39.244579+00:00",
-      "status": "completed"
-    },
-    "ac2c3d10-e7fe-49ff-bd63-3ee728789a41": {
-      "id": "ac2c3d10-e7fe-49ff-bd63-3ee728789a41",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Clay Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat",
           "Soybeans",
-          "Potatoes",
-          "Tomatoes",
+          "Rice",
           "Cotton"
         ],
         "risk_preference": "moderate",
@@ -752,303 +26,245 @@
       },
       "results": [
         {
-          "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Cotton suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Wheat suitability score is 90.0%."
-        },
-        {
           "crop_name": "Soybeans",
-          "expected_profit": -117.47,
-          "profit_p10": -57.32,
-          "profit_p50": -117.47,
-          "profit_p90": -177.61,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "expected_profit": 22927.0,
+          "profit_p10": 11188.38,
+          "profit_p50": 22927.0,
+          "profit_p90": 34665.62,
+          "yield_forecast": 54.75,
+          "yield_unit": "BU / ACRE",
+          "calc_yield_for_profit": 54.75,
+          "calc_yield_unit": "bu/acre",
+          "price_forecast": 11.44,
+          "price_unit": "$/bu",
+          "revenue_per_acre": 626.34,
+          "profit_per_acre": 229.27,
+          "soil_compatibility": 74.8,
+          "risk_score": 99.0,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Soybeans suitability score is 90.0%."
+          "soil_explanation": "Soybeans can tolerate a range of soil conditions but prefer well-drained soils with moderate organic matter. The current soil profile shows zero organic matter and unknown drainage, which may affect nutrient availability and root development. Irrigation will help mitigate moisture stress, but soil amendments may be needed to improve fertility.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
         },
         {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "crop_name": "Rice",
+          "expected_profit": 16707.25,
+          "profit_p10": 8153.14,
+          "profit_p50": 16707.25,
+          "profit_p90": 25261.36,
+          "yield_forecast": 7519.57,
+          "yield_unit": "LB / ACRE",
+          "calc_yield_for_profit": 75.1957,
+          "calc_yield_unit": "cwt/acre",
+          "price_forecast": 12.48,
+          "price_unit": "$/cwt",
+          "revenue_per_acre": 938.44,
+          "profit_per_acre": 167.07,
+          "soil_compatibility": 72.3,
+          "risk_score": 99.0,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Corn suitability score is 90.0%."
+          "soil_explanation": "Rice generally requires flooded or saturated soils, which may be challenging given the unknown drainage and zero available water capacity in the soil profile. The presence of irrigation is beneficial, but soil management practices to enhance water retention and drainage control will be important for successful rice cultivation.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
         },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -84784.76,
-          "profit_p10": -41374.96,
-          "profit_p50": -84784.76,
-          "profit_p90": -128194.56,
-          "yield_forecast": 65.22,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Clay Loam'. Tomatoes suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T03:45:48.489287+00:00",
-      "status": "completed"
-    },
-    "bce36df2-e454-4d6c-adef-52c8aa38b3bc": {
-      "id": "bce36df2-e454-4d6c-adef-52c8aa38b3bc",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat",
-          "Tomatoes",
-          "Cotton",
-          "Potatoes"
-        ],
-        "risk_preference": "moderate",
-        "goal": "balanced"
-      },
-      "results": [
         {
           "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "expected_profit": 15009.78,
+          "profit_p10": 7324.77,
+          "profit_p50": 15009.78,
+          "profit_p90": 22694.78,
+          "yield_forecast": 1009.44,
+          "yield_unit": "LB / ACRE",
+          "calc_yield_for_profit": 1009.4444,
+          "calc_yield_unit": "lb/acre",
+          "price_forecast": 0.832,
+          "price_unit": "$/lb",
+          "revenue_per_acre": 839.86,
+          "profit_per_acre": 150.1,
+          "soil_compatibility": 74.8,
+          "risk_score": 99.0,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Cotton suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+          "soil_explanation": "Cotton prefers well-drained soils with moderate fertility. The unknown drainage and zero organic matter in the soil profile suggest potential challenges in water management and nutrient supply. Irrigation availability is advantageous, but soil amendments and erosion control on the 5.5% slope will be necessary to optimize cotton growth.",
+          "cost_per_acre": 689.76,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
         },
         {
           "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "expected_profit": -12106.0,
+          "profit_p10": -5907.73,
+          "profit_p50": -12106.0,
+          "profit_p90": -18304.27,
+          "yield_forecast": 150.0,
+          "yield_unit": "bu/acre",
+          "calc_yield_for_profit": 150.0,
+          "calc_yield_unit": "bu/acre",
+          "price_forecast": 3.64,
+          "price_unit": "$/bu",
+          "revenue_per_acre": 546.0,
+          "profit_per_acre": -121.06,
+          "soil_compatibility": 74.8,
+          "risk_score": 99.0,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -84784.76,
-          "profit_p10": -41374.96,
-          "profit_p50": -84784.76,
-          "profit_p90": -128194.56,
-          "yield_forecast": 65.22,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Tomatoes suitability score is 90.0%."
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and zero reported organic matter and available water capacity, which may limit nutrient and water retention. The moderate slope of 5.5% could increase erosion risk. Corn typically requires well-drained soils with good moisture retention, so irrigation will be critical to support growth under these conditions.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "fallback_default_yield_incompatible_api_unit",
+          "forecast_confidence": 0.2,
+          "cost_source": "api_or_default"
         }
       ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Tomatoes currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T03:50:34.225769+00:00",
+      "weather_summary": "The weather in Cincinnati, Ohio, shows an average precipitation of 13.16 mm/day based on data from three nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days reported, indicating stable conditions for crop growth.",
+      "market_outlook": "Market prices for Corn, Cotton, Rice, and Soybeans are trending slightly upward with a 4% price increase expected in 2024 and 2025. Despite high risk scores for all crops, Soybeans currently offer the highest expected profit, followed by Rice and Cotton. Corn shows a negative expected profit, suggesting caution. Macro factors such as rising producer prices and moderate fuel costs may impact input expenses, while a slightly weaker dollar could benefit exports.",
+      "created_at": "2026-03-19T02:54:56.711345+00:00",
       "status": "completed"
     },
-    "7191528d-eceb-4979-b810-846d1c8d37f9": {
-      "id": "7191528d-eceb-4979-b810-846d1c8d37f9",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+    "sample-analysis-2": {
+      "id": "sample-analysis-2",
+      "user_id": "demo-user",
       "farm_profile": {
         "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
           "county": "",
           "state": ""
         },
         "acres": 100.0,
         "has_irrigation": true,
-        "soil_type": "Loam",
+        "soil_type": "Silt Loam",
         "selected_crops": [
           "Corn",
-          "Wheat",
           "Soybeans",
-          "Tomatoes",
-          "Cotton",
-          "Potatoes"
+          "Wheat"
         ],
-        "risk_preference": "moderate",
-        "goal": "balanced"
+        "risk_preference": "conservative",
+        "goal": "minimize_risk"
       },
       "results": [
         {
-          "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
+          "crop_name": "Corn",
+          "expected_profit": 60394.0,
+          "profit_p10": 29472.27,
+          "profit_p50": 60394.0,
+          "profit_p90": 91315.73,
+          "yield_forecast": 155.0,
+          "price_forecast": 8.2,
           "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "risk_score": 81.8,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Cotton suitability score is 90.0%."
+          "soil_explanation": "The silt loam soil type with a 5.5% slope is generally suitable for corn, offering good water retention and nutrient availability, but the unknown drainage and zero reported organic matter and available water capacity may pose challenges requiring irrigation and soil amendments.",
+          "cost_per_acre": 667.06,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
         },
         {
           "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
+          "expected_profit": 16719.0,
+          "profit_p10": 8158.87,
+          "profit_p50": 16719.0,
+          "profit_p90": 25279.13,
+          "yield_forecast": 50.0,
+          "price_forecast": 12.0,
           "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "risk_score": 81.8,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
+          "soil_explanation": "Wheat is compatible with silt loam soils and can tolerate moderate slopes. However, the lack of organic matter and unknown drainage status suggest the need for careful soil management to optimize yield.",
+          "cost_per_acre": 432.81,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
         },
         {
           "crop_name": "Soybeans",
-          "expected_profit": -117.47,
-          "profit_p10": -57.32,
-          "profit_p50": -117.47,
-          "profit_p90": -177.61,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
+          "expected_profit": 13293.0,
+          "profit_p10": 6486.98,
+          "profit_p50": 13293.0,
+          "profit_p90": 20099.02,
+          "yield_forecast": 53.0,
+          "price_forecast": 10.0,
           "soil_compatibility": 90.0,
-          "risk_score": 96.2,
+          "risk_score": 81.8,
           "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Soybeans suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -84784.76,
-          "profit_p10": -41374.96,
-          "profit_p50": -84784.76,
-          "profit_p90": -128194.56,
-          "yield_forecast": 65.22,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Tomatoes suitability score is 90.0%."
+          "soil_explanation": "Soybeans also perform well in silt loam soils, but similar to corn and wheat, the soil's low organic matter and unknown drainage require attention to maintain soil health and moisture levels, especially since irrigation is available.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
         }
       ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T03:58:08.212618+00:00",
+      "weather_summary": "The weather in Cincinnati, Ohio, based on data from 3 nearby NOAA stations, shows an average precipitation of 13.16 mm/day with no recorded extreme heat or freeze days recently. Temperature data is unavailable, but precipitation variability is moderate with a risk index of 0.95 indicating stable conditions.",
+      "market_outlook": "Corn prices are trending strongly upward with a significant increase expected over the next few years, making it a potentially profitable crop despite its high risk. Wheat prices show a slight positive trend, suggesting stable but modest gains. Soybeans data is limited, but given the conservative risk preference, wheat may be a safer choice compared to corn.",
+      "created_at": "2026-03-08T03:27:44.683418+00:00",
       "status": "completed"
     },
-    "0a377f63-ac29-4f4f-b095-a7f00a34f8d1": {
-      "id": "0a377f63-ac29-4f4f-b095-a7f00a34f8d1",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+    "sample-analysis-3": {
+      "id": "sample-analysis-3",
+      "user_id": "demo-user",
       "farm_profile": {
         "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
+          "county": "",
+          "state": ""
+        },
+        "acres": 100.0,
+        "has_irrigation": true,
+        "soil_type": "Silt Loam",
+        "selected_crops": [
+          "Corn",
+          "Cotton"
+        ],
+        "risk_preference": "moderate",
+        "goal": "minimize_risk"
+      },
+      "results": [
+        {
+          "crop_name": "Corn",
+          "expected_profit": -23105834.42,
+          "profit_p10": -11275647.2,
+          "profit_p50": -23105834.42,
+          "profit_p90": -34936021.65,
+          "yield_forecast": 147.11,
+          "price_forecast": 7.4168,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. However, the soil profile shows zero pH and organic matter values, which may indicate missing data or poor soil health. The soil compatibility for corn is high at 90%, but the lack of available water capacity (AWC) could impact crop performance without irrigation."
+        },
+        {
+          "crop_name": "Cotton",
+          "expected_profit": -31622468.77,
+          "profit_p10": -15431764.76,
+          "profit_p50": -31622468.77,
+          "profit_p90": -47813172.77,
+          "yield_forecast": 1043.47,
+          "price_forecast": 19.7704,
+          "soil_compatibility": 90.0,
+          "risk_score": 96.2,
+          "risk_level": "High",
+          "soil_explanation": "Similar to corn, cotton is grown on Silt Loam soil with unknown drainage and a 5.5% slope. Soil health indicators such as pH and organic matter are reported as zero, suggesting data gaps or poor conditions. Cotton also has a 90% soil compatibility rating, but the absence of water retention capacity highlights the importance of irrigation for this crop."
+        }
+      ],
+      "weather_summary": "The weather in Cincinnati, Ohio shows an average precipitation of 12.94 mm/day based on data from 3 nearby NOAA stations. Temperature data is unavailable, but there are no extreme heat or freeze days expected, indicating stable weather conditions with a low risk index of 0.95.",
+      "market_outlook": "Corn prices are trending slightly upward with a positive price trend of 9.25%, while cotton prices are expected to decline significantly with a negative trend of -50.67%. Given the high risk scores and negative expected profits for both crops, market conditions suggest caution, especially for cotton.",
+      "created_at": "2026-02-27T01:52:28.768647+00:00",
+      "status": "completed"
+    },
+    "sample-analysis-4": {
+      "id": "sample-analysis-4",
+      "user_id": "demo-user",
+      "farm_profile": {
+        "location": {
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
           "county": "",
           "state": ""
         },
@@ -1151,444 +367,140 @@
       "created_at": "2026-02-24T04:02:10.370478+00:00",
       "status": "completed"
     },
-    "d7c1835a-7b3c-4d4a-87d1-661e74c12e85": {
-      "id": "d7c1835a-7b3c-4d4a-87d1-661e74c12e85",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+    "sample-analysis-5": {
+      "id": "sample-analysis-5",
+      "user_id": "demo-user",
       "farm_profile": {
         "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
           "county": "",
           "state": ""
         },
         "acres": 100.0,
         "has_irrigation": true,
-        "soil_type": "Sandy Loam",
+        "soil_type": "Silt Loam",
         "selected_crops": [
-          "Corn",
-          "Wheat",
           "Soybeans",
-          "Potatoes",
-          "Tomatoes",
-          "Cotton"
+          "Rice"
         ],
         "risk_preference": "moderate",
         "goal": "balanced"
       },
       "results": [
         {
-          "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Cotton suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
-        },
-        {
           "crop_name": "Soybeans",
-          "expected_profit": -117.47,
-          "profit_p10": -57.32,
-          "profit_p50": -117.47,
-          "profit_p90": -177.61,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Soybeans suitability score is 90.0%."
+          "expected_profit": 22927.0,
+          "profit_p10": 11188.38,
+          "profit_p50": 22927.0,
+          "profit_p90": 34665.62,
+          "yield_forecast": 54.75,
+          "yield_unit": "BU / ACRE",
+          "calc_yield_for_profit": 54.75,
+          "calc_yield_unit": "bu/acre",
+          "price_forecast": 11.44,
+          "price_unit": "$/bu",
+          "revenue_per_acre": 626.34,
+          "profit_per_acre": 229.27,
+          "soil_compatibility": 74.8,
+          "risk_score": 38.7,
+          "risk_level": "Low",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a moderate slope of 5.5%. However, the reported pH and organic matter values are zero, indicating missing or incomplete data. Silt Loam generally supports soybean growth well, but soil fertility and drainage should be verified for optimal yield.",
+          "cost_per_acre": 397.07,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
         },
         {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -83817.01,
-          "profit_p10": -40902.7,
-          "profit_p50": -83817.01,
-          "profit_p90": -126731.33,
-          "yield_forecast": 66.27,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 96.0,
-          "risk_score": 94.5,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Potatoes suitability score is 96.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Tomatoes suitability score is 90.0%."
+          "crop_name": "Rice",
+          "expected_profit": 16707.25,
+          "profit_p10": 8153.14,
+          "profit_p50": 16707.25,
+          "profit_p90": 25261.36,
+          "yield_forecast": 7519.57,
+          "yield_unit": "LB / ACRE",
+          "calc_yield_for_profit": 75.1957,
+          "calc_yield_unit": "cwt/acre",
+          "price_forecast": 12.48,
+          "price_unit": "$/cwt",
+          "revenue_per_acre": 938.44,
+          "profit_per_acre": 167.07,
+          "soil_compatibility": 72.3,
+          "risk_score": 39.1,
+          "risk_level": "Low",
+          "soil_explanation": "Rice is moderately compatible with the Silt Loam soil type present, but the unknown drainage status is a concern since rice typically requires well-managed water conditions. The lack of organic matter data suggests the need for soil testing to ensure adequate nutrient availability and water retention for rice cultivation.",
+          "cost_per_acre": 771.37,
+          "forecast_source": "deterministic_observed_yield_default_price",
+          "forecast_confidence": 0.35,
+          "cost_source": "api_or_default"
         }
       ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T04:09:04.799541+00:00",
+      "weather_summary": "The local weather near Cincinnati, Ohio shows moderate precipitation averaging 2.97 mm/day with average temperatures ranging from 7.2C to 19.4C. The climate includes a significant number of freeze days (268) and extreme heat days (190), indicating a temperate seasonal pattern suitable for diverse crop growth.",
+      "market_outlook": "Market prices for Soybeans and Rice are trending positively with a 4% increase expected in 2024 and 2025. Input costs are influenced by high producer price index inflation and fluctuating crude oil prices, while export competitiveness is challenged by a weakening dollar. Interest rates have slightly decreased, potentially lowering financing costs. Overall, the market outlook is cautiously optimistic for these crops with moderate risk.",
+      "created_at": "2026-03-24T20:34:48.516904+00:00",
       "status": "completed"
     },
-    "aabfb3fd-43ac-4bb1-a88b-075a10b7dab9": {
-      "id": "aabfb3fd-43ac-4bb1-a88b-075a10b7dab9",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
+    "sample-analysis-6": {
+      "id": "sample-analysis-6",
+      "user_id": "demo-user",
       "farm_profile": {
         "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
+          "lat": 39.5,
+          "lng": -96.5,
+          "address": "Sample Farm Location",
           "county": "",
           "state": ""
         },
         "acres": 100.0,
         "has_irrigation": true,
-        "soil_type": "Sandy Loam",
+        "soil_type": "Silt Loam",
         "selected_crops": [
-          "Corn",
-          "Wheat",
           "Soybeans",
-          "Potatoes",
-          "Tomatoes",
-          "Cotton"
+          "Rice"
         ],
         "risk_preference": "moderate",
         "goal": "balanced"
       },
       "results": [
         {
-          "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
+          "crop_name": "Rice",
+          "expected_profit": 9300109.3,
+          "profit_p10": 5635419.83,
+          "profit_p50": 9300109.3,
+          "profit_p90": 12964798.77,
+          "yield_forecast": 7520.0,
+          "price_forecast": 12.48,
           "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Cotton suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Wheat suitability score is 90.0%."
+          "risk_score": 57.7,
+          "risk_level": "Medium",
+          "soil_explanation": "The soil is classified as Silt Loam with unknown drainage and a slope of 5.5%. Organic matter and available water capacity are reported as zero, which may require soil amendments or irrigation management to optimize Rice growth.",
+          "cost_per_acre": 848.51,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
         },
         {
           "crop_name": "Soybeans",
-          "expected_profit": -117.47,
-          "profit_p10": -57.32,
-          "profit_p50": -117.47,
-          "profit_p90": -177.61,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
+          "expected_profit": 11119.9,
+          "profit_p10": 6738.13,
+          "profit_p50": 11119.9,
+          "profit_p90": 15501.67,
+          "yield_forecast": 47.9,
+          "price_forecast": 11.44,
           "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Soybeans suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -83817.01,
-          "profit_p10": -40902.7,
-          "profit_p50": -83817.01,
-          "profit_p90": -126731.33,
-          "yield_forecast": 66.27,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 96.0,
-          "risk_score": 94.5,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Potatoes suitability score is 96.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Sandy Loam'. Tomatoes suitability score is 90.0%."
+          "risk_score": 57.7,
+          "risk_level": "Medium",
+          "soil_explanation": "The Silt Loam soil with moderate slope and unknown drainage presents some challenges due to low organic matter and water holding capacity. Proper irrigation and soil fertility management will be important to support Soybean production.",
+          "cost_per_acre": 436.78,
+          "forecast_source": "llm_api_based",
+          "forecast_confidence": 0.0,
+          "cost_source": "llm_api_based_factor_bounded"
         }
       ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T04:13:13.036787+00:00",
-      "status": "completed"
-    },
-    "a0a62127-f0b6-4f8d-81ea-a395201be203": {
-      "id": "a0a62127-f0b6-4f8d-81ea-a395201be203",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat",
-          "Soybeans",
-          "Potatoes",
-          "Tomatoes",
-          "Cotton"
-        ],
-        "risk_preference": "moderate",
-        "goal": "balanced"
-      },
-      "results": [
-        {
-          "crop_name": "Cotton",
-          "expected_profit": 150083.81,
-          "profit_p10": 73240.9,
-          "profit_p50": 150083.81,
-          "profit_p90": 226926.73,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Cotton suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": 737.89,
-          "profit_p10": 360.09,
-          "profit_p50": 737.89,
-          "profit_p90": 1115.7,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Soybeans",
-          "expected_profit": -117.47,
-          "profit_p10": -57.32,
-          "profit_p50": -117.47,
-          "profit_p90": -177.61,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Soybeans suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -18201.54,
-          "profit_p10": -8882.35,
-          "profit_p50": -18201.54,
-          "profit_p90": -27520.73,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -84784.76,
-          "profit_p10": -41374.96,
-          "profit_p50": -84784.76,
-          "profit_p90": -128194.56,
-          "yield_forecast": 65.22,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Tomatoes suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T04:19:54.607433+00:00",
-      "status": "completed"
-    },
-    "2cdf3cd3-1f34-4ce0-bd47-0b103f9f772c": {
-      "id": "2cdf3cd3-1f34-4ce0-bd47-0b103f9f772c",
-      "user_id": "8dd1d043-628c-4613-830c-a56153b2c6fb",
-      "farm_profile": {
-        "location": {
-          "lat": 39.1014537,
-          "lng": -84.5124602,
-          "address": "cincinnati, Ohio",
-          "county": "",
-          "state": ""
-        },
-        "acres": 100.0,
-        "has_irrigation": true,
-        "soil_type": "Loam",
-        "selected_crops": [
-          "Corn",
-          "Wheat",
-          "Soybeans",
-          "Potatoes",
-          "Tomatoes",
-          "Cotton"
-        ],
-        "risk_preference": "moderate",
-        "goal": "balanced"
-      },
-      "results": [
-        {
-          "crop_name": "Potatoes",
-          "expected_profit": -84784.76,
-          "profit_p10": -41374.96,
-          "profit_p50": -84784.76,
-          "profit_p90": -128194.56,
-          "yield_forecast": 65.22,
-          "price_forecast": 9.2331,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Potatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Tomatoes",
-          "expected_profit": -131052.97,
-          "profit_p10": -63953.85,
-          "profit_p50": -131052.97,
-          "profit_p90": -198152.09,
-          "yield_forecast": 51.54,
-          "price_forecast": 11.4368,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Tomatoes suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Soybeans",
-          "expected_profit": -10805344.47,
-          "profit_p10": -5273008.1,
-          "profit_p50": -10805344.47,
-          "profit_p90": -16337680.84,
-          "yield_forecast": 51.06,
-          "price_forecast": 10.553,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Soybeans suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Wheat",
-          "expected_profit": -13506349.11,
-          "profit_p10": -6591098.36,
-          "profit_p50": -13506349.11,
-          "profit_p90": -20421599.85,
-          "yield_forecast": 78.27,
-          "price_forecast": 6.7379,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Wheat suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Corn",
-          "expected_profit": -23155141.54,
-          "profit_p10": -11299709.07,
-          "profit_p50": -23155141.54,
-          "profit_p90": -35010574.01,
-          "yield_forecast": 147.11,
-          "price_forecast": 4.065,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Corn suitability score is 90.0%."
-        },
-        {
-          "crop_name": "Cotton",
-          "expected_profit": -33459363.19,
-          "profit_p10": -16328169.23,
-          "profit_p50": -33459363.19,
-          "profit_p90": -50590557.14,
-          "yield_forecast": 164.55,
-          "price_forecast": 13.7397,
-          "soil_compatibility": 90.0,
-          "risk_score": 96.2,
-          "risk_level": "High",
-          "soil_explanation": "Soil compatibility estimated from soil_type='Loam'. Cotton suitability score is 90.0%."
-        }
-      ],
-      "weather_summary": "Weather from 3 nearby NOAA station(s): avg PRCP 12.94 mm/day, avg TMAX nanC, avg TMIN nanC.",
-      "market_outlook": "Recent average pricing suggests mixed commodity momentum. Soybeans currently shows the strongest observed average price.",
-      "created_at": "2026-02-24T04:27:44.588685+00:00",
+      "weather_summary": "The 3-year weather baseline near Cincinnati, Ohio indicates average precipitation of 2.63 mm/day with temperatures ranging from 15.1C to 26.5C, featuring moderate temperature variability and limited extreme heat and freeze days.",
+      "market_outlook": "Market prices for Rice and Soybeans are trending slightly upward with a 4% increase expected in 2024 and 2025. Input costs are influenced by fluctuating crude oil prices and producer price index changes, while export competitiveness and financing costs remain stable. Overall, a moderate risk environment with balanced profit potential is anticipated.",
+      "created_at": "2026-03-17T22:16:28.103603+00:00",
       "status": "completed"
     }
   }

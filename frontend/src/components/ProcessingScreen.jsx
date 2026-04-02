@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Progress } from './ui/progress';
 import { 
   Database, 
@@ -58,8 +58,8 @@ const PROCESSING_STEPS = [
     title: 'Market Forecasting',
     icon: DollarSign,
     thoughts: [
-      'Connecting to USDA AMS market feeds...',
-      'Fetching current commodity prices...',
+      'Building commodity price baselines...',
+      'Applying crop-specific market priors...',
       'Analyzing futures market trends... [OK]',
       'Processing export demand indicators...',
       'Evaluating supply chain factors...',
@@ -83,56 +83,26 @@ const PROCESSING_STEPS = [
   },
 ];
 
-export const ProcessingScreen = ({ farmProfile, onComplete }) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [stepProgress, setStepProgress] = useState(0);
-  const [logs, setLogs] = useState([]);
-  const [completedSteps, setCompletedSteps] = useState([]);
+export const ProcessingScreen = ({ farmProfile, analysisJob }) => {
   const logsEndRef = useRef(null);
-  const thoughtIndexRef = useRef(0);
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs]);
+  }, [analysisJob?.logs]);
 
-  useEffect(() => {
-    const currentStep = PROCESSING_STEPS[currentStepIndex];
-    if (!currentStep) {
-      // All steps complete
-      setTimeout(() => {
-        onComplete();
-      }, 1000);
-      return;
-    }
-
-    const thoughts = currentStep.thoughts;
-    thoughtIndexRef.current = 0;
-
-    const thoughtInterval = setInterval(() => {
-      if (thoughtIndexRef.current < thoughts.length) {
-        const thought = thoughts[thoughtIndexRef.current];
-        setLogs(prev => [...prev, { 
-          step: currentStep.title, 
-          text: thought, 
-          isOk: thought.includes('[OK]') 
-        }]);
-        setStepProgress(((thoughtIndexRef.current + 1) / thoughts.length) * 100);
-        thoughtIndexRef.current++;
-      } else {
-        clearInterval(thoughtInterval);
-        setCompletedSteps(prev => [...prev, currentStep.id]);
-        
-        setTimeout(() => {
-          setCurrentStepIndex(prev => prev + 1);
-          setStepProgress(0);
-        }, 500);
-      }
-    }, 400);
-
-    return () => clearInterval(thoughtInterval);
-  }, [currentStepIndex, onComplete]);
-
-  const overallProgress = ((currentStepIndex + stepProgress / 100) / PROCESSING_STEPS.length) * 100;
+  const logs = analysisJob?.logs || [
+    {
+      step: 'Backend Sync',
+      text: 'Starting backend analysis request...',
+      is_ok: false,
+    },
+  ];
+  const currentStepIndex = Math.max(
+    0,
+    PROCESSING_STEPS.findIndex((step) => step.id === analysisJob?.stage_id)
+  );
+  const activeStageIndex = currentStepIndex;
+  const overallProgress = Number.isFinite(analysisJob?.progress_pct) ? analysisJob.progress_pct : 0;
 
   return (
     <div className="fixed inset-0 z-50 bg-emerald-950 flex items-center justify-center" data-testid="processing-screen">
@@ -164,8 +134,8 @@ export const ProcessingScreen = ({ farmProfile, onComplete }) => {
         {/* Steps */}
         <div className="grid grid-cols-5 gap-2 mb-8">
           {PROCESSING_STEPS.map((step, index) => {
-            const isCompleted = completedSteps.includes(step.id);
-            const isCurrent = index === currentStepIndex;
+            const isCompleted = activeStageIndex > index || analysisJob?.status === 'completed';
+            const isCurrent = activeStageIndex === index && analysisJob?.status !== 'completed';
             const Icon = step.icon;
 
             return (
@@ -213,12 +183,12 @@ export const ProcessingScreen = ({ farmProfile, onComplete }) => {
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <span className="text-slate-500">[{log.step}]</span>{' '}
-                <span className={log.isOk ? 'text-lime-400' : 'text-slate-300'}>
+                <span className={log.is_ok || log.isOk ? 'text-lime-400' : 'text-slate-300'}>
                   {log.text}
                 </span>
               </div>
             ))}
-            {currentStepIndex < PROCESSING_STEPS.length && (
+            {analysisJob?.status !== 'completed' && analysisJob?.status !== 'failed' && (
               <div className="text-lime-400 terminal-cursor">
                 <span className="text-slate-500">{'>'}</span>{' '}
               </div>
@@ -228,15 +198,15 @@ export const ProcessingScreen = ({ farmProfile, onComplete }) => {
         </div>
 
         {/* Current Step Progress */}
-        {currentStepIndex < PROCESSING_STEPS.length && (
+        {analysisJob?.status !== 'completed' && (
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-400">
-                {PROCESSING_STEPS[currentStepIndex]?.title}
+                {analysisJob?.stage_title || PROCESSING_STEPS[currentStepIndex]?.title || 'Backend Analysis'}
               </span>
-              <span className="text-sm font-mono text-lime-400">{Math.round(stepProgress)}%</span>
+              <span className="text-sm font-mono text-lime-400">{Math.round(overallProgress)}%</span>
             </div>
-            <Progress value={stepProgress} className="h-1.5 bg-slate-800" />
+            <Progress value={overallProgress} className="h-1.5 bg-slate-800" />
           </div>
         )}
       </div>
